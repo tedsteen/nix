@@ -1,13 +1,20 @@
 { config, lib, pkgs, options, ... }:
 
 let
-  home-manager = builtins.fetchTarball https://github.com/nix-community/home-manager/archive/release-24.11.tar.gz;
+  home-manager = builtins.fetchTarball {
+    url = "https://github.com/nix-community/home-manager/archive/release-24.11.tar.gz";
+    sha256 = "0gjfa3bv0m0kymxqla9iih11gjb6czyj942v34pyc7xy4qsx898k";
+  };
 in
 {
   imports =
     [
       (import "${home-manager}/nixos")
     ];
+  
+  system = {
+    stateVersion = "24.11"; # DON'T CHANGE THIS UNLESS YOU KNOW WHAT YOU'RE DOING
+  };
 
   environment = {
     systemPackages = with pkgs; [
@@ -30,18 +37,6 @@ in
 
     sessionVariables = {
       EDITOR="nvim";
-    };
-  };
-
-  services = {
-    openssh = {
-      enable = true;
-      settings = {
-        PasswordAuthentication = false;
-        ChallengeResponseAuthentication = false;
-        PermitRootLogin = "no";
-        PubkeyAuthentication = true;
-      };
     };
   };
 
@@ -128,8 +123,6 @@ in
       };
     };
   };
-
-  console.keyMap = "dvorak";
 
   users.users.ted = {
     shell = pkgs.fish;
