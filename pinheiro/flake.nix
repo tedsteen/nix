@@ -16,6 +16,11 @@
       hostName = "pinherio-nuc";
       timeZone = "Europe/Lisbon";
       hardwareConfig = ./hardware-configuration.nix;
+      extraModules = [
+        ({ pkgs, ... }: {
+          environment.systemPackages = with pkgs; [ wget ];
+        })
+      ];
     };
   };
 }

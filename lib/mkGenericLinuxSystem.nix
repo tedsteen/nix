@@ -1,6 +1,6 @@
 { nixpkgs, disko, configuration, linuxDiskConfig }:
 
-{ system, mainDevice, hostName, timeZone, hardwareConfig }:
+{ system, mainDevice, hostName, timeZone, hardwareConfig, extraModules ? [] }:
 
 nixpkgs.lib.nixosSystem {
   inherit system;
@@ -27,5 +27,5 @@ nixpkgs.lib.nixosSystem {
         };
       };
     })
-  ];
+  ] ++ extraModules;
 }
