@@ -1,21 +1,6 @@
-{ config, lib, pkgs, options, ... }:
+{ pkgs, ... }:
 
-let
-  home-manager = builtins.fetchTarball {
-    url = "https://github.com/nix-community/home-manager/archive/release-24.11.tar.gz";
-    sha256 = "0gjfa3bv0m0kymxqla9iih11gjb6czyj942v34pyc7xy4qsx898k";
-  };
-in
 {
-  imports =
-    [
-      (import "${home-manager}/nixos")
-    ];
-  
-  system = {
-    stateVersion = "24.11"; # DON'T CHANGE THIS UNLESS YOU KNOW WHAT YOU'RE DOING
-  };
-
   environment = {
     systemPackages = with pkgs; [
       git
@@ -51,9 +36,7 @@ in
         set -e __fish_nixos_interactive_config_sourced
         set -e __fish_nixos_env_preinit_sourced
       '';
-      #interactiveShellInit = ''
-      #   ${lib.getExe config.programs.starship.package} init fish | source
-      #'';
+
       shellAbbrs = {
         ls="ls -hal";
         wget="wget -c";
@@ -122,36 +105,5 @@ in
         '';
       };
     };
-  };
-
-  users.users.ted = {
-    shell = pkgs.fish;
-    isNormalUser = true;
-    extraGroups = [ "wheel" ]; # Enable ‘sudo’
-    openssh.authorizedKeys.keys = [
-    	"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKeAaaHvF/6KmN2neKxeHyL0WEuVC5XIp0CHp1i3u6Ff ted@mbp-2025-05-04"
-    ];
-  };
-  # Allow sudo without password
-  security.sudo.extraRules = [
-    {
-      users = [ "ted" ];
-      commands = [ { command = "ALL"; options = [ "NOPASSWD" ]; } ];
-    }
-  ];
-
-  home-manager.users.ted = { pkgs, ... }: {
-    programs = {
-      git = {
-        enable = true;
-
-        userEmail = "ted.steen@gmail.com";
-        userName = "Ted Steen";
-      };
-    };
-
-    # The state version is required and should stay at the version you
-    # originally installed.
-    home.stateVersion = "24.11"; # DON'T TOUCH!
   };
 }

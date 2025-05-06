@@ -1,18 +1,34 @@
 {
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-  inputs.disko.url = "github:nix-community/disko";
-  inputs.disko.inputs.nixpkgs.follows = "nixpkgs";
+  inputs = {
+    nixpkgs.url = "nixpkgs/nixos-24.11";
+    home-manager = {
+      url = "github:nix-community/home-manager/release-24.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
 
-  outputs = { nixpkgs, disko, ... }: let
+  outputs = { nixpkgs, disko, home-manager, ... }: let
     linuxDiskConfig = import ../linux-disk-config.nix;
+    basicUserConfig = import ../basic-user.nix;
   in {
     nixosConfigurations.pinheiro = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
-        disko.nixosModules.disko
         ./hardware-configuration.nix
+        
+        disko.nixosModules.disko
         (linuxDiskConfig { mainDevice = "/dev/sda"; })
-        ../configuration.nix
+        
+        ../basic-config.nix
+        
+        home-manager.nixosModules.home-manager
+        (import ../basic-user.nix {
+          userName = "ted";
+          userEmail = "ted.steen@gmail.com";
+          userFullName = "Ted Steen";
+          userSshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKeAaaHvF/6KmN2neKxeHyL0WEuVC5XIp0CHp1i3u6Ff ted@mbp-2025-05-04";
+        })
+
         ({ config, pkgs, ... }: {
           networking.hostName = "pinherio-nuc";
           time.timeZone = "Europe/Lisbon";
@@ -30,6 +46,12 @@
               PubkeyAuthentication = true;
             };
           };
+
+          # The state versions are required and should stay at the version you
+          # originally installed.
+          # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
+          system.stateVersion = "24.11";
+          home-manager.users.ted.home.stateVersion = "24.11";
         })
       ];
     };
