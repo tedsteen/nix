@@ -4,21 +4,32 @@
   inputs.disko.inputs.nixpkgs.follows = "nixpkgs";
 
   outputs = { nixpkgs, disko, ... }: let
-    configuration = ../configuration.nix;
     linuxDiskConfig = import ../linux-disk-config.nix;
-    mkGenericLinuxSystem = import ../lib/mkGenericLinuxSystem.nix {
-      inherit nixpkgs disko configuration linuxDiskConfig;
-    };
   in {
-    nixosConfigurations.pinheiro = mkGenericLinuxSystem {
+    nixosConfigurations.pinheiro = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      mainDevice = "/dev/sda";
-      hostName = "pinherio-nuc";
-      timeZone = "Europe/Lisbon";
-      hardwareConfig = ./hardware-configuration.nix;
-      extraModules = [
-        ({ pkgs, ... }: {
-          environment.systemPackages = with pkgs; [ wget ];
+      modules = [
+        disko.nixosModules.disko
+        ./hardware-configuration.nix
+        (linuxDiskConfig { mainDevice = "/dev/sda"; })
+        ../configuration.nix
+        ({ config, pkgs, ... }: {
+          networking.hostName = "pinherio-nuc";
+          time.timeZone = "Europe/Lisbon";
+          console.keyMap = "dvorak";
+          boot.loader = {
+            systemd-boot.enable = true;
+            efi.canTouchEfiVariables = true;
+          };
+          services.openssh = {
+            enable = true;
+            settings = {
+              PasswordAuthentication = false;
+              ChallengeResponseAuthentication = false;
+              PermitRootLogin = "no";
+              PubkeyAuthentication = true;
+            };
+          };
         })
       ];
     };
