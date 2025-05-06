@@ -1,4 +1,4 @@
-
+#!/bin/bash
 export TARGET_CONFIG=${1:-"test"}
 export TARGET_HOST=${2:-"nixos"}@${3:-"<missing-ip>"}
 
