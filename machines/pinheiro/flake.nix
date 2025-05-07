@@ -18,12 +18,14 @@
       system = "x86_64-linux";
       modules = [
         ./nuc/hardware-configuration.nix
-        
+
         (import ../../linux-system-boot-config.nix {
           inherit disko;
           mainDevice = "/dev/sda";
         })
         
+        ../../hardening-config.nix
+
         (import ../../basic-system-config.nix {
           hostName = "pinherio-nuc";
           timeZone = "Europe/Lisbon";
@@ -60,6 +62,21 @@
               commands = [{ command = "ALL"; options = [ "NOPASSWD" ]; }];
             }
           ];
+
+          # Enable rootless docker
+          virtualisation.docker = {
+            enable = true;
+            rootless = {
+              enable = true;
+              setSocketVariable = true;
+            };
+          };
+          users.users.ted.extraGroups = [ "docker" ];
+          home-manager.users.ted.programs.fish.shellAbbrs = nixpkgs.lib.mkBefore {
+            # Delete all stopped containers (including data-only containers)
+            dkrm="for id in (docker ps -aq -f status=exited); docker rm -f $id; end";
+            dkkill="for id in (docker ps -q); docker kill $id; end";
+          };
 
           # The state versions are required and should stay at the version you
           # originally installed.
