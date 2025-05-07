@@ -8,21 +8,21 @@
   };
 
   outputs = { nixpkgs, disko, home-manager, ... }: let
-    linuxDiskConfig = import ../linux-disk-config.nix;
-    basicUserConfig = import ../basic-user.nix;
+    linuxDiskConfig = import ../../linux-disk-config.nix;
+    basicUserConfig = import ../../basic-user.nix;
   in {
-    nixosConfigurations.pinheiro = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.nuc = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
-        ./hardware-configuration.nix
+        ./nuc/hardware-configuration.nix
         
         (linuxDiskConfig { inherit disko; mainDevice = "/dev/sda"; })
         
-        ../basic-config.nix
+        ../../basic-config.nix
         
         home-manager.nixosModules.home-manager
         
-        (import ../basic-user.nix {
+        (import ../../basic-user.nix {
           userName = "ted";
           userEmail = "ted.steen@gmail.com";
           userFullName = "Ted Steen";

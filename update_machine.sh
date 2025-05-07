@@ -1,5 +1,10 @@
 #!/bin/bash
-export TARGET_CONFIG=${1:-"test"}
-export TARGET_HOST=${2:-"nixos"}@${3:-"<missing-ip>"}
-nix-shell -p '(nixos{}).nixos-rebuild' git --run "nixos-rebuild --fast --build-host $TARGET_HOST --use-remote-sudo --flake ./$TARGET_CONFIG#$TARGET_CONFIG --target-host $TARGET_HOST switch"
+IP=${1:-"<missing-ip>"}
+USER=${2:-"ted"}
+export CONFIG=${3:-"nuc"}
+export MACHINE=${4:-"./machines/pinheiro"}
+
+export TARGET_HOST="$USER@$IP"
+
+nix-shell -p '(nixos{}).nixos-rebuild' git --run "nixos-rebuild --fast --build-host $TARGET_HOST --use-remote-sudo --flake $MACHINE#$CONFIG --target-host $TARGET_HOST switch"
 
