@@ -1,3 +1,4 @@
+# Bare minimum user and shell configuration
 { userName, userEmail, userFullName, userAuthorizedKeys }:
 
 { config, lib, pkgs, ... }: {
@@ -8,13 +9,6 @@
     openssh.authorizedKeys.keys = userAuthorizedKeys;
   };
 
-  security.sudo.extraRules = [
-    {
-      users = [ userName ];
-      commands = [{ command = "ALL"; options = [ "NOPASSWD" ]; }];
-    }
-  ];
-
   home-manager.users.${userName} = { pkgs, ... }: {
     programs = {
       fish = {
@@ -22,13 +16,7 @@
 
         shellAbbrs = {
           ls="ls -hal";
-          wget="wget -c";
           jcurl="curl -H 'Content-Type: application/json' -H 'Accept: application/json'";
-
-          # docker
-          # Delete all stopped containers (including data-only containers)
-          dkrm="for id in $(docker ps -aq -f status=exited); do docker rm -f $id; done";
-          dkkill="for id in $(docker ps -q); do docker kill $id; done";
 
           # git
           gs="git status";

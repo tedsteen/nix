@@ -1,28 +1,35 @@
 {
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-24.11";
+
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     home-manager = {
       url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { nixpkgs, disko, home-manager, ... }: let
-    linuxDiskConfig = import ../../linux-disk-config.nix;
-    basicUserConfig = import ../../basic-user.nix;
-  in {
+  outputs = { nixpkgs, disko, home-manager, ... }: {
     nixosConfigurations.nuc = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
         ./nuc/hardware-configuration.nix
         
-        (linuxDiskConfig { inherit disko; mainDevice = "/dev/sda"; })
+        (import ../../linux-system-boot-config.nix {
+          inherit disko;
+          mainDevice = "/dev/sda";
+        })
         
-        ../../basic-config.nix
-        
-        home-manager.nixosModules.home-manager
-        
-        (import ../../basic-user.nix {
+        (import ../../basic-system-config.nix {
+          hostName = "pinherio-nuc";
+          timeZone = "Europe/Lisbon";
+        })
+
+        (import ../../user-and-shell-config.nix {
           userName = "ted";
           userEmail = "ted.steen@gmail.com";
           userFullName = "Ted Steen";
@@ -32,11 +39,12 @@
           ];
         })
 
-        ({
-          networking.hostName = "pinherio-nuc";
-          time.timeZone = "Europe/Lisbon";
+        home-manager.nixosModules.home-manager
+
+        {
           console.keyMap = "dvorak";
 
+          # Lock down root and password access but let the user "ted" in with private key and enable passwordless sudo
           services.openssh = {
             enable = true;
             settings = {
@@ -46,13 +54,19 @@
               PubkeyAuthentication = true;
             };
           };
+          security.sudo.extraRules = [
+            {
+              users = [ "ted" ];
+              commands = [{ command = "ALL"; options = [ "NOPASSWD" ]; }];
+            }
+          ];
 
           # The state versions are required and should stay at the version you
           # originally installed.
           # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
           system.stateVersion = "24.11";
           home-manager.users.ted.home.stateVersion = "24.11";
-        })
+        }
       ];
     };
   };
