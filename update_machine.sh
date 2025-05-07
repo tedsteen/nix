@@ -1,8 +1,8 @@
 #!/bin/bash
 IP=${1:-"<missing-ip>"}
 USER=${2:-"ted"}
-export CONFIG=${3:-"nuc"}
-export MACHINE=${4:-"./machines/pinheiro"}
+export MACHINE=${3:-"./machines/pinheiro"}
+export CONFIG=${4:-"nuc"}
 
 export TARGET_HOST="$USER@$IP"
 
