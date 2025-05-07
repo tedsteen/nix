@@ -1,4 +1,6 @@
-{ mainDevice, ... }: {
+{ disko, mainDevice, ... }: { config, pkgs, lib, ... }: {
+  imports = [ disko.nixosModules.disko ];
+
   disko.devices = {
     disk.main = {
       device = mainDevice;
@@ -27,5 +29,10 @@
         };
       };
     };
+  };
+  
+  boot.loader = {
+    systemd-boot.enable = true;
+    efi.canTouchEfiVariables = true;
   };
 }

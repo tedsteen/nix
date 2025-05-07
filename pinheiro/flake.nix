@@ -16,12 +16,12 @@
       modules = [
         ./hardware-configuration.nix
         
-        disko.nixosModules.disko
-        (linuxDiskConfig { mainDevice = "/dev/sda"; })
+        (linuxDiskConfig { inherit disko; mainDevice = "/dev/sda"; })
         
         ../basic-config.nix
         
         home-manager.nixosModules.home-manager
+        
         (import ../basic-user.nix {
           userName = "ted";
           userEmail = "ted.steen@gmail.com";
@@ -32,14 +32,11 @@
           ];
         })
 
-        ({ config, pkgs, ... }: {
+        ({
           networking.hostName = "pinherio-nuc";
           time.timeZone = "Europe/Lisbon";
           console.keyMap = "dvorak";
-          boot.loader = {
-            systemd-boot.enable = true;
-            efi.canTouchEfiVariables = true;
-          };
+
           services.openssh = {
             enable = true;
             settings = {
