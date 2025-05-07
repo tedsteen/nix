@@ -1,11 +1,11 @@
-{ userName, userEmail, userFullName, userSshKey }:
+{ userName, userEmail, userFullName, userAuthorizedKeys }:
 
 { config, lib, pkgs, ... }: {
   users.users.${userName} = {
     isNormalUser = true;
     shell = pkgs.fish;
     extraGroups = [ "wheel" ];
-    openssh.authorizedKeys.keys = [ userSshKey ];
+    openssh.authorizedKeys.keys = userAuthorizedKeys;
   };
 
   security.sudo.extraRules = [
