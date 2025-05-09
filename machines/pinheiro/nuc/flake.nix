@@ -66,7 +66,7 @@
           virtualisation.docker.enable = true;
 
           home-manager.users.ted = lib.mkMerge [
-            (import ../../../basic-shell-config.nix {
+            (import ../../../home-manager/basic-shell-config.nix {
               email = "ted.steen@gmail.com";
               fullName = "Ted Steen";
             })
