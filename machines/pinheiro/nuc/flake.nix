@@ -14,24 +14,24 @@
   };
 
   outputs = { nixpkgs, disko, home-manager, ... }: {
-    nixosConfigurations.nuc = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.default = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
-        ./nuc/hardware-configuration.nix
+        ./hardware-configuration.nix
 
-        (import ../../linux-system-boot-config.nix {
+        (import ../../../linux-system-boot-config.nix {
           inherit disko;
           mainDevice = "/dev/sda";
         })
         
-        ../../hardening-config.nix
+        ../../../hardening-config.nix
 
-        (import ../../basic-system-config.nix {
+        (import ../../../basic-system-config.nix {
           hostName = "pinherio-nuc";
           timeZone = "Europe/Lisbon";
         })
 
-        (import ../../user-and-shell-config.nix {
+        (import ../../../user-and-shell-config.nix {
           userName = "ted";
           userEmail = "ted.steen@gmail.com";
           userFullName = "Ted Steen";
@@ -45,9 +45,9 @@
 
         ({ pkgs, ... }: let
             backupDockerVolumesScript = pkgs.writeScriptBin "docker-volumes-backup"
-              (builtins.readFile ./nuc/scripts/docker-volumes-backup.sh);
+              (builtins.readFile ./scripts/docker-volumes-backup.sh);
             restoreDockerVolumesScript = pkgs.writeScriptBin "docker-volumes-restore"
-              (builtins.readFile ./nuc/scripts/docker-volumes-restore.sh);
+              (builtins.readFile ./scripts/docker-volumes-restore.sh);
         in {
           console.keyMap = "dvorak";
 
@@ -87,7 +87,7 @@
             };
           };
           
-          # Let the docker expose port 80 for traefik (all of the services run on that port)
+          # Let docker expose port 80 for traefik (all of the services run on that port)
           boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 80;
           networking.firewall.allowedTCPPorts = [ 80 ];
 
