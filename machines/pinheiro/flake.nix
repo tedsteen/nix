@@ -43,7 +43,12 @@
 
         home-manager.nixosModules.home-manager
 
-        {
+        ({ pkgs, ... }: let
+            backupDockerVolumesScript = pkgs.writeScriptBin "docker-volumes-backup"
+              (builtins.readFile ./nuc/scripts/docker-volumes-backup.sh);
+            restoreDockerVolumesScript = pkgs.writeScriptBin "docker-volumes-restore"
+              (builtins.readFile ./nuc/scripts/docker-volumes-restore.sh);
+        in {
           console.keyMap = "dvorak";
 
           # Lock down root and password access but let the user "ted" in with private key and enable passwordless sudo
@@ -63,27 +68,36 @@
             }
           ];
 
-          # Enable rootless docker
-          virtualisation.docker = {
-            enable = true;
-            rootless = {
-              enable = true;
-              setSocketVariable = true;
+          # Enable docker
+          virtualisation.docker.enable = true;
+          # Allow the user "ted" to run docker commands without sudo
+          users.users.ted.extraGroups = [ "docker" ];
+          home-manager.users.ted = {
+            programs.fish.shellAbbrs = nixpkgs.lib.mkBefore {
+              # Delete all stopped containers (including data-only containers)
+              dkrm="for id in (docker ps -aq -f status=exited); docker rm -f $id; end";
+              dkkill="for id in (docker ps -q); docker kill $id; end";
+            };
+            
+            home = {
+              packages = [
+                backupDockerVolumesScript
+                restoreDockerVolumesScript
+              ];
             };
           };
-          users.users.ted.extraGroups = [ "docker" ];
-          home-manager.users.ted.programs.fish.shellAbbrs = nixpkgs.lib.mkBefore {
-            # Delete all stopped containers (including data-only containers)
-            dkrm="for id in (docker ps -aq -f status=exited); docker rm -f $id; end";
-            dkkill="for id in (docker ps -q); docker kill $id; end";
-          };
+          
+          # Let the docker expose port 80 for traefik (all of the services run on that port)
+          boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 80;
+          networking.firewall.allowedTCPPorts = [ 80 ];
 
           # The state versions are required and should stay at the version you
           # originally installed.
           # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
-          system.stateVersion = "24.11";
           home-manager.users.ted.home.stateVersion = "24.11";
-        }
+          system.stateVersion = "24.11";
+          
+        })
       ];
     };
   };
