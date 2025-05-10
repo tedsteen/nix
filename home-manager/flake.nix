@@ -21,12 +21,8 @@
         inherit pkgs;
 
         modules = [
-          (import ./basic-shell-config.nix {
-            email = "ted.steen@gmail.com";
-            fullName = "Ted Steen";
-          })
           ./home.nix
-          ];
+        ];
 
         # Optionally use extraSpecialArgs
         # to pass through arguments to home.nix

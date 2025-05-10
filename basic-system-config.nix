@@ -8,7 +8,7 @@
 
   programs = {
     command-not-found.enable = false;
-    fish.enable = true;
+    zsh.enable = true;
     neovim = {
       enable = true;
       defaultEditor = true;

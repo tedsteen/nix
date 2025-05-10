@@ -1,6 +1,13 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
-{
+let
+  basic = import ./basic-shell-config.nix {
+    email = "ted@rorointeractive.com";
+    fullName = "Ted Steen";
+  };
+in {
+  imports = [ basic ];
+  # This is the Home Manager configuration for Ted Steen.
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "tedsteen";
