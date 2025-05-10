@@ -2,7 +2,7 @@
 
 let
   basic = import ./basic-shell-config.nix {
-    email = "ted@rorointeractive.com";
+    email = "ted.steen@gmail.com";
     fullName = "Ted Steen";
   };
 in {

@@ -17,18 +17,17 @@
     nixosConfigurations.default = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       
-      specialArgs = {
-        inherit disko;
-        hostName = "pinheiro-nuc";
-        timeZone = "Europe/Lisbon";
-        mainDevice = "/dev/sda";
-      };
-
       modules = [
         ./hardware-configuration.nix
-        ../../../linux-system-boot-config.nix
-        ../../../hardening-config.nix
-        ../../../basic-system-config.nix
+        (import ../../system-boot-config.nix {
+          inherit disko;
+          mainDevice = "/dev/sda";
+        })
+        ../../hardening-config.nix
+        (import ../../basic-system-config.nix {
+          hostName = "pinheiro-nuc";
+          timeZone = "Europe/Lisbon";
+        })
         home-manager.nixosModules.home-manager
         ({pkgs, ...}: {
           console.keyMap = "dvorak";
@@ -44,14 +43,12 @@
             ];
           };
           
-          home-manager.users."ted" = let
-            basic = import ../../../home-manager/basic-shell-config.nix {
-              email = "ted@rorointeractive.com";
-              fullName = "Ted Steen";
-            };
-          in {
+          home-manager.users."ted" = {
             imports = [
-              basic
+              (import ../../../home-manager/basic-shell-config.nix {
+                email = "ted.steen@gmail.com";
+                fullName = "Ted Steen";
+              })
               ({ pkgs, ... }: {
                 programs.zsh.shellAliases = {
                   # Delete all stopped containers (including data-only containers)

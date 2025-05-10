@@ -1,5 +1,5 @@
-# Bare minimum system configuration
-{ pkgs, hostName, timeZone, ... }: {
+# Bare minimum linux system configuration
+{ hostName, timeZone, ... }: {
   nix.settings.experimental-features = "nix-command flakes";
   
   networking.hostName = hostName;
