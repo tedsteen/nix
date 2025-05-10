@@ -18,7 +18,9 @@ mkdir -p "$MOUNTPOINTS_DIR"
 RUNNING_CONTAINERS=$(docker ps -q)
 
 echo "[+] stopping all containers..."
-docker stop $(docker ps -q) >/dev/null
+if [ -n "$RUNNING_CONTAINERS" ]; then
+  docker stop $RUNNING_CONTAINERS >/dev/null
+fi
 
 echo "[+] gathering volume info..."
 docker volume ls -q > "$VOLUME_LIST"
