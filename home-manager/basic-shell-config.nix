@@ -1,7 +1,7 @@
 # Bare minimum shell configuration
 { email, fullName }:
 
-{ pkgs, ... }: {
+{ lib, pkgs, ... }: {
   
   programs = {
     zsh = {
@@ -30,7 +30,7 @@
       '';
 
       shellAliases = {
-        ls = "ls -hal";
+        ls = lib.mkDefault "ls -hal --color=auto";
         jcurl = "curl -H 'Content-Type: application/json' -H 'Accept: application/json'";
 
         # git
