@@ -28,6 +28,9 @@ in {
         # Enable comments in zsh
         setopt interactivecomments
         
+        setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits.
+        setopt HIST_IGNORE_DUPS          # Don't record an entry that was just recorded again.
+
         source "${pkgs.zinit}/share/zinit/zinit.zsh"
         # TODO: Enable?
         # zinit compile
