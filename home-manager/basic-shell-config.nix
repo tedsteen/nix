@@ -9,15 +9,13 @@ in {
     recursive = true;
   };
 
-  home.packages = with pkgs; [
-    
+  home.packages = with pkgs; [    
     # nvim dependencies
-    gnumake
-    unzip
     gcc
+    unzip
     fd
     ripgrep
-
+    gnumake
   ];
 
   programs = {
@@ -26,7 +24,7 @@ in {
       # TODO: Or use marlonrichert/zsh-autocomplete?
       enableCompletion = true;
 
-      initExtra = ''
+      initContent = ''
         # Enable comments in zsh
         setopt interactivecomments
         
