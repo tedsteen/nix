@@ -1,8 +1,25 @@
 # Bare minimum shell configuration
 { email, fullName }:
 
-{ lib, pkgs, ... }: {
-  
+{ lib, pkgs, ... }: let
+  nvimConfigPath = ./nvim;
+in {
+  home.file.".config/nvim" = {
+    source = "${nvimConfigPath}";
+    recursive = true;
+  };
+
+  home.packages = with pkgs; [
+    
+    # nvim dependencies
+    gnumake
+    unzip
+    gcc
+    fd
+    ripgrep
+
+  ];
+
   programs = {
     zsh = {
       enable = true;
@@ -75,8 +92,6 @@
       defaultEditor = true;
       viAlias = true;
       vimAlias = true;
-
-      extraLuaConfig = builtins.readFile ./nvim.lua;
     };
 
     git = {
