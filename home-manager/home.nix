@@ -80,4 +80,21 @@ in {
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
+  
+  home.file.".config/ghostty/config".text = ''
+    background-opacity = 0.95
+    background-blur = true
+    macos-non-native-fullscreen = true
+    keybind = super+left=previous_tab
+    keybind = super+right=next_tab
+    window-vsync = true
+  '';
+
+  programs.ssh = {
+    enable = true;
+    extraConfig = ''
+      Host *
+        SetEnv TERM=xterm-256color
+    '';
+  };
 }
