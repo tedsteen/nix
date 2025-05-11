@@ -72,17 +72,11 @@
 
     neovim = {
       enable = true;
+      defaultEditor = true;
+      viAlias = true;
+      vimAlias = true;
 
-      extraConfig = ''
-          " set tabs to 2 spaces
-          set tabstop=2
-          set shiftwidth=2
-          " expand tabs to spaces
-          set expandtab
-          " try to be smart (increase the indenting level after ‘{’,
-          " decrease it after ‘}’, and so on):
-          " set smartindent
-      '';
+      extraLuaConfig = builtins.readFile ./nvim.lua;
     };
 
     git = {
