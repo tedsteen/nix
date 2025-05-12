@@ -85,8 +85,12 @@ in {
     background-opacity = 0.95
     background-blur = true
     macos-non-native-fullscreen = true
-    keybind = super+left=previous_tab
-    keybind = super+right=next_tab
+    keybind = super+alt+left=previous_tab
+    keybind = super+alt+right=next_tab
+    keybind = super+up=goto_split:up
+    keybind = super+down=goto_split:down
+    keybind = super+left=goto_split:left
+    keybind = super+right=goto_split:right
     window-vsync = true
   '';
 
