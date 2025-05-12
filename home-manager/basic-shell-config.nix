@@ -26,6 +26,7 @@ in {
       enable = true;
       # TODO: Or use marlonrichert/zsh-autocomplete?
       enableCompletion = true;
+      autosuggestion.enable = true;
 
       initContent = ''
         # Enable comments in zsh
@@ -39,7 +40,6 @@ in {
         # zinit compile
         
         zinit light zdharma-continuum/fast-syntax-highlighting
-        zinit light zsh-users/zsh-autosuggestions
         
         # TODO: Look into this. Perhaps enableCompletion = true is enough?
         # zinit light marlonrichert/zsh-autocomplete
