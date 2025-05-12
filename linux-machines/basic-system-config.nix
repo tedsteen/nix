@@ -1,7 +1,5 @@
 # Bare minimum linux system configuration
-{ hostName, timeZone, ... }: {
-  nix.settings.experimental-features = "nix-command flakes";
-  
+{ hostName, timeZone, ... }: {  
   networking.hostName = hostName;
   time.timeZone = timeZone;
   environment.sessionVariables.EDITOR="nvim";
