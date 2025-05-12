@@ -99,6 +99,11 @@ in {
     keybind = super+right=goto_split:right
     window-vsync = true
   '';
+  
+  programs.zsh.initContent = ''
+    # Fix broken nix after macOS upgrade
+    [[ ! $(command -v nix) && -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]] && source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+  '';
 
   programs.ssh = {
     enable = true;
