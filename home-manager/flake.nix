@@ -17,7 +17,7 @@
       pkgs = nixpkgs.legacyPackages.${system};
     in
     {
-      homeConfigurations."tedsteen" = home-manager.lib.homeManagerConfiguration {
+      homeConfigurations.default = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
 
         modules = [

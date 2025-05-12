@@ -1,12 +1,22 @@
-## Bootstraping
-Make sure your target machine is ready with root or user with passwordless sudo. You need the username and password to be able to do the install over SSH.
+# My NIX stuff
+Nix flakes for installing some machines and configuring my macs.
 
+Depends on the nix package manager: https://nixos.org/download/
+
+## Managing linux machines
+Make sure your target machine is reachable over SSH using root or user with passwordless sudo.
+
+### Bootstraping a new machine
 ```bash
-./create_machine.sh <ip> <user> <machine> <config>
+./create_machine.sh <user>@<ip> <path_to_linux_machine>
 ```
 
-## Applying new config to existing machine
-
+### Updating an existing machine
 ```bash
-./update_machine.sh <ip> <user> <machine> <config>
+./update_machine.sh <user>@<ip> <path_to_linux_machine>
+```
+
+## Setup my Mac user config (home manager)
+```bash
+./update_mac.sh
 ```
