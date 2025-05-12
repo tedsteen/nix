@@ -16,6 +16,9 @@ in {
     fd
     ripgrep
     gnumake
+
+    # git
+    difftastic
   ];
 
   programs = {
@@ -45,6 +48,8 @@ in {
         zinit light zsh-users/zsh-history-substring-search
         # Make up/down arrows for zsh-history-substring-search work
         bindkey '^[[A' history-substring-search-up && bindkey '^[[B' history-substring-search-down
+
+        mkcd() { mkdir -p "$@" && cd "$@"; }
       '';
 
       shellAliases = {
@@ -104,6 +109,7 @@ in {
         fetch.prune = true;
         pull.rebase = true;
         push.autoSetupRemote = true;
+        diff.external = "difft";
       };
     };
   };
