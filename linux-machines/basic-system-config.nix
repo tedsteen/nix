@@ -1,6 +1,11 @@
 # Bare minimum linux system configuration
 { hostName, timeZone, ... }: {  
-  networking.hostName = hostName;
+  networking = {
+    hostName = hostName;
+    nameservers = [ "1.1.1.1" "8.8.8.8" ];
+    enableIPv6 = false;
+  };
+  
   time.timeZone = timeZone;
   environment.sessionVariables.EDITOR="nvim";
 
