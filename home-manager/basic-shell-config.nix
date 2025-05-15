@@ -19,6 +19,7 @@ in {
 
     # git
     difftastic
+    git-lfs
   ];
 
   programs = {
