@@ -45,17 +45,12 @@
           
           home-manager.users."ted" = {
             imports = [
-              (import ../../../home-manager/basic-shell-config.nix {
+              (import ../../../shared/basic-shell-config.nix {
                 email = "ted.steen@gmail.com";
                 fullName = "Ted Steen";
               })
+              ../../../shared/docker-config.nix
               ({ pkgs, ... }: {
-                programs.zsh.shellAliases = {
-                  # Delete all stopped containers (including data-only containers)
-                  dkrm = "docker ps -aq -f status=exited | xargs -r docker rm -f";
-                  dkkill = "docker ps -q | xargs -r docker kill";
-                };
-
                 home = {
                   packages = [
                     (pkgs.writeScriptBin "docker-volumes-backup"

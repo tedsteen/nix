@@ -1,11 +1,13 @@
 # Bare minimum shell configuration
 { email, fullName }:
 
-{ lib, pkgs, ... }: let
-  nvimConfigPath = ./nvim;
-in {
+{ lib, pkgs, ... }: {
+    nix = {
+    settings.experimental-features = "nix-command flakes";
+  };
+
   home.file.".config/nvim" = {
-    source = "${nvimConfigPath}";
+    source = ./nvim;
     recursive = true;
   };
 

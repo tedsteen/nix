@@ -1,2 +1,2 @@
 #!/bin/bash
-nix --extra-experimental-features "nix-command flakes" run home-manager/master -- --extra-experimental-features "nix-command flakes" switch --flake path:./home-manager#default
+nix run github:lnl7/nix-darwin --extra-experimental-features nix-command --extra-experimental-features flakes -- switch --flake ./mac-machines/#"teds-mbp"
