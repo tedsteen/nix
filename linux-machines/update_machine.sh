@@ -2,4 +2,11 @@
 export TARGET_HOST="${1:-"ted@<missing-ip>"}"
 export MACHINE=${2:-"./pinheiro/nuc"}
 
-nix-shell -p '(nixos{}).nixos-rebuild' git --run "nixos-rebuild --fast --build-host $TARGET_HOST --use-remote-sudo --flake $MACHINE#default --target-host $TARGET_HOST switch"
+export NIX_CONFIG="extra-experimental-features = nix-command flakes"
+nix run nixpkgs#nixos-rebuild -- \
+  --fast \
+  --flake "$MACHINE#default" \
+  --build-host "$TARGET_HOST" \
+  --target-host "$TARGET_HOST" \
+  --use-remote-sudo \
+  switch
