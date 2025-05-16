@@ -105,13 +105,14 @@ in {
   '';
   
   programs.zsh.initContent = ''
-    # Fix broken nix after macOS upgrade
-    [[ ! $(command -v nix) && -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]] && source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+    # # TODO: Fix broken nix after macOS upgrade (not needed?)
+    # [[ ! $(command -v nix) && -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]] && source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
   '';
 
   programs.ssh = {
     enable = true;
     extraConfig = ''
+      # Fix for ghostty https://ghostty.org/docs/help/terminfo#configure-ssh-to-fall-back-to-a-known-terminfo-entry
       Host *
         SetEnv TERM=xterm-256color
     '';
