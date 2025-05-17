@@ -16,7 +16,7 @@ Make sure your target machine is reachable over SSH using root or user with pass
 ./update_machine.sh <user>@<ip> <path_to_linux_machine>
 ```
 
-## Setup my Mac user config (home manager)
+## Setup my Mac and user
 ```bash
 ./update_mac.sh
 ```
