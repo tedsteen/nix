@@ -23,11 +23,6 @@
   outputs = { self, nixpkgs, darwin, home-manager, nix-homebrew, ... }: let
     system = "aarch64-darwin";
     pkgs = nixpkgs.legacyPackages.${system};
-    basic = import ../shared/basic-shell-config.nix {
-      email = "ted.steen@gmail.com";
-      fullName = "Ted Steen";
-    };
-    docker = import ../shared/docker-config.nix;
   in {
     darwinConfigurations."teds-mbp" = darwin.lib.darwinSystem {
       inherit system pkgs;
@@ -52,8 +47,11 @@
 
           home-manager.users.tedsteen = {
             imports = [
-              basic
-              docker
+              (import ../shared/basic-shell-config.nix {
+                email = "ted.steen@gmail.com";
+                fullName = "Ted Steen";
+              })
+              ../shared/docker-config.nix
             ];
 
             home.username = "tedsteen";
