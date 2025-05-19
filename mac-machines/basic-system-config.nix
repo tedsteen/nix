@@ -111,7 +111,6 @@
     casks = [
       "balenaetcher"
       "discord"
-      "docker"
       "ghostty"
       "gifox"
       "grandperspective"
@@ -120,11 +119,15 @@
       "mullvadvpn"
       "numi"
       "ocenaudio"
+      "orbstack"
+      "raycast"
       "signal"
       "spotify"
       "stats"
       "transmission"
+      "utm"
       "visual-studio-code"
+      # TODO: Check out zed
     ];
   };
 }
