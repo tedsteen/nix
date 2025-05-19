@@ -31,8 +31,22 @@
         nix-homebrew.darwinModules.nix-homebrew
         home-manager.darwinModules.home-manager
         ./basic-system-config.nix
-        ./user-ted.nix
         {
+          users.users.tedsteen = {
+            name = "tedsteen";
+            home = "/Users/tedsteen";
+          };
+
+          home-manager.users.tedsteen = {
+            imports = [
+              (import ./basic-ted-user-config.nix { inherit pkgs; username = "tedsteen";})
+            ];
+
+            # The state versions are required and should stay at the version you
+            # originally installed.
+            # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
+            home.stateVersion = "24.11";
+          };
           # Enable touch to click on the trackpad
           system.defaults.trackpad.Clicking = true;
 
@@ -51,8 +65,23 @@
         nix-homebrew.darwinModules.nix-homebrew
         home-manager.darwinModules.home-manager
         ./basic-system-config.nix
-        ./user-ted.nix
         {
+          users.users.tedsteen = {
+            name = "tedsteen";
+            home = "/Users/tedsteen";
+          };
+
+          home-manager.users.tedsteen = {
+            imports = [
+              (import ./basic-ted-user-config.nix { inherit pkgs; username = "tedsteen";})
+            ];
+
+            # The state versions are required and should stay at the version you
+            # originally installed.
+            # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
+            home.stateVersion = "24.11";
+          };
+
           # The state versions are required and should stay at the version you
           # originally installed.
           # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
