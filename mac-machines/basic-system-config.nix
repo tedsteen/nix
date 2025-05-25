@@ -106,7 +106,7 @@
     };
     taps = [ "homebrew/core" "homebrew/cask" ];
     brews = [
-      "sdl2"
+      "sdl2" # NOTE: This has to be here because mesen2 has hardcoded sdl2 path
     ];
     casks = [
       "balenaetcher"

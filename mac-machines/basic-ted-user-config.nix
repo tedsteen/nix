@@ -13,8 +13,30 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
+    # General stuff
+    cmake
+    #pkg-config
+    
+    # NOTE: The following two package is required for rust, [see](https://github.com/NixOS/nixpkgs/issues/206242).
+    #       Also see the LIBRARY_PATH further down, it's part of this fix
+    libiconv
+    
+    # NES stuff
     cc65
     python3
+
+    # Rust stuff
+    cargo
+    rustc
+    rustfmt
+    clippy
+    rust-analyzer
+    gdb
+
+    # Node stuff
+    nodejs
+    pnpm
+    yarn
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -50,11 +72,18 @@
   #
   home.sessionVariables = {
     # EDITOR = "emacs";
+    
+    # Part of the fix for rust, see the packages above
+    LIBRARY_PATH = "${pkgs.libiconv}/lib";
+    
+    # Use clang instead of gcc
+    CC = "clang";
+    CXX = "clang++";
   };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
-  
+
   home.file.".config/ghostty/config".text = ''
     background-opacity = 0.95
     background-blur = true
@@ -67,7 +96,7 @@
     keybind = super+right=goto_split:right
     window-vsync = true
   '';
-  
+
   programs.zsh.initContent = ''
     # # TODO: Fix broken nix after macOS upgrade (not needed?)
     # [[ ! $(command -v nix) && -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]] && source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
