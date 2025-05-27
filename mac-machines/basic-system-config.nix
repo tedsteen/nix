@@ -94,8 +94,13 @@
 
   homebrew = {
     enable = true;
-    onActivation.autoUpdate = true;
-    onActivation.cleanup = "zap";
+    onActivation = {
+      autoUpdate = true;
+      cleanup = "zap";
+      upgrade = true;
+    };
+    global.autoUpdate = true;
+
     masApps = {
       "DigiDoc4 Client" = 1370791134;
       "Messenger" = 1480068668;
@@ -104,7 +109,7 @@
       "WhatsApp" = 310633997;
       "Wireguard" = 1451685025;
     };
-    taps = [ "homebrew/core" "homebrew/cask" ];
+    taps = [ ];
     brews = [
       "sdl2" # NOTE: This has to be here because mesen2 has hardcoded sdl2 path
     ];
