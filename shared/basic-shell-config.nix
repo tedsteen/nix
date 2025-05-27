@@ -57,7 +57,7 @@
 
       shellAliases = {
         ls = lib.mkDefault "ls -hal --color=auto";
-        jcurl = "curl -H 'Content-Type: application/json' -H 'Accept: application/json'";
+        jcurl = "curl -sS -H 'Content-Type: application/json' -H 'Accept: application/json'";
 
         # git
         gs = "git status";
