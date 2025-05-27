@@ -58,7 +58,7 @@
       ];
     };
     
-    darwinConfigurations."teds-imac" = darwin.lib.darwinSystem {
+    darwinConfigurations."steen-imac" = darwin.lib.darwinSystem {
       inherit system pkgs;
 
       modules = [
