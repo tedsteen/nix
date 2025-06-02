@@ -29,7 +29,7 @@
           timeZone = "Europe/Lisbon";
         })
         home-manager.nixosModules.home-manager
-        ({pkgs, ...}: {
+        ({ pkgs, ... }: {
           console.keyMap = "dvorak";
 
           users.users.ted = {
@@ -50,22 +50,21 @@
                 fullName = "Ted Steen";
               })
               ../../../shared/docker-config.nix
-              ({ pkgs, ... }: {
-                home = {
-                  packages = [
-                    (pkgs.writeScriptBin "docker-volumes-backup"
-                    (builtins.readFile ./scripts/docker-volumes-backup.sh))
-                    (pkgs.writeScriptBin "docker-volumes-restore"
-                    (builtins.readFile ./scripts/docker-volumes-restore.sh))
-                  ];
-
-                  # The state versions are required and should stay at the version you
-                  # originally installed.
-                  # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
-                  stateVersion = "24.11";
-                };
-              })
             ];
+            
+            home = {
+              packages = [
+                (pkgs.writeScriptBin "docker-volumes-backup"
+                (builtins.readFile ./scripts/docker-volumes-backup.sh))
+                (pkgs.writeScriptBin "docker-volumes-restore"
+                (builtins.readFile ./scripts/docker-volumes-restore.sh))
+              ];
+              
+              # The state versions are required and should stay at the version you
+              # originally installed.
+              # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
+              stateVersion = "24.11";
+            };
           };
 
           # Lock down root and password access but let the user "ted" in with private key and enable passwordless sudo

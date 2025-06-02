@@ -22,6 +22,9 @@
     # git
     difftastic
     git-lfs
+
+    # nice to have
+    watch
   ];
 
   programs = {
