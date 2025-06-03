@@ -84,8 +84,41 @@
             }
           ];
 
+        # ZFS stuff
+         boot = {
+            kernelModules = [ "zfs" ];
+            supportedFilesystems = [ "zfs" ];
+          };
+
+          networking.hostId = "1f666b7f"; # head -c4 /dev/urandom | od -A none -t x4
+          services.zfs = {
+            
+            # TODO: Check https://mynixos.com/options/services.zfs.zed
+
+            autoScrub = {
+              enable = true;
+              interval = "quarterly";
+              pools = [ "mediapool" ];
+            };
+          };
+
+          fileSystems."/mnt/mediapool" = {
+            # NOTE: If the pool is degraded it might take a long time to import it (see https://github.com/NixOS/nixpkgs/issues/413060)
+            device = "mediapool";
+            fsType = "zfs";
+            options = [ "nofail" ]; # We want to be able to boot even tho there is no mediapool
+          };
+
           # Enable docker
           virtualisation.docker.enable = true;
+          systemd.services.docker = {
+            # Docker will bind mount into the mediapool and thus depends on it
+            after = [ "mnt-mediapool.mount" ];
+            unitConfig = {
+              RequiresMountsFor = [ "/mnt/mediapool" ];
+              BindsTo = [ "mnt-mediapool.mount" ];
+            };
+          };
 
           # Let docker expose port 80 for traefik (all of the services run on that port)
           boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 80;
