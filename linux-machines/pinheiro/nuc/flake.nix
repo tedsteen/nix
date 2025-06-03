@@ -109,15 +109,84 @@
             options = [ "nofail" ]; # We want to be able to boot even tho there is no mediapool
           };
 
-          # Enable docker
-          virtualisation.docker.enable = true;
-          systemd.services.docker = {
-            # Docker will bind mount into the mediapool and thus depends on it
-            after = [ "mnt-mediapool.mount" ];
-            unitConfig = {
-              RequiresMountsFor = [ "/mnt/mediapool" ];
-              BindsTo = [ "mnt-mediapool.mount" ];
+          # Enable docker with buildx support
+          virtualisation.docker = {
+            enable = true;
+            package = pkgs.docker.override (args: { buildxSupport = true; });
+          };
+          
+          environment.systemPackages = [ pkgs.docker-compose ];
+          
+          systemd.services = let
+            dockerScripts = ./docker;
+          in {
+            docker-stack-infra = {
+              description = "Docker stack: Infra";
+              path = [ pkgs.bash pkgs.docker-compose ];
+              after = [ "docker.service" ];
+              wants = [ "docker.service" ];
+              serviceConfig = {
+                ExecStart = "${dockerScripts}/infra.sh up";
+                ExecStop  = "${dockerScripts}/infra.sh down";
+                ExecReload = "${dockerScripts}/infra.sh restart";
+                Type="oneshot";
+                RemainAfterExit="true";
+                WorkingDirectory = "${dockerScripts}";
+              };
+              wantedBy = [ "multi-user.target" ];
             };
+
+            docker-stack-automation = {
+              description = "Docker stack: Automation";
+              path = [ pkgs.bash pkgs.docker-compose ];
+              after = [ "docker-stack-infra.service" ];
+              wants = [ "docker-stack-infra.service" ];
+              serviceConfig = {
+                ExecStart = "${dockerScripts}/automation.sh up";
+                ExecStop  = "${dockerScripts}/automation.sh down";
+                ExecReload = "${dockerScripts}/automation.sh restart";
+                Type="oneshot";
+                RemainAfterExit="true";
+                WorkingDirectory = "${dockerScripts}";
+              };
+              wantedBy = [ "multi-user.target" ];
+            };
+
+            docker-stack-lab = {
+              description = "Docker stack: Lab";
+              path = [ pkgs.bash pkgs.docker-compose ];
+              after = [ "docker-stack-infra.service" ];
+              wants = [ "docker-stack-infra.service" ];
+              serviceConfig = {
+                ExecStart = "${dockerScripts}/lab.sh up";
+                ExecStop  = "${dockerScripts}/lab.sh down";
+                ExecReload = "${dockerScripts}/lab.sh restart";
+                Type="oneshot";
+                RemainAfterExit="true";
+                WorkingDirectory = "${dockerScripts}";
+              };
+              wantedBy = [ "multi-user.target" ];
+            };
+
+            # docker-stack-tedflix = {
+            #   description = "Docker stack: Tedflix";
+            #   path = [ pkgs.bash pkgs.docker-compose ];
+            #   # Docker will bind mount into the mediapool and thus depends on it
+            #   after = [ "docker-stack-infra.service" "mnt-mediapool.mount" ];
+            #   wants = [ " docker-stack-infra.service" ]
+            #   unitConfig = {
+            #     RequiresMountsFor = [ "/mnt/mediapool" ];
+            #     BindsTo = [ "mnt-mediapool.mount" ];
+            #   };
+            #   serviceConfig = {
+            #     ExecStart = "${dockerScripts}/tedflix.sh up";
+            #     ExecStop  = "${dockerScripts}/tedflix.sh down";
+            #     ExecReload = "${dockerScripts}/tedflix.sh restart";
+            #     Type="oneshot";
+            #     RemainAfterExit="true";
+            #     WorkingDirectory = "${dockerScripts}";
+            #   };
+            # };
           };
 
           # Let docker expose port 80 for traefik (all of the services run on that port)

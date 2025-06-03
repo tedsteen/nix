@@ -1,0 +1,56 @@
+services:
+  home-assistant:
+    image: homeassistant/home-assistant:latest
+    restart: unless-stopped
+    healthcheck:
+      test: "curl -sS http://localhost:8123"
+      interval: 2s
+      timeout: 5s
+      retries: 10
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.automation_home-assistant.rule=Host(`home-assistant.pinheiro.s3n.io`)'
+      - 'traefik.http.routers.automation_home-assistant.entrypoints=web'
+      - 'traefik.http.services.automation_home-assistant.loadbalancer.server.port=8123'
+      - 'traefik.docker.network=infra_traefik'
+    ports:
+      - "5683:5683/udp"
+      - "5683:5683/tcp"
+    environment:
+      PUID: 1001
+      GUID: 1001
+      TZ: Europe/Lisbon
+    networks:
+      - infra_metrics
+      - infra_traefik
+    volumes:
+      - hass_config:/config
+
+  nodered:
+    image: nodered/node-red:latest
+    restart: unless-stopped
+    depends_on:
+      home-assistant:
+        condition: service_healthy
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.automation_nodered.rule=Host(`nodered.pinheiro.s3n.io`)'
+      - 'traefik.http.routers.automation_nodered.entrypoints=web'
+      - 'traefik.http.services.automation_nodered.loadbalancer.server.port=1880'
+      - 'traefik.docker.network=infra_traefik'
+    environment:
+      TZ: Europe/Lisbon
+    networks:
+      - infra_traefik
+    volumes:
+      - nodered_data:/data
+
+networks:
+  infra_traefik:
+    external: true
+  infra_metrics:
+    external: true
+
+volumes:
+  hass_config:
+  nodered_data:

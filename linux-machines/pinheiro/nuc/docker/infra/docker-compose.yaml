@@ -1,0 +1,112 @@
+services:
+  traefik:
+    image: 'traefik:latest'
+    restart: unless-stopped
+    command:
+      #- "--log.level=DEBUG"
+      - '--api.insecure=true'
+
+      - '--providers.docker=true'
+      - '--providers.docker.exposedbydefault=false'
+
+      - '--entrypoints.web.address=:80'
+    environment:
+      TZ: Europe/Lisbon
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.infra_traefik.rule=Host(`traefik.pinheiro.s3n.io`)'
+      - 'traefik.http.routers.infra_traefik.entrypoints=web'
+      - 'traefik.http.services.infra_traefik.loadbalancer.server.port=8080'
+      - 'traefik.docker.network=infra_traefik'
+    ports:
+      - '80:80'
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+    networks:
+      - traefik
+
+  influxdb:
+    image: influxdb:alpine
+    restart: unless-stopped
+    healthcheck:
+      test: "curl -f http://localhost:8086/ping"
+      interval: 2s
+      timeout: 10s
+      retries: 10
+    environment:
+      TZ: Europe/Lisbon
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: ted
+      DOCKER_INFLUXDB_INIT_PASSWORD: password
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: MyInitialAdminToken0==
+      DOCKER_INFLUXDB_INIT_ORG: pinheiro
+      DOCKER_INFLUXDB_INIT_BUCKET: everything
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.infra_influxdb.rule=Host(`influxdb.pinheiro.s3n.io`)'
+      - 'traefik.http.routers.infra_influxdb.entrypoints=web'
+      - 'traefik.http.services.infra_influxdb.loadbalancer.server.port=8086'
+      - 'traefik.docker.network=infra_traefik'
+    networks:
+      - metrics
+      - traefik
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+      - influxdb_config:/etc/influxdb2
+
+  grafana:
+    image: grafana/grafana:latest
+    restart: unless-stopped
+    depends_on:
+      influxdb:
+        condition: service_healthy
+    environment:
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.infra_grafana.rule=Host(`grafana.pinheiro.s3n.io`)'
+      - 'traefik.http.routers.infra_grafana.entrypoints=web'
+      - 'traefik.http.services.infra_grafana.loadbalancer.server.port=3000'
+      - 'traefik.docker.network=infra_traefik'
+    networks:
+      - metrics
+      - traefik
+    volumes:
+      - grafana:/var/lib/grafana
+
+  telegraf:
+    build: ./telegraf
+    restart: unless-stopped
+    hostname: "pinheiro-nuc"
+    depends_on:
+      influxdb:
+        condition: service_healthy
+    environment:
+      TZ: Europe/Lisbon
+      INFLUXDB_ADMIN_TOKEN: MyInitialAdminToken0==
+      HOST_MOUNT_PREFIX: /hostfs
+      HOST_PROC: /hostfs/proc
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - type: bind
+        source: /
+        target: /hostfs
+        read_only: true
+        bind:
+          propagation: rslave
+    networks:
+      - metrics
+
+networks:
+  traefik:
+    driver: bridge
+  metrics:
+    driver: bridge
+
+volumes:
+  influxdb_data:
+  influxdb_config:
+  grafana:
