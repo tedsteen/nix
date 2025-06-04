@@ -113,6 +113,23 @@ services:
           propagation: rslave
     networks:
       - metrics
+  
+  samba:
+    image: dperson/samba
+    pull_policy: always
+    command: -n -r -s "Everything;/mount;yes;no;yes;;;;"
+    restart: unless-stopped
+    ports:
+      - "139:139"
+      - "445:445"
+    volumes:
+      - /:/mount
+    environment:
+      GROUPID: 0
+      USERID: 0
+      TZ: Europe/Tallinn
+    tmpfs:
+      - /tmp
 
 networks:
   traefik:

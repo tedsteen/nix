@@ -97,10 +97,15 @@
     window-vsync = true
   '';
 
-  programs.zsh.initContent = ''
-    # # TODO: Fix broken nix after macOS upgrade (not needed?)
-    # [[ ! $(command -v nix) && -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]] && source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-  '';
+  # programs.zsh.initContent = ''
+  #   # # TODO: Fix broken nix after macOS upgrade (not needed?)
+  #   # [[ ! $(command -v nix) && -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]] && source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+  # '';
+
+  programs.zsh.shellAliases = {
+    samba-nuc = "open smb://guest:guest@nuc.pinheiro.s3n.io/everything";
+    samba-mister = "open smb://root:1@mister/sdcard";
+  };
 
   programs.ssh = {
     enable = true;
