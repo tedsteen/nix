@@ -18,6 +18,18 @@ services:
       - infra_traefik
     volumes:
       - minecraft_data:/data
+  
+  cors-proxy:
+    image: redocly/cors-anywhere
+    restart: unless-stopped
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.sites_cors-proxy.rule=Host(`cors-proxy.s3n.io`)'
+      - 'traefik.http.routers.sites_cors-proxy.entrypoints=web_public'
+      - 'traefik.http.services.sites_cors-proxy.loadbalancer.server.port=8080'
+      - 'traefik.docker.network=infra_traefik'
+    networks:
+      - infra_traefik
 
 networks:
   infra_traefik:

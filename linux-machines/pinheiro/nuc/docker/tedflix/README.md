@@ -22,5 +22,5 @@ Add transmission download client using host `transmission` and port `9091`
 ### Ombi
 * Add plex config using host `plex`, port `32400` and token from [here](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)
   * If plex is forcing secure connections make sure Ombi is using SSL and if there is no valid certificate in Ombi, make sure to ignore certificate errors (needs restart)
-* Add sonarr config using host `sonarr`, port `8989` and api key from [here](http://sonarr.tedflix.s3n.io/settings/general)
-* Add radarr config using host `radarr`, port `7878` and api key from [here](http://radarr.tedflix.s3n.io/settings/general)
+* Add sonarr config using host `sonarr`, port `8989` and api key from [here](http://sonarr.pinheiro.s3n.io/settings/general)
+* Add radarr config using host `radarr`, port `7878` and api key from [here](http://radarr.pinheiro.s3n.io/settings/general)
