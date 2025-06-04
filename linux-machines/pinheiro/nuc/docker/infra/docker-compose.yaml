@@ -127,7 +127,7 @@ services:
     environment:
       GROUPID: 0
       USERID: 0
-      TZ: Europe/Tallinn
+      TZ: Europe/Lisbon
     tmpfs:
       - /tmp
 
