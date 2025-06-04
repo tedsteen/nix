@@ -1,4 +1,5 @@
 #!/usr/bin/with-contenv sh
+set -ex
 wg-quick up wg0
 
-su - abc /tedflix/update-settings.sh
+/tedflix/update-settings.sh

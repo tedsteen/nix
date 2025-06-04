@@ -12,6 +12,7 @@ echo "  VPN_IPV4_ADDR='$VPN_IPV4_ADDR'"
 echo "  VPN_IPV6_ADDR='$VPN_IPV6_ADDR'"
 
 mkdir -p $DOWNLOAD_DIR
+chown 1000:1000 $DOWNLOAD_DIR
 
 cat <<EOF > $FILE
 {
