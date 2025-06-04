@@ -7,7 +7,7 @@ export TEDFLIX_PATH=${TEDFLIX_PATH:-"/mnt/mediapool/tedflix"}
 # Make sure the initial directory structure is set up with the right permissions
 if [ ! -d $TEDFLIX_PATH ]; then
   mkdir -p $TEDFLIX_PATH/downloads/{complete,incomplete,manual} $TEDFLIX_PATH/movies $TEDFLIX_PATH/tv
-  chown -R 1001:1001 $TEDFLIX_PATH
+  chown -R 1000:1000 $TEDFLIX_PATH
 fi
 
 export COMPOSE_BAKE=true
