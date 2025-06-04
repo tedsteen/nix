@@ -195,9 +195,9 @@
             };
           };
 
-          # Let docker expose port 80 for traefik (all of the services run on that port)
+          # Let docker expose port 80 and 81 for traefik (internal and external services are exposed on 80 and 81)
           boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 80;
-          networking.firewall.allowedTCPPorts = [ 80 ];
+          networking.firewall.allowedTCPPorts = [ 80 81 ];
 
           # The state versions are required and should stay at the version you
           # originally installed.
