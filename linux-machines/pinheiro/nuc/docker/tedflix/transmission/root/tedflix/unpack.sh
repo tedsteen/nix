@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 DEST_DIR="${TR_TORRENT_DIR}/${TR_TORRENT_NAME}/"
 cd "$DEST_DIR"
 function unpack() {
