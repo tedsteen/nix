@@ -31,8 +31,7 @@ services:
       - prowlarr_config:/config
 
   flaresolverr:
-    # TODO: Switch to the [default image](ghcr.io/flaresolverr/flaresolverr:latest) when this is fixed
-    image: alexfozor/flaresolverr:pr-1300-experimental
+    image: ghcr.io/flaresolverr/flaresolverr:latest
     pull_policy: always
     restart: unless-stopped
     environment:
