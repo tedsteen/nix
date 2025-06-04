@@ -10,6 +10,7 @@ services:
       - '--providers.docker.exposedbydefault=false'
 
       - '--entrypoints.web.address=:80'
+      - '--entrypoints.web_public.address=:81'
     environment:
       TZ: Europe/Lisbon
     labels:
@@ -20,6 +21,7 @@ services:
       - 'traefik.docker.network=infra_traefik'
     ports:
       - '80:80'
+      - '81:81'
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
     networks:

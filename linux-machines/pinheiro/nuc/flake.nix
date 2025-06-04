@@ -116,7 +116,12 @@
           };
           
           environment.systemPackages = [ pkgs.docker-compose ];
-          
+
+          # # Needed for transmissions wireguard tunnel to work
+          # networking.sysctl = {
+          #   "net.ipv4.conf.all.src_valid_mark" = 1;
+          # };
+
           systemd.services = let
             dockerScripts = ./docker;
           in {
@@ -168,25 +173,26 @@
               wantedBy = [ "multi-user.target" ];
             };
 
-            # docker-stack-tedflix = {
-            #   description = "Docker stack: Tedflix";
-            #   path = [ pkgs.bash pkgs.docker-compose ];
-            #   # Docker will bind mount into the mediapool and thus depends on it
-            #   after = [ "docker-stack-infra.service" "mnt-mediapool.mount" ];
-            #   wants = [ " docker-stack-infra.service" ]
-            #   unitConfig = {
-            #     RequiresMountsFor = [ "/mnt/mediapool" ];
-            #     BindsTo = [ "mnt-mediapool.mount" ];
-            #   };
-            #   serviceConfig = {
-            #     ExecStart = "${dockerScripts}/tedflix.sh up";
-            #     ExecStop  = "${dockerScripts}/tedflix.sh down";
-            #     ExecReload = "${dockerScripts}/tedflix.sh restart";
-            #     Type="oneshot";
-            #     RemainAfterExit="true";
-            #     WorkingDirectory = "${dockerScripts}";
-            #   };
-            # };
+            docker-stack-tedflix = {
+              description = "Docker stack: Tedflix";
+              path = [ pkgs.bash pkgs.docker-compose ];
+              # Docker will bind mount into the mediapool and thus depends on it
+              after = [ "docker-stack-infra.service" "mnt-mediapool.mount" ];
+              wants = [ "docker-stack-infra.service" ];
+              unitConfig = {
+                RequiresMountsFor = [ "/mnt/mediapool" ];
+                BindsTo = [ "mnt-mediapool.mount" ];
+              };
+              serviceConfig = {
+                ExecStart = "${dockerScripts}/tedflix.sh up";
+                ExecStop  = "${dockerScripts}/tedflix.sh down";
+                ExecReload = "${dockerScripts}/tedflix.sh restart";
+                Type="oneshot";
+                RemainAfterExit="true";
+                WorkingDirectory = "${dockerScripts}";
+              };
+              wantedBy = [ "multi-user.target" ];
+            };
           };
 
           # Let docker expose port 80 for traefik (all of the services run on that port)

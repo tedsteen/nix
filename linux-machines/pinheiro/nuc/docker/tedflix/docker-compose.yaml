@@ -1,0 +1,202 @@
+services:
+  mariadb:
+    build: mariadb
+    restart: unless-stopped
+    expose:
+      - 3306
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MARIADB_AUTO_UPGRADE: 1
+      MYSQL_INITDB_SKIP_TZINFO: 1
+    volumes:
+      - mariadb_data:/var/lib/mysql
+  
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    restart: unless-stopped
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.tedflix_prowlarr.rule=Host(`prowlarr.tedflix.s3n.io`)'
+      - 'traefik.http.routers.tedflix_prowlarr.entrypoints=web'
+      - 'traefik.http.services.tedflix_prowlarr.loadbalancer.server.port=9696'
+      - 'traefik.docker.network=infra_traefik'
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - TZ=Etc/Lisbon
+    networks:
+      - infra_traefik
+      - default # For access to flaresolverr
+    volumes:
+      - prowlarr_config:/config
+
+  flaresolverr:
+    # TODO: Switch to the [default image](ghcr.io/flaresolverr/flaresolverr:latest) when this is fixed
+    image: alexfozor/flaresolverr:pr-1300-experimental
+    pull_policy: always
+    restart: unless-stopped
+    environment:
+      - LOG_LEVEL=info
+      - LOG_HTML=false
+      - CAPTCHA_SOLVER=none
+      - TZ=Europe/Lisbon
+    
+  ombi:
+    image: linuxserver/ombi:latest
+    pull_policy: always
+    restart: unless-stopped
+    labels:
+      - 'traefik.enable=true'
+
+      - 'traefik.http.routers.tedflix_ombi_public.rule=Host(`ombi.hal.pub`)'
+      - 'traefik.http.routers.tedflix_ombi_public.entrypoints=web_public'
+      - 'traefik.http.routers.tedflix_ombi_public.service=tedflix_ombi_public'
+      - 'traefik.http.services.tedflix_ombi_public.loadbalancer.server.port=3579'
+
+      - 'traefik.http.routers.tedflix_ombi.rule=Host(`ombi.tedflix.s3n.io`)'
+      - 'traefik.http.routers.tedflix_ombi.entrypoints=web'
+      - 'traefik.http.routers.tedflix_ombi.service=tedflix_ombi'
+      - 'traefik.http.services.tedflix_ombi.loadbalancer.server.port=3579'
+
+      - 'traefik.docker.network=infra_traefik'
+    environment:
+      PGID: 1001
+      PUID: 1001
+      TZ: Europe/Lisbon
+    networks:
+      - infra_traefik
+      - default # for mariadb
+    volumes:
+      - ombi_config:/config
+
+  radarr:
+    image: linuxserver/radarr:latest
+    pull_policy: always
+    restart: unless-stopped
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.tedflix_radarr.rule=Host(`radarr.tedflix.s3n.io`)'
+      - 'traefik.http.routers.tedflix_radarr.entrypoints=web'
+      - 'traefik.http.services.tedflix_radarr.loadbalancer.server.port=7878'
+      - 'traefik.docker.network=infra_traefik'
+    environment:
+      PGID: 1001
+      PUID: 1001
+      TZ: Europe/Lisbon
+    networks:
+      - infra_traefik
+    volumes:
+      - radarr_config:/config
+      - ${TEDFLIX_PATH}:/media
+
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    pull_policy: always
+    restart: unless-stopped
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.tedflix_bazarr.rule=Host(`bazarr.tedflix.s3n.io`)'
+      - 'traefik.http.routers.tedflix_bazarr.entrypoints=web'
+      - 'traefik.http.services.tedflix_bazarr.loadbalancer.server.port=6767'
+      - 'traefik.docker.network=infra_traefik'
+    environment:
+      PUID: 1001
+      PGID: 1001
+      TZ: Europe/Lisbon
+    volumes:
+      - bazarr_config:/config
+      - ${TEDFLIX_PATH}/movies:/movies
+      - ${TEDFLIX_PATH}/tv:/tv
+    networks:
+      - infra_traefik
+
+  sonarr:
+    image: linuxserver/sonarr:latest
+    pull_policy: always
+    restart: unless-stopped
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.tedflix_sonarr.rule=Host(`sonarr.tedflix.s3n.io`)'
+      - 'traefik.http.routers.tedflix_sonarr.entrypoints=web'
+      - 'traefik.http.services.tedflix_sonarr.loadbalancer.server.port=8989'
+      - 'traefik.docker.network=infra_traefik'
+    environment:
+      PGID: 1001
+      PUID: 1001
+      TZ: Europe/Lisbon
+      VIRTUAL_HOST: 
+    networks:
+      - infra_traefik
+    volumes:
+      - sonarr_config:/config
+      - ${TEDFLIX_PATH}:/media
+
+  transmission:
+    build: transmission
+    restart: unless-stopped
+    healthcheck:
+      test: curl https://am.i.mullvad.net/connected | grep -q "You are connected"
+    privileged: true # TODO: Fix this...
+    # cap_add:
+    #   - NET_ADMIN
+    environment:
+      PGID: 1001
+      PUID: 1001
+      TZ: Europe/Lisbon
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.tedflix_transmission.rule=Host(`transmission.tedflix.s3n.io`)'
+      - 'traefik.http.routers.tedflix_transmission.entrypoints=web'
+      - 'traefik.http.services.tedflix_transmission.loadbalancer.server.port=9091'
+      - 'traefik.docker.network=infra_traefik'
+    # sysctls:
+    #   net.ipv6.conf.all.disable_ipv6: "0"
+    #   net.ipv4.conf.all.src_valid_mark: "1"
+    networks:
+      - infra_traefik
+    volumes:
+      - transmission_config:/config
+      - transmission_wireguard:/etc/wireguard:ro
+      - ${TEDFLIX_PATH}:/media
+
+  plex:
+    image: plexinc/pms-docker:public
+    pull_policy: always
+    restart: unless-stopped
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.tedflix_plex.rule=Host(`plex.tedflix.s3n.io`)'
+      - 'traefik.http.routers.tedflix_plex.entrypoints=web'
+      - 'traefik.http.services.tedflix_plex.loadbalancer.server.port=32400'
+      - 'traefik.docker.network=infra_traefik'
+    environment:
+      PLEX_UID: 1001
+      PLEX_GID: 1001
+      # ADVERTISE_IP: "http://pinheiro.s3n.io:1984/"
+      # ALLOWED_NETWORKS: "192.168.0.0/255.255.0.0"
+      TZ: Europe/Lisbon
+    networks:
+      - infra_traefik
+    ports:
+      - "32400:32400"
+    volumes:
+      - plex_config:/config
+      - ${TEDFLIX_PATH}:/media
+      - /tmp/transcode:/transcode
+    devices:
+      - "/dev/dri:/dev/dri"
+
+networks:
+  infra_traefik:
+    external: true
+
+volumes:
+  mariadb_data:
+  prowlarr_config:
+  ombi_config:
+  radarr_config:
+  bazarr_config:
+  sonarr_config:
+  transmission_config:
+  transmission_wireguard:
+  plex_config:

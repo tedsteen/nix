@@ -1,12 +1,8 @@
-## The NUC @ Pinheiro
-For provisioning see https://github.com/tedsteen/nix
-
+## The docker compose stack
+infa provides the shared stuff like reverse proxy and metrics.
+All stacks (docker compose files) can be managed with a script. See examples below
 ```bash
-# To deploy the infa on the nuc with the correct config dir use `/var/nuc` as the path f.ex
-# Note: `restart` and `down` is also available.
-# Same goes for `automation.sh` and `lab.sh`
-./infra.sh up
-
-# TODO: Start the infra docker compose environment on your local docker
-# ./infra.sh up local
+# Usage: ./infra up|down|restart
+# Same goes for `automation.sh`, `lab.sh` and `tedflix.sh`. Infra is needed for the rest to work (f.ex it provides the reverse proxy)
+./infra.sh up # Starts the infra docker compose stack
 ```

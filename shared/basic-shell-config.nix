@@ -25,6 +25,7 @@
 
     # nice to have
     watch
+    tree
   ];
 
   programs = {
