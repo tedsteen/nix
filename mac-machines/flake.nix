@@ -37,6 +37,7 @@
             home = "/Users/tedsteen";
           };
 
+          networking.computerName = "Ted's MacBook Pro";
           home-manager.users.tedsteen = {
             imports = [
               (import ./basic-ted-user-config.nix { inherit pkgs; username = "tedsteen";})
@@ -71,6 +72,7 @@
             home = "/Users/tedsteen";
           };
 
+          networking.computerName = "Steen's iMac";
           home-manager.users.tedsteen = {
             imports = [
               (import ./basic-ted-user-config.nix { inherit pkgs; username = "tedsteen";})
