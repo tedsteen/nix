@@ -18,25 +18,29 @@
       system = "x86_64-linux";
       
       modules = [
+        home-manager.nixosModules.home-manager
         ./hardware-configuration.nix
+        ../../hardening-config.nix
+        ({ pkgs, ... }: import ./docker/docker-stack.nix {
+          inherit pkgs;
+          dockerUser = "ted";
+        })
         (import ../../system-boot-config.nix {
           inherit disko;
           mainDevice = "/dev/sda";
         })
-        ../../hardening-config.nix
         (import ../../basic-system-config.nix {
           hostName = "pinheiro-nuc";
           timeZone = "Europe/Lisbon";
         })
-        home-manager.nixosModules.home-manager
         ({ pkgs, ... }: {
           console.keyMap = "dvorak";
 
           users.users.ted = {
             isNormalUser = true;
             shell = pkgs.zsh;
-            # Allow the user "ted" to run docker commands without sudo and allow sudo in general
-            extraGroups = [ "wheel" "docker" ];
+            # Sudo for ted
+            extraGroups = [ "wheel" ];
             openssh.authorizedKeys.keys = [
               "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKeAaaHvF/6KmN2neKxeHyL0WEuVC5XIp0CHp1i3u6Ff ted@mbp-2025-05-04"
               "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOp8j7ztDOXAovDvPh6OaIoWWnHmr8n63/wdh11AvtZo ted@imac-2025-05-07"
@@ -49,22 +53,12 @@
                 email = "ted.steen@gmail.com";
                 fullName = "Ted Steen";
               })
-              ../../../shared/docker-config.nix
             ];
             
-            home = {
-              packages = [
-                (pkgs.writeScriptBin "docker-volumes-backup"
-                (builtins.readFile ./scripts/docker-volumes-backup.sh))
-                (pkgs.writeScriptBin "docker-volumes-restore"
-                (builtins.readFile ./scripts/docker-volumes-restore.sh))
-              ];
-              
-              # The state versions are required and should stay at the version you
-              # originally installed.
-              # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
-              stateVersion = "24.11";
-            };
+            # The state versions are required and should stay at the version you
+            # originally installed.
+            # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
+            home.stateVersion = "24.11";
           };
 
           # Lock down root and password access but let the user "ted" in with private key and enable passwordless sudo
@@ -108,96 +102,6 @@
             fsType = "zfs";
             options = [ "nofail" ]; # We want to be able to boot even tho there is no mediapool
           };
-
-          # Enable docker with buildx support
-          virtualisation.docker = {
-            enable = true;
-            package = pkgs.docker.override (args: { buildxSupport = true; });
-          };
-          
-          environment.systemPackages = [ pkgs.docker-compose ];
-
-          # # Needed for transmissions wireguard tunnel to work
-          # networking.sysctl = {
-          #   "net.ipv4.conf.all.src_valid_mark" = 1;
-          # };
-
-          systemd.services = let
-            dockerScripts = ./docker;
-          in {
-            docker-stack-infra = {
-              description = "Docker stack: Infra";
-              path = [ pkgs.bash pkgs.docker-compose ];
-              after = [ "docker.service" ];
-              wants = [ "docker.service" ];
-              serviceConfig = {
-                ExecStart = "${dockerScripts}/infra.sh up";
-                ExecStop  = "${dockerScripts}/infra.sh down";
-                ExecReload = "${dockerScripts}/infra.sh restart";
-                Type="oneshot";
-                RemainAfterExit="true";
-                WorkingDirectory = "${dockerScripts}";
-              };
-              wantedBy = [ "multi-user.target" ];
-            };
-
-            docker-stack-automation = {
-              description = "Docker stack: Automation";
-              path = [ pkgs.bash pkgs.docker-compose ];
-              after = [ "docker-stack-infra.service" ];
-              wants = [ "docker-stack-infra.service" ];
-              serviceConfig = {
-                ExecStart = "${dockerScripts}/automation.sh up";
-                ExecStop  = "${dockerScripts}/automation.sh down";
-                ExecReload = "${dockerScripts}/automation.sh restart";
-                Type="oneshot";
-                RemainAfterExit="true";
-                WorkingDirectory = "${dockerScripts}";
-              };
-              wantedBy = [ "multi-user.target" ];
-            };
-
-            docker-stack-lab = {
-              description = "Docker stack: Lab";
-              path = [ pkgs.bash pkgs.docker-compose ];
-              after = [ "docker-stack-infra.service" ];
-              wants = [ "docker-stack-infra.service" ];
-              serviceConfig = {
-                ExecStart = "${dockerScripts}/lab.sh up";
-                ExecStop  = "${dockerScripts}/lab.sh down";
-                ExecReload = "${dockerScripts}/lab.sh restart";
-                Type="oneshot";
-                RemainAfterExit="true";
-                WorkingDirectory = "${dockerScripts}";
-              };
-              wantedBy = [ "multi-user.target" ];
-            };
-
-            docker-stack-tedflix = {
-              description = "Docker stack: Tedflix";
-              path = [ pkgs.bash pkgs.docker-compose ];
-              # Docker will bind mount into the mediapool and thus depends on it
-              after = [ "docker-stack-infra.service" "mnt-mediapool.mount" ];
-              wants = [ "docker-stack-infra.service" ];
-              unitConfig = {
-                RequiresMountsFor = [ "/mnt/mediapool" ];
-                BindsTo = [ "mnt-mediapool.mount" ];
-              };
-              serviceConfig = {
-                ExecStart = "${dockerScripts}/tedflix.sh up";
-                ExecStop  = "${dockerScripts}/tedflix.sh down";
-                ExecReload = "${dockerScripts}/tedflix.sh restart";
-                Type="oneshot";
-                RemainAfterExit="true";
-                WorkingDirectory = "${dockerScripts}";
-              };
-              wantedBy = [ "multi-user.target" ];
-            };
-          };
-
-          # Let docker expose port 80 and 81 for traefik (internal and external services are exposed on 80 and 81)
-          boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 80;
-          networking.firewall.allowedTCPPorts = [ 80 81 ];
 
           # The state versions are required and should stay at the version you
           # originally installed.
