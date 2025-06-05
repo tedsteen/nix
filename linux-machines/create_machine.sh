@@ -1,6 +1,6 @@
 #!/bin/bash
 export TARGET_HOST="${1:-"nixos@<missing-ip>"}"
-export MACHINE=${2:-"./pinheiro/nuc"}
+export MACHINE=${2:-"./lab"}
 
 export NIX_CONFIG="extra-experimental-features = nix-command flakes"
 nix run github:nix-community/nixos-anywhere -- \
