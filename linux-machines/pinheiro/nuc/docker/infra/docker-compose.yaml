@@ -4,8 +4,8 @@ services:
     restart: unless-stopped
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.pinheiro_site.rule=Host(`pinheiro.s3n.io`)'
-      - 'traefik.http.routers.pinheiro_site.entrypoints=web_public'
+      - 'traefik.http.routers.pinheiro_site.rule=Host(`nuc.pinheiro.s3n.io`)'
+      - 'traefik.http.routers.pinheiro_site.entrypoints=web'
       - 'traefik.http.services.pinheiro_site.loadbalancer.server.port=3000'
       - 'traefik.docker.network=infra_traefik'
     networks:
