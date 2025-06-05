@@ -19,7 +19,6 @@
       
       modules = [
         ./hardware-configuration.nix
-        ../hardening-config.nix
         (import ../system-boot-config.nix {
           inherit disko;
           mainDevice = "/dev/vda";
@@ -30,7 +29,6 @@
         })
         home-manager.nixosModules.home-manager
         ({ pkgs, ... }: {
-          console.keyMap = "dvorak";
 
           users.users.ted = {
             isNormalUser = true;
