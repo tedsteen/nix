@@ -78,8 +78,8 @@
             }
           ];
 
-        # ZFS stuff
-         boot = {
+          # ZFS stuff
+          boot = {
             kernelModules = [ "zfs" ];
             supportedFilesystems = [ "zfs" ];
           };
