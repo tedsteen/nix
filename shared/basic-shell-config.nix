@@ -26,6 +26,7 @@
     # nice to have
     watch
     tree
+    htop
   ];
 
   programs = {
@@ -57,24 +58,6 @@
         bindkey '^[[A' history-substring-search-up && bindkey '^[[B' history-substring-search-down
 
         mkcd() { mkdir -p "$@" && cd "$@"; }
-
-        # Top procs by memory (Linux/Mac)
-        psmem() {
-          if [ "$(uname)" = "Darwin" ]; then
-            ps aux | sort -nrk 4
-          else
-            ps auxf | sort -nr -k 4
-          fi
-        }
-
-        # Top procs by cpu (Linux/Mac)
-        pscpu() {
-          if [ "$(uname)" = "Darwin" ]; then
-            ps aux | sort -nrk 3
-          else
-            ps auxf | sort -nr -k 3
-          fi
-        }
 
         # Show listening ports (Linux/Mac)
         ports() {
