@@ -8,10 +8,10 @@
 
   environment.systemPackages = [ pkgs.docker-compose ];
 
-  systemd.services = let
-    dockerScripts = ./.;
-  in {
-    docker-stack-infra = {
+  systemd.services = {
+    docker-stack-infra = let
+      dockerScripts = ./infra;
+    in {
       description = "Docker stack: Infra";
       path = [ pkgs.bash pkgs.docker-compose ];
       after = [ "docker.service" ];
@@ -27,7 +27,9 @@
       wantedBy = [ "multi-user.target" ];
     };
 
-    docker-stack-automation = {
+    docker-stack-automation = let
+      dockerScripts = ./automation;
+    in {
       description = "Docker stack: Automation";
       path = [ pkgs.bash pkgs.docker-compose ];
       after = [ "docker-stack-infra.service" ];
@@ -43,7 +45,9 @@
       wantedBy = [ "multi-user.target" ];
     };
 
-    docker-stack-lab = {
+    docker-stack-lab = let
+      dockerScripts = ./lab;
+    in {
       description = "Docker stack: Lab";
       path = [ pkgs.bash pkgs.docker-compose ];
       after = [ "docker-stack-infra.service" ];
@@ -59,7 +63,9 @@
       wantedBy = [ "multi-user.target" ];
     };
 
-    docker-stack-tedflix = {
+    docker-stack-tedflix = let
+      dockerScripts = ./tedflix;
+    in {
       description = "Docker stack: Tedflix";
       path = [ pkgs.bash pkgs.docker-compose ];
       # Docker will bind mount into the mediapool and thus depends on it
