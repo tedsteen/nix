@@ -57,6 +57,33 @@
         bindkey '^[[A' history-substring-search-up && bindkey '^[[B' history-substring-search-down
 
         mkcd() { mkdir -p "$@" && cd "$@"; }
+
+        # Top procs by memory (Linux/Mac)
+        psmem() {
+          if [ "$(uname)" = "Darwin" ]; then
+            ps aux | sort -nrk 4
+          else
+            ps auxf | sort -nr -k 4
+          fi
+        }
+
+        # Top procs by cpu (Linux/Mac)
+        pscpu() {
+          if [ "$(uname)" = "Darwin" ]; then
+            ps aux | sort -nrk 3
+          else
+            ps auxf | sort -nr -k 3
+          fi
+        }
+
+        # Show listening ports (Linux/Mac)
+        ports() {
+          if [ "$(uname)" = "Darwin" ]; then
+            lsof -i -P -n | grep LISTEN
+          else
+            netstat -tulanp 2>/dev/null || ss -tulpn
+          fi
+        }
       '';
 
       shellAliases = {
@@ -75,21 +102,7 @@
         gb = "git for-each-ref --sort='-authordate:iso8601' --format=' %(color:green)%(authordate:iso8601)%09%(color:white)%(refname:short)' refs/heads";
         gnuke = "git reset --hard && git clean -fdx";
 
-        # TODO: Fix on mac
-        # # get top process eating memory
-        # psmem = "ps auxf | sort -nr -k 4";
-        # psmem10 = "ps auxf | sort -nr -k 4 | head -10";
-        
-        # TODO: Fix on mac
-        # # get top process eating cpu
-        # pscpu = "ps auxf | sort -nr -k 3";
-        # pscpu10 = "ps auxf | sort -nr -k 3 | head -10";
-
-        # TODO: Fix on mac
-        # # Show open ports
-        # ports = "netstat -tulanp";
-
-        # Colorize the grep command output for ease of use (good for log files)##
+        # Colorize the grep command output for ease of use (good for log files)
         grep = "grep --color=auto";
       };
     };
