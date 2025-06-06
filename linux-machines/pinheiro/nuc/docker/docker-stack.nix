@@ -87,14 +87,9 @@
     };
   };
 
-  # TODO: # Perhaps needed for transmissions wireguard tunnel to work?
-  # networking.sysctl = {
-  #   "net.ipv4.conf.all.src_valid_mark" = 1;
-  # };
-
-  # Let docker expose port 80 and 81 for traefik (internal and external services are exposed on 80 and 81)
+  # Let docker expose port 80, 81 and 443 for traefik. Internal and external (http + https) services are exposed on those ports.
   boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 80;
-  networking.firewall.allowedTCPPorts = [ 80 81 ];
+  networking.firewall.allowedTCPPorts = [ 80 81 443 ];
 
   # Allow the docker user to run docker
   users.users.${dockerUser}.extraGroups = [ "docker" ];

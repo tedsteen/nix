@@ -17,9 +17,13 @@ services:
     command:
       #- "--log.level=DEBUG"
       - '--api.insecure=true'
-
       - '--providers.docker=true'
       - '--providers.docker.exposedbydefault=false'
+      
+      - "--entryPoints.web_public_secure.address=:443"
+      - "--certificatesresolvers.certresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.certresolver.acme.email=ted.steen@gmail.com"
+      - "--certificatesresolvers.certresolver.acme.storage=/letsencrypt/acme.json"
 
       - '--entrypoints.web.address=:80'
       - '--entrypoints.web_public.address=:81'
@@ -34,8 +38,10 @@ services:
     ports:
       - '80:80'
       - '81:81'
+      - "443:443"
     volumes:
-      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      - traefik_letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - traefik
 
@@ -141,3 +147,4 @@ volumes:
   influxdb_data:
   influxdb_config:
   grafana:
+  traefik_letsencrypt:

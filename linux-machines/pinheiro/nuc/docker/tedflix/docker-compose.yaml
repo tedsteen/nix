@@ -135,9 +135,7 @@ services:
     restart: unless-stopped
     healthcheck:
       test: curl https://am.i.mullvad.net/connected | grep -q "You are connected"
-    privileged: true # TODO: Fix this...
-    # cap_add:
-    #   - NET_ADMIN
+    privileged: true # TODO: Fix this, it should not be needed instead set the right cap_add and sysctls (NET_ADMIN + net.ipv4.conf.all.src_valid_mark: "1")
     environment:
       PGID: 1000
       PUID: 1000
@@ -148,9 +146,6 @@ services:
       - 'traefik.http.routers.tedflix_transmission.entrypoints=web'
       - 'traefik.http.services.tedflix_transmission.loadbalancer.server.port=9091'
       - 'traefik.docker.network=infra_traefik'
-    # sysctls:
-    #   net.ipv6.conf.all.disable_ipv6: "0"
-    #   net.ipv4.conf.all.src_valid_mark: "1"
     networks:
       - infra_traefik
     volumes:
@@ -172,7 +167,7 @@ services:
       PLEX_UID: 1000
       PLEX_GID: 1000
       # ADVERTISE_IP: "http://pinheiro.s3n.io:1984/"
-      # ALLOWED_NETWORKS: "192.168.0.0/255.255.0.0"
+      # ALLOWED_NETWORKS: "0.0.0.0/0.0.0.0"
       TZ: Europe/Lisbon
     networks:
       - infra_traefik
