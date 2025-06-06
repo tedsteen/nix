@@ -13,14 +13,14 @@ fi
 export COMPOSE_BAKE=true
 case "$CMD" in
     up)
-        docker-compose -p tedflix pull
-        docker-compose -p tedflix up -d --build --remove-orphans
+        docker compose -p tedflix pull
+        docker compose -p tedflix up -d --build --remove-orphans
         ;;
     down)
-        docker-compose -p tedflix down
+        docker compose -p tedflix down
         ;;
     restart)
-        docker-compose -p tedflix restart
+        docker compose -p tedflix restart
         ;;
     *)
         echo "Usage: $0 up|down|restart"

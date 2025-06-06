@@ -5,14 +5,14 @@ CMD=$1
 export COMPOSE_BAKE=true
 case "$CMD" in
     up)
-        docker-compose -p lab pull
-        docker-compose -p lab up -d --build --remove-orphans
+        docker compose -p lab pull
+        docker compose -p lab up -d --build --remove-orphans
         ;;
     down)
-        docker-compose -p lab down
+        docker compose -p lab down
         ;;
     restart)
-        docker-compose -p lab restart
+        docker compose -p lab restart
         ;;
     *)
         echo "Usage: $0 up|down|restart"

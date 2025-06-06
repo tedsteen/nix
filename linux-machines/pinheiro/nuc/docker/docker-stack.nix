@@ -6,14 +6,12 @@
     package = pkgs.docker.override (args: { buildxSupport = true; });
   };
 
-  environment.systemPackages = [ pkgs.docker-compose ];
-
   systemd.services = {
     docker-stack-infra = let
       dockerScripts = ./infra;
     in {
       description = "Docker stack: Infra";
-      path = [ pkgs.bash pkgs.docker-compose ];
+      path = [ pkgs.bash pkgs.docker ];
       after = [ "docker.service" ];
       wants = [ "docker.service" ];
       serviceConfig = {
@@ -31,7 +29,7 @@
       dockerScripts = ./automation;
     in {
       description = "Docker stack: Automation";
-      path = [ pkgs.bash pkgs.docker-compose ];
+      path = [ pkgs.bash pkgs.docker ];
       after = [ "docker-stack-infra.service" ];
       wants = [ "docker-stack-infra.service" ];
       serviceConfig = {
@@ -49,7 +47,7 @@
       dockerScripts = ./lab;
     in {
       description = "Docker stack: Lab";
-      path = [ pkgs.bash pkgs.docker-compose ];
+      path = [ pkgs.bash pkgs.docker ];
       after = [ "docker-stack-infra.service" ];
       wants = [ "docker-stack-infra.service" ];
       serviceConfig = {
@@ -67,7 +65,7 @@
       dockerScripts = ./tedflix;
     in {
       description = "Docker stack: Tedflix";
-      path = [ pkgs.bash pkgs.docker-compose ];
+      path = [ pkgs.bash pkgs.docker ];
       # Docker will bind mount into the mediapool and thus depends on it
       after = [ "docker-stack-infra.service" "mnt-mediapool.mount" ];
       wants = [ "docker-stack-infra.service" ];
