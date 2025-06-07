@@ -10,7 +10,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.automation_home-assistant.rule=Host(`home-assistant.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.automation_home-assistant.entrypoints=web'
+      - 'traefik.http.routers.automation_home-assistant.entrypoints=web_private'
       - 'traefik.http.services.automation_home-assistant.loadbalancer.server.port=8123'
       - 'traefik.docker.network=infra_traefik'
     ports:
@@ -35,7 +35,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.automation_nodered.rule=Host(`nodered.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.automation_nodered.entrypoints=web'
+      - 'traefik.http.routers.automation_nodered.entrypoints=web_private'
       - 'traefik.http.services.automation_nodered.loadbalancer.server.port=1880'
       - 'traefik.docker.network=infra_traefik'
     environment:

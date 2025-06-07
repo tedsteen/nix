@@ -5,7 +5,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.pinheiro_site.rule=Host(`nuc.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.pinheiro_site.entrypoints=web'
+      - 'traefik.http.routers.pinheiro_site.entrypoints=web_private'
       - 'traefik.http.services.pinheiro_site.loadbalancer.server.port=3000'
       - 'traefik.docker.network=infra_traefik'
     networks:
@@ -21,17 +21,16 @@ services:
       - '--providers.docker.exposedbydefault=false'
 
       # Private entrypoint for internal services
-      - '--entrypoints.web.address=:80'
-
-      # Public entrypoint for external access (only used for redirects)
-      - '--entrypoints.web_public_do_not_use.address=:81'
-
+      - '--entrypoints.web_private.address=:80'
+      
       # Public entrypoint for secure (HTTPS) external access
       - "--entryPoints.web_public_secure.address=:443"
       - "--certificatesresolvers.defaultcertresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.defaultcertresolver.acme.email=ted.steen@gmail.com"
       - "--certificatesresolvers.defaultcertresolver.acme.storage=/letsencrypt/acme.json"
 
+      # Public entrypoint for external access (only used for redirects)
+      - '--entrypoints.web_public_do_not_use.address=:81'
       # Redirect all public HTTP traffic to HTTPS
       - "--entrypoints.web_public_do_not_use.http.redirections.entryPoint.to=web_public_secure"
       - "--entrypoints.web_public_do_not_use.http.redirections.entryPoint.scheme=https"
@@ -41,7 +40,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.infra_traefik.rule=Host(`traefik.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.infra_traefik.entrypoints=web'
+      - 'traefik.http.routers.infra_traefik.entrypoints=web_private'
       - 'traefik.http.services.infra_traefik.loadbalancer.server.port=8080'
       - 'traefik.docker.network=infra_traefik'
     ports:
@@ -73,7 +72,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.infra_influxdb.rule=Host(`influxdb.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.infra_influxdb.entrypoints=web'
+      - 'traefik.http.routers.infra_influxdb.entrypoints=web_private'
       - 'traefik.http.services.infra_influxdb.loadbalancer.server.port=8086'
       - 'traefik.docker.network=infra_traefik'
     networks:
@@ -97,7 +96,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.infra_grafana.rule=Host(`grafana.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.infra_grafana.entrypoints=web'
+      - 'traefik.http.routers.infra_grafana.entrypoints=web_private'
       - 'traefik.http.services.infra_grafana.loadbalancer.server.port=3000'
       - 'traefik.docker.network=infra_traefik'
     networks:

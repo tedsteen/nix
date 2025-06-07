@@ -17,7 +17,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.tedflix_prowlarr.rule=Host(`prowlarr.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.tedflix_prowlarr.entrypoints=web'
+      - 'traefik.http.routers.tedflix_prowlarr.entrypoints=web_private'
       - 'traefik.http.services.tedflix_prowlarr.loadbalancer.server.port=9696'
       - 'traefik.docker.network=infra_traefik'
     environment:
@@ -54,7 +54,7 @@ services:
   #     - 'traefik.http.services.tedflix_ombi_public.loadbalancer.server.port=3579'
 
   #     - 'traefik.http.routers.tedflix_ombi.rule=Host(`ombi.pinheiro.s3n.io`)'
-  #     - 'traefik.http.routers.tedflix_ombi.entrypoints=web'
+  #     - 'traefik.http.routers.tedflix_ombi.entrypoints=web_private'
   #     - 'traefik.http.routers.tedflix_ombi.service=tedflix_ombi'
   #     - 'traefik.http.services.tedflix_ombi.loadbalancer.server.port=3579'
 
@@ -76,7 +76,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.tedflix_radarr.rule=Host(`radarr.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.tedflix_radarr.entrypoints=web'
+      - 'traefik.http.routers.tedflix_radarr.entrypoints=web_private'
       - 'traefik.http.services.tedflix_radarr.loadbalancer.server.port=7878'
       - 'traefik.docker.network=infra_traefik'
     environment:
@@ -96,7 +96,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.tedflix_bazarr.rule=Host(`bazarr.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.tedflix_bazarr.entrypoints=web'
+      - 'traefik.http.routers.tedflix_bazarr.entrypoints=web_private'
       - 'traefik.http.services.tedflix_bazarr.loadbalancer.server.port=6767'
       - 'traefik.docker.network=infra_traefik'
     environment:
@@ -117,7 +117,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.tedflix_sonarr.rule=Host(`sonarr.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.tedflix_sonarr.entrypoints=web'
+      - 'traefik.http.routers.tedflix_sonarr.entrypoints=web_private'
       - 'traefik.http.services.tedflix_sonarr.loadbalancer.server.port=8989'
       - 'traefik.docker.network=infra_traefik'
     environment:
@@ -144,7 +144,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.tedflix_transmission.rule=Host(`transmission.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.tedflix_transmission.entrypoints=web'
+      - 'traefik.http.routers.tedflix_transmission.entrypoints=web_private'
       - 'traefik.http.services.tedflix_transmission.loadbalancer.server.port=9091'
       - 'traefik.docker.network=infra_traefik'
     networks:
@@ -161,7 +161,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.tedflix_plex.rule=Host(`plex.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.tedflix_plex.entrypoints=web'
+      - 'traefik.http.routers.tedflix_plex.entrypoints=web_private'
       - 'traefik.http.services.tedflix_plex.loadbalancer.server.port=32400'
       - 'traefik.docker.network=infra_traefik'
     environment:
