@@ -39,34 +39,35 @@ services:
       - LOG_HTML=false
       - CAPTCHA_SOLVER=none
       - TZ=Europe/Lisbon
-    
-  ombi:
-    image: linuxserver/ombi:latest
-    pull_policy: always
-    restart: unless-stopped
-    labels:
-      - 'traefik.enable=true'
+  # TODO: Enable this when it's moved over to pinheiro  
+  # ombi:
+  #   image: linuxserver/ombi:latest
+  #   pull_policy: always
+  #   restart: unless-stopped
+  #   labels:
+  #     - 'traefik.enable=true'
 
-      - 'traefik.http.routers.tedflix_ombi_public.rule=Host(`ombi.hal.pub`)'
-      - 'traefik.http.routers.tedflix_ombi_public.entrypoints=web_public'
-      - 'traefik.http.routers.tedflix_ombi_public.service=tedflix_ombi_public'
-      - 'traefik.http.services.tedflix_ombi_public.loadbalancer.server.port=3579'
+  #     - 'traefik.http.routers.tedflix_ombi_public.rule=Host(`ombi.hal.pub`)'
+  #     - 'traefik.http.routers.tedflix_ombi_public.entrypoints=web_public_secure'
+  #     - 'traefik.http.routers.tedflix_ombi_public.tls.certresolver=defaultcertresolver'
+  #     - 'traefik.http.routers.tedflix_ombi_public.service=tedflix_ombi_public'
+  #     - 'traefik.http.services.tedflix_ombi_public.loadbalancer.server.port=3579'
 
-      - 'traefik.http.routers.tedflix_ombi.rule=Host(`ombi.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.tedflix_ombi.entrypoints=web'
-      - 'traefik.http.routers.tedflix_ombi.service=tedflix_ombi'
-      - 'traefik.http.services.tedflix_ombi.loadbalancer.server.port=3579'
+  #     - 'traefik.http.routers.tedflix_ombi.rule=Host(`ombi.pinheiro.s3n.io`)'
+  #     - 'traefik.http.routers.tedflix_ombi.entrypoints=web'
+  #     - 'traefik.http.routers.tedflix_ombi.service=tedflix_ombi'
+  #     - 'traefik.http.services.tedflix_ombi.loadbalancer.server.port=3579'
 
-      - 'traefik.docker.network=infra_traefik'
-    environment:
-      PGID: 1000
-      PUID: 1000
-      TZ: Europe/Lisbon
-    networks:
-      - infra_traefik
-      - default # for mariadb
-    volumes:
-      - ombi_config:/config
+  #     - 'traefik.docker.network=infra_traefik'
+  #   environment:
+  #     PGID: 1000
+  #     PUID: 1000
+  #     TZ: Europe/Lisbon
+  #   networks:
+  #     - infra_traefik
+  #     - default # for mariadb
+  #   volumes:
+  #     - ombi_config:/config
 
   radarr:
     image: linuxserver/radarr:latest
