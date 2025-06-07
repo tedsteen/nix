@@ -34,18 +34,10 @@ services:
   whoami:
     image: "traefik/whoami"
     labels:
-      - 'traefik.enable=true'
-      
-      - 'traefik.http.routers.lab_whoami_secure.service=lab_whoami_secure'
-      - 'traefik.http.routers.lab_whoami_secure.rule=Host(`whoami.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.lab_whoami_secure.entrypoints=web_public_secure'
-      - 'traefik.http.routers.lab_whoami_secure.tls.certresolver=certresolver'
-      - 'traefik.http.services.lab_whoami_secure.loadbalancer.server.port=80'
-
+      - 'traefik.enable=true'      
       - 'traefik.http.routers.lab_whoami.rule=Host(`whoami.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.lab_whoami.entrypoints=web_public'
-      - 'traefik.http.routers.lab_whoami.service=lab_whoami'
-      - 'traefik.http.services.lab_whoami.loadbalancer.server.port=80'
+      - 'traefik.http.routers.lab_whoami.entrypoints=web_public_secure'
+      - 'traefik.http.routers.lab_whoami.tls.certresolver=certresolver'
 
     networks:
       - infra_traefik

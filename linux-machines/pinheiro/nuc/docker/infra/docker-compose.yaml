@@ -19,14 +19,23 @@ services:
       - '--api.insecure=true'
       - '--providers.docker=true'
       - '--providers.docker.exposedbydefault=false'
-      
+
+      # Private entrypoint for internal services
+      - '--entrypoints.web.address=:80'
+
+      # Public entrypoint for external access
+      - '--entrypoints.web_public.address=:81'
+
+      # Public entrypoint for secure (HTTPS) external access
       - "--entryPoints.web_public_secure.address=:443"
       - "--certificatesresolvers.certresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.certresolver.acme.email=ted.steen@gmail.com"
       - "--certificatesresolvers.certresolver.acme.storage=/letsencrypt/acme.json"
 
-      - '--entrypoints.web.address=:80'
-      - '--entrypoints.web_public.address=:81'
+      # Redirect all public HTTP traffic to HTTPS
+      - "--entrypoints.web_public.http.redirections.entryPoint.to=web_public_secure"
+      - "--entrypoints.web_public.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.web_public.http.redirections.entrypoint.permanent=true"
     environment:
       TZ: Europe/Lisbon
     labels:
