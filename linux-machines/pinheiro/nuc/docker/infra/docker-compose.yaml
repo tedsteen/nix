@@ -28,9 +28,9 @@ services:
 
       # Public entrypoint for secure (HTTPS) external access
       - "--entryPoints.web_public_secure.address=:443"
-      - "--certificatesresolvers.certresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.certresolver.acme.email=ted.steen@gmail.com"
-      - "--certificatesresolvers.certresolver.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.defaultcertresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.defaultcertresolver.acme.email=ted.steen@gmail.com"
+      - "--certificatesresolvers.defaultcertresolver.acme.storage=/letsencrypt/acme.json"
 
       # Redirect all public HTTP traffic to HTTPS
       - "--entrypoints.web_public.http.redirections.entryPoint.to=web_public_secure"
