@@ -1,87 +1,49 @@
-{ pkgs, dockerUser, ... }: {
+{ pkgs, dockerUser, ... }: let
+  mkDockerStack = name: dir: pkgs.stdenv.mkDerivation {
+    pname = "docker-stack-${name}";
+    version = "1.0";
+    src = dir;
+    installPhase = ''
+      mkdir -p $out/${name}
+      cp -r . $out/${name}
+      mkdir -p $out/bin
+      ln -s $out/${name}/manage.sh $out/bin/docker-manage-${name}
+    '';
+  };
 
+  tedflixStack = mkDockerStack "tedflix" ./tedflix;  
+in {
   # Enable docker with buildx support
   virtualisation.docker = {
     enable = true;
     package = pkgs.docker.override (args: { buildxSupport = true; });
   };
 
-  systemd.services = {
-    docker-stack-infra = let
-      dockerScripts = ./infra;
-    in {
-      description = "Docker stack: Infra";
-      path = [ pkgs.bash pkgs.docker ];
-      after = [ "docker.service" ];
-      wants = [ "docker.service" ];
-      serviceConfig = {
-        ExecStart = "${dockerScripts}/infra.sh up";
-        ExecStop  = "${dockerScripts}/infra.sh down";
-        ExecReload = "${dockerScripts}/infra.sh restart";
-        Type="oneshot";
-        RemainAfterExit="true";
-        WorkingDirectory = "${dockerScripts}";
-      };
-      wantedBy = [ "multi-user.target" ];
+  systemd.services.docker-stack-tedflix-guard = {
+    description = "Keep tedflix in sync with mediapool mount";
+    path = [ pkgs.bash pkgs.docker pkgs.util-linux tedflixStack ];
+    wantedBy = [ "multi-user.target" "mnt-mediapool.mount" ];
+    after = [ "docker.service" "mnt-mediapool.mount" ];
+    wants = [ "docker.service" "mnt-mediapool.mount" ];
+    unitConfig = {
+      BindsTo = [ "mnt-mediapool.mount" ]; # service stops if mount goes away
+      RequiresMountsFor = [ "/mnt/mediapool" ];
     };
-
-    docker-stack-automation = let
-      dockerScripts = ./automation;
-    in {
-      description = "Docker stack: Automation";
-      path = [ pkgs.bash pkgs.docker ];
-      after = [ "docker-stack-infra.service" ];
-      wants = [ "docker-stack-infra.service" ];
-      serviceConfig = {
-        ExecStart = "${dockerScripts}/automation.sh up";
-        ExecStop  = "${dockerScripts}/automation.sh down";
-        ExecReload = "${dockerScripts}/automation.sh restart";
-        Type="oneshot";
-        RemainAfterExit="true";
-        WorkingDirectory = "${dockerScripts}";
-      };
-      wantedBy = [ "multi-user.target" ];
-    };
-
-    docker-stack-lab = let
-      dockerScripts = ./lab;
-    in {
-      description = "Docker stack: Lab";
-      path = [ pkgs.bash pkgs.docker ];
-      after = [ "docker-stack-infra.service" ];
-      wants = [ "docker-stack-infra.service" ];
-      serviceConfig = {
-        ExecStart = "${dockerScripts}/lab.sh up";
-        ExecStop  = "${dockerScripts}/lab.sh down";
-        ExecReload = "${dockerScripts}/lab.sh restart";
-        Type="oneshot";
-        RemainAfterExit="true";
-        WorkingDirectory = "${dockerScripts}";
-      };
-      wantedBy = [ "multi-user.target" ];
-    };
-
-    docker-stack-tedflix = let
-      dockerScripts = ./tedflix;
-    in {
-      description = "Docker stack: Tedflix";
-      path = [ pkgs.bash pkgs.docker ];
-      # Docker will bind mount into the mediapool and thus depends on it
-      after = [ "docker-stack-infra.service" "mnt-mediapool.mount" ];
-      wants = [ "docker-stack-infra.service" ];
-      unitConfig = {
-        RequiresMountsFor = [ "/mnt/mediapool" ];
-        BindsTo = [ "mnt-mediapool.mount" ];
-      };
-      serviceConfig = {
-        ExecStart = "${dockerScripts}/tedflix.sh up";
-        ExecStop  = "${dockerScripts}/tedflix.sh down";
-        ExecReload = "${dockerScripts}/tedflix.sh restart";
-        Type="oneshot";
-        RemainAfterExit="true";
-        WorkingDirectory = "${dockerScripts}";
-      };
-      wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = pkgs.writeScript "tedflix-up-on-remount" ''
+        #!${pkgs.bash}/bin/bash
+        if mountpoint -q /mnt/mediapool; then
+          echo "[+] mediapool mounted, bringing tedflix stack up"
+          docker-manage-tedflix up
+        fi
+      '';
+      ExecStop = pkgs.writeScript "tedflix-down-on-unmount" ''
+        #!${pkgs.bash}/bin/bash
+        echo "[+] mediapool unmounted, bringing tedflix stack down"
+        docker-manage-tedflix down
+      '';
     };
   };
 
@@ -97,12 +59,21 @@
       ../../../../shared/docker-config.nix
     ];
     
-    home = {
+    home = let
+      automationStack = mkDockerStack "automation" ./automation;
+      infraStack = mkDockerStack "infra" ./infra;
+      labStack = mkDockerStack "lab" ./lab;
+    in {
       packages = [
         (pkgs.writeScriptBin "docker-volumes-backup"
         (builtins.readFile ./scripts/docker-volumes-backup.sh))
         (pkgs.writeScriptBin "docker-volumes-restore"
         (builtins.readFile ./scripts/docker-volumes-restore.sh))
+
+        automationStack
+        infraStack
+        labStack
+        tedflixStack
       ];
     };
   };

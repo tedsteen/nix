@@ -2,6 +2,9 @@
 set -e
 CMD=$1
 
+# Make sure we are relative to the script directory
+cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+
 export COMPOSE_BAKE=true
 case "$CMD" in
     up)
@@ -15,7 +18,7 @@ case "$CMD" in
         docker compose -p infra restart
         ;;
     *)
-        echo "Usage: $0 up|down|restart"
+        echo "Usage: $(basename "$0") up|down|restart"
         exit 1
         ;;
 esac
