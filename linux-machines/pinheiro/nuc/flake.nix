@@ -21,7 +21,7 @@
         home-manager.nixosModules.home-manager
         ./hardware-configuration.nix
         ../../hardening-config.nix
-        ({ pkgs, ... }: import ./docker/docker-stack.nix {
+        ({ pkgs, ... }: import ./docker/docker-stacks.nix {
           inherit pkgs;
           dockerUser = "ted";
         })
