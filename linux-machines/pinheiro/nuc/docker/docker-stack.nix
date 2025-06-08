@@ -3,9 +3,11 @@
     pname = "docker-stack-${name}";
     version = "1.0";
     src = dir;
+    dontPatchShebangs = true; # most stuff is used in docker containers, i'll manually patch the needed shebangs
     installPhase = ''
       mkdir -p $out/${name}
       cp -r . $out/${name}
+      patchShebangs $out/${name}/manage.sh
       mkdir -p $out/bin
       ln -s $out/${name}/manage.sh $out/bin/docker-manage-${name}
     '';
