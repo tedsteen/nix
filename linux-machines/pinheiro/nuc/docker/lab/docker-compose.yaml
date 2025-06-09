@@ -2,6 +2,7 @@ services:
   minecraft:
     image: itzg/minecraft-server
     restart: unless-stopped
+    pull_policy: always
     healthcheck:
       test: "/health.sh"
       interval: 2s
@@ -22,6 +23,7 @@ services:
   cors-proxy:
     image: redocly/cors-anywhere
     restart: unless-stopped
+    pull_policy: always
     stop_signal: SIGKILL
     stop_grace_period: 0s
     labels:
@@ -36,12 +38,13 @@ services:
   
   whoami:
     image: "traefik/whoami"
+    restart: unless-stopped
+    pull_policy: always
     labels:
       - 'traefik.enable=true'      
       - 'traefik.http.routers.lab_whoami.rule=Host(`whoami.pinheiro.s3n.io`)'
       - 'traefik.http.routers.lab_whoami.entrypoints=web_public_secure'
       - 'traefik.http.routers.lab_whoami.tls.certresolver=defaultcertresolver'
-
     networks:
       - infra_traefik
 

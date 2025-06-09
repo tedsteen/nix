@@ -16,7 +16,6 @@ cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 export COMPOSE_BAKE=true
 case "$CMD" in
     up)
-        docker compose -p tedflix pull
         docker compose -p tedflix up -d --build --remove-orphans
         ;;
     down)

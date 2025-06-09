@@ -1,5 +1,5 @@
 services:
-  pinheiro:
+  site-pinheiro:
     build: pinheiro
     restart: unless-stopped
     labels:
@@ -13,6 +13,7 @@ services:
   traefik:
     image: 'traefik:latest'
     restart: unless-stopped
+    pull_policy: always
     command:
       #- "--log.level=DEBUG"
       - '--api.insecure=true'
@@ -55,6 +56,7 @@ services:
   influxdb:
     image: influxdb:alpine
     restart: unless-stopped
+    pull_policy: always
     healthcheck:
       test: "curl -f http://localhost:8086/ping"
       interval: 2s
@@ -84,6 +86,7 @@ services:
   grafana:
     image: grafana/grafana:latest
     restart: unless-stopped
+    pull_policy: always
     depends_on:
       influxdb:
         condition: service_healthy

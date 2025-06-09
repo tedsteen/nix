@@ -2,6 +2,7 @@ services:
   mariadb:
     build: mariadb
     restart: unless-stopped
+    pull_policy: always
     expose:
       - 3306
     environment:
@@ -14,6 +15,7 @@ services:
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     restart: unless-stopped
+    pull_policy: always
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.tedflix_prowlarr.rule=Host(`prowlarr.pinheiro.s3n.io`)'
@@ -32,18 +34,19 @@ services:
 
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr:latest
-    pull_policy: always
     restart: unless-stopped
+    pull_policy: always
     environment:
       - LOG_LEVEL=info
       - LOG_HTML=false
       - CAPTCHA_SOLVER=none
       - TZ=Europe/Lisbon
+
   # TODO: Enable this when it's moved over to pinheiro  
   # ombi:
   #   image: linuxserver/ombi:latest
-  #   pull_policy: always
   #   restart: unless-stopped
+  #   pull_policy: always
   #   labels:
   #     - 'traefik.enable=true'
 
@@ -71,8 +74,8 @@ services:
 
   radarr:
     image: linuxserver/radarr:latest
-    pull_policy: always
     restart: unless-stopped
+    pull_policy: always
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.tedflix_radarr.rule=Host(`radarr.pinheiro.s3n.io`)'
@@ -91,8 +94,8 @@ services:
 
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
-    pull_policy: always
     restart: unless-stopped
+    pull_policy: always
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.tedflix_bazarr.rule=Host(`bazarr.pinheiro.s3n.io`)'
@@ -112,8 +115,8 @@ services:
 
   sonarr:
     image: linuxserver/sonarr:latest
-    pull_policy: always
     restart: unless-stopped
+    pull_policy: always
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.tedflix_sonarr.rule=Host(`sonarr.pinheiro.s3n.io`)'
@@ -156,8 +159,8 @@ services:
 
   plex:
     image: plexinc/pms-docker:public
-    pull_policy: always
     restart: unless-stopped
+    pull_policy: always
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.tedflix_plex.rule=Host(`plex.pinheiro.s3n.io`)'

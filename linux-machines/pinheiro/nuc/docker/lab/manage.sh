@@ -8,7 +8,6 @@ cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 export COMPOSE_BAKE=true
 case "$CMD" in
     up)
-        docker compose -p lab pull
         docker compose -p lab up -d --build --remove-orphans
         ;;
     down)

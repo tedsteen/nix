@@ -2,6 +2,7 @@ services:
   home-assistant:
     image: homeassistant/home-assistant:latest
     restart: unless-stopped
+    pull_policy: always
     healthcheck:
       test: "curl -sS http://localhost:8123"
       interval: 2s
@@ -29,6 +30,7 @@ services:
   nodered:
     image: nodered/node-red:latest
     restart: unless-stopped
+    pull_policy: always
     depends_on:
       home-assistant:
         condition: service_healthy
