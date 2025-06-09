@@ -15,11 +15,8 @@
 
   tedflixStack = mkDockerStack "tedflix" ./tedflix;  
 in {
-  # Enable docker with buildx support
-  virtualisation.docker = {
-    enable = true;
-    package = pkgs.docker.override (args: { buildxSupport = true; });
-  };
+
+  virtualisation.docker.enable = true;
 
   systemd.services.docker-stack-tedflix-guard = {
     description = "Keep tedflix in sync with mediapool mount";
