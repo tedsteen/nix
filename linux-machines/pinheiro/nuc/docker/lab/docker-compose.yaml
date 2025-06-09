@@ -22,6 +22,8 @@ services:
   cors-proxy:
     image: redocly/cors-anywhere
     restart: unless-stopped
+    stop_signal: SIGKILL
+    stop_grace_period: 0s
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.sites_cors_proxy.rule=Host(`cors-proxy.s3n.io`)'
