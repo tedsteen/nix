@@ -139,6 +139,9 @@ services:
     restart: unless-stopped
     healthcheck:
       test: curl https://am.i.mullvad.net/connected | grep -q "You are connected"
+      interval: 5s
+      start_interval: 2s
+      retries: 10
     privileged: true # TODO: Fix this, it should not be needed instead set the right cap_add and sysctls (NET_ADMIN + net.ipv4.conf.all.src_valid_mark: "1")
     environment:
       PGID: 1000

@@ -6,6 +6,7 @@ truncate -s 1200m /tmp/mediapool-1-4.raw
 for n in {0..4}; do truncate -s 1800m /tmp/mediapool-2-$n.raw; done
 sudo zpool create -f \
     -o ashift=12 \
+    -O xattr=sa \
     -O atime=off \
     -O recordsize=1M \
     -O compression=lz4 \
@@ -18,6 +19,7 @@ sudo zpool create -f \
 # Create a test pool in UTM (using virtual USB-disks)
 sudo zpool create -f \
     -o ashift=12 \
+    -O xattr=sa \
     -O atime=off \
     -O recordsize=1M \
     -O compression=lz4 \
@@ -28,6 +30,7 @@ sudo zpool create -f \
 # Create a test pool on the USB-stick on the pinherio NUC
 sudo zpool create -f \
     -o ashift=12 \
+    -O xattr=sa \
     -O atime=off \
     -O recordsize=1M \
     -O compression=lz4 \
