@@ -91,7 +91,7 @@
 
             autoScrub = {
               enable = true;
-              interval = "quarterly";
+              interval = "monthly";
               pools = [ "mediapool" ];
             };
           };
