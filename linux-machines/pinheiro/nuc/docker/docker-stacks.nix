@@ -46,10 +46,6 @@ in {
     };
   };
 
-  # Let docker expose port 80, 81 and 443 for traefik. Internal and external (http + https) services are exposed on those ports.
-  boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = 80;
-  networking.firewall.allowedTCPPorts = [ 80 81 443 ];
-
   # Allow the docker user to run docker
   users.users.${dockerUser}.extraGroups = [ "docker" ];
   # Configure the docker user with shared docker config + some handy scripts
