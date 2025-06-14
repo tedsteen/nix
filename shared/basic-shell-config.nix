@@ -27,6 +27,7 @@
     watch
     tree
     htop
+    tmux
   ];
 
   programs = {
@@ -84,6 +85,11 @@
         gl = "git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
         gb = "git for-each-ref --sort='-authordate:iso8601' --format=' %(color:green)%(authordate:iso8601)%09%(color:white)%(refname:short)' refs/heads";
         gnuke = "git reset --hard && git clean -fdx";
+
+        # tmux
+        tn = "tmux new -s";
+        ta = "tmux attach -t";
+        tls = "tmux ls";
 
         # Colorize the grep command output for ease of use (good for log files)
         grep = "grep --color=auto";
