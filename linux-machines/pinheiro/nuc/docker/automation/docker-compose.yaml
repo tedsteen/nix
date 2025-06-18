@@ -19,8 +19,6 @@ services:
       - "5683:5683/udp"
       - "5683:5683/tcp"
     environment:
-      PUID: 1001
-      GUID: 1001
       TZ: Europe/Lisbon
     networks:
       - infra_metrics
