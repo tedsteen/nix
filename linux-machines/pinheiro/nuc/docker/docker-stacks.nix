@@ -1,26 +1,10 @@
-{ pkgs, dockerUser, ... }: let
-  mkDockerStack = name: dir: pkgs.stdenv.mkDerivation {
-    pname = "docker-stack-${name}";
-    version = "1.0";
-    src = dir;
-    dontPatchShebangs = true; # most stuff is used in docker containers, i'll manually patch the needed shebangs
-    installPhase = ''
-      mkdir -p $out/${name}
-      cp -r . $out/${name}
-      patchShebangs $out/${name}/manage.sh
-      mkdir -p $out/bin
-      ln -s $out/${name}/manage.sh $out/bin/docker-manage-${name}
-    '';
-  };
-
-  tedflixStack = mkDockerStack "tedflix" ./tedflix;  
-in {
+{ pkgs, dockerUser, ... }: {
 
   virtualisation.docker.enable = true;
 
   systemd.services.docker-stack-tedflix-guard = {
     description = "Keep tedflix in sync with mediapool mount";
-    path = [ pkgs.bash pkgs.docker pkgs.util-linux tedflixStack ];
+    path = [ pkgs.bash pkgs.docker pkgs.util-linux ];
     wantedBy = [ "multi-user.target" "mnt-mediapool.mount" ];
     after = [ "docker.service" "mnt-mediapool.mount" ];
     wants = [ "docker.service" "mnt-mediapool.mount" ];
@@ -31,17 +15,17 @@ in {
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
-      ExecStart = pkgs.writeScript "tedflix-up-on-remount" ''
+      ExecStart = pkgs.writeScript "tedflix-start-on-remount" ''
         #!${pkgs.bash}/bin/bash
         if mountpoint -q /mnt/mediapool; then
-          echo "[+] mediapool mounted, bringing tedflix stack up"
-          docker-manage-tedflix up
+          echo "[+] mediapool mounted, starting the tedflix stack"
+          docker compose -p tedflix start
         fi
       '';
       ExecStop = pkgs.writeScript "tedflix-down-on-unmount" ''
         #!${pkgs.bash}/bin/bash
-        echo "[+] mediapool unmounted, bringing tedflix stack down"
-        docker-manage-tedflix down
+        echo "[+] mediapool unmounted, stopping the tedflix stack"
+        docker compose -p tedflix stop
       '';
     };
   };
@@ -55,8 +39,23 @@ in {
     ];
     
     home = let
-      automationStack = mkDockerStack "automation" ./automation;
+      mkDockerStack = name: dir: pkgs.stdenv.mkDerivation {
+        pname = "docker-stack-${name}";
+        version = "1.0";
+        src = dir;
+        dontPatchShebangs = true; # most stuff is used in docker containers, i'll manually patch the needed shebangs
+        installPhase = ''
+          mkdir -p $out/${name}
+          cp -r . $out/${name}
+          patchShebangs $out/${name}/manage.sh
+          mkdir -p $out/bin
+          ln -s $out/${name}/manage.sh $out/bin/docker-manage-${name}
+        '';
+      };
+
       infraStack = mkDockerStack "infra" ./infra;
+      automationStack = mkDockerStack "automation" ./automation;
+      tedflixStack = mkDockerStack "tedflix" ./tedflix;
       labStack = mkDockerStack "lab" ./lab;
     in {
       packages = [
@@ -65,10 +64,10 @@ in {
         (pkgs.writeScriptBin "docker-volumes-restore"
         (builtins.readFile ./scripts/docker-volumes-restore.sh))
 
-        automationStack
         infraStack
-        labStack
+        automationStack
         tedflixStack
+        labStack
       ];
     };
   };
