@@ -6,9 +6,15 @@
     settings.experimental-features = "nix-command flakes";
   };
 
-  home.file.".config/nvim" = {
-    source = ./nvim;
-    recursive = true;
+  home.file = {
+    ".config/nvim" = {
+      source = ./nvim;
+      recursive = true;
+    };
+
+    ".tmux.conf".text = ''
+      set -g mouse on
+    '';
   };
 
   home.packages = with pkgs; [    
