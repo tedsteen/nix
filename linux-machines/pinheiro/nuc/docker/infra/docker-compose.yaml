@@ -110,6 +110,7 @@ services:
   telegraf:
     build: ./telegraf
     restart: unless-stopped
+    privileged: true
     hostname: "pinheiro-nuc"
     depends_on:
       influxdb:
@@ -118,15 +119,15 @@ services:
       TZ: Europe/Lisbon
       INFLUXDB_ADMIN_TOKEN: MyInitialAdminToken0==
       HOST_MOUNT_PREFIX: /hostfs
+      HOST_ETC: /hostfs/etc
       HOST_PROC: /hostfs/proc
+      HOST_SYS: /hostfs/sys
+      HOST_VAR: /hostfs/var
+      HOST_RUN: /hostfs/run
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - type: bind
-        source: /
-        target: /hostfs
-        read_only: true
-        bind:
-          propagation: rslave
+      - /run/udev:/run/udev:ro
+      - /:/hostfs:ro
     networks:
       - metrics
   
