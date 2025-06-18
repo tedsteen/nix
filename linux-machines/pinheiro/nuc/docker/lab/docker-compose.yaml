@@ -12,8 +12,6 @@ services:
       - "25565:25565"
     environment:
       EULA: true
-      PUID: 1001
-      GUID: 1001
       TZ: Europe/Lisbon
     networks:
       - infra_traefik
