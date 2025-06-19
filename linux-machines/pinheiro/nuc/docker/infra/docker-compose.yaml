@@ -1,4 +1,20 @@
 services:
+  cloudflare-ddns:
+    image: favonia/cloudflare-ddns
+    user: "1000:${DOCKER_GID}"
+    restart: always
+    read_only: true
+    cap_drop: [all]
+    security_opt: [no-new-privileges:true]
+    environment:
+      - TZ=Europe/Lisbon
+      - CLOUDFLARE_API_TOKEN_FILE=/run/secrets/cloudflare_s3n_io_ddns_api_token
+      - DOMAINS=ddns.pinheiro.s3n.io
+      - PROXIED=true
+      - IP6_PROVIDER=none
+    secrets:
+      - cloudflare_s3n_io_ddns_api_token
+  
   site-pinheiro:
     build: pinheiro
     restart: unless-stopped
@@ -159,3 +175,7 @@ volumes:
   influxdb_config:
   grafana:
   traefik_letsencrypt:
+
+secrets:
+  cloudflare_s3n_io_ddns_api_token:
+    file: /run/secrets/cloudflare_s3n_io_ddns_api_token

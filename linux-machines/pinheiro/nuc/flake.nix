@@ -11,14 +11,20 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { nixpkgs, disko, home-manager, ... }: {
+  outputs = { nixpkgs, disko, home-manager, sops-nix, ... }: {
     nixosConfigurations.default = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       
       modules = [
         home-manager.nixosModules.home-manager
+        sops-nix.nixosModules.sops
         ./hardware-configuration.nix
         ../../hardening-config.nix
         ({ pkgs, ... }: import ./docker/docker-stacks.nix {
@@ -87,7 +93,16 @@
           networking.hostId = "1f666b7f"; # head -c4 /dev/urandom | od -A none -t x4
           services.zfs = {
             
-            # TODO: Check https://mynixos.com/options/services.zfs.zed
+            # # TODO: Enable and add email/signal/sms notifications
+            # zed = {
+            #   settings = {
+            #     ZED_EMAIL_ADDR = [];                # disables mail
+            #     ZED_NOTIFY_INTERVAL_SECS = "3600";
+            #     ZED_LOG_EXECS = "YES";              # default is YES, logs execs
+            #     ZED_SYSLOG_PRIORITY = "daemon.info";
+            #     ZED_DEBUG_LOG = "/var/log/zed.log"; # optional
+            #   };
+            # };
 
             autoScrub = {
               enable = true;
@@ -95,6 +110,20 @@
               pools = [ "mediapool" ];
             };
           };
+
+          # # TODO: Enable and add email/signal/sms notifications
+          # services.smartd = {
+          #   enable = true;
+          #   autodetect = false;
+          #   notifications.mail.enable = false;
+
+          #   devices = builtins.map (i: {
+          #     device = "/dev/disk/by-id/usb-ST18000N_T001-3NF101_2024051400025-0:${toString i}";
+          #     # Short test: every Saturday @ 2AM
+          #     # Long test: every 2nd @ 3AM
+          #     options = "-a -d sat -n standby,10 -s (S/../../6/02|L/../../2/03)";
+          #   }) (builtins.genList (x: x) 5);
+          # };
 
           fileSystems."/mnt/mediapool" = {
             # NOTE: If the pool is degraded it might take a long time to import it (see https://github.com/NixOS/nixpkgs/issues/413060)

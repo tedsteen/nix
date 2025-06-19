@@ -29,6 +29,10 @@
     difftastic
     git-lfs
 
+    # secrets management
+    sops
+    age
+
     # nice to have
     watch
     tree

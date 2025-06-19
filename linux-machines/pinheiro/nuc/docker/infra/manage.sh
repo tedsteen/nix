@@ -7,6 +7,7 @@ cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
 case "$CMD" in
     up)
+        export DOCKER_GID=$(getent group docker | cut -d: -f3)
         docker compose -p infra up -d --build --remove-orphans
         ;;
     down)
