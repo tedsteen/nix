@@ -39,7 +39,7 @@
           hostName = "pinheiro-nuc";
           timeZone = "Europe/Lisbon";
         })
-        ({ pkgs, ... }: {
+        ({ config, pkgs, ... }: {
           console.keyMap = "dvorak";
 
           users.users.ted = {
@@ -84,6 +84,37 @@
             }
           ];
 
+          # NOTE: The yaml-file is encrypted with the auto-imported SSH pinheiro-nuc keys, it is only decryptable by the pinheiro-nuc machine
+          #       tl;dr: It was encrypted like this: `sops -e -i secrets.yaml`
+          sops = {
+            defaultSopsFile = ./secrets.yaml;
+            secrets = {
+              cloudflare_s3n_io_ddns_api_token = {
+                mode = "0440";
+                owner = "root";
+                group = "docker";
+              };
+              ntfy_topic = {
+                mode = "0440";
+                owner = "root";
+                group = "docker";
+              };
+            };
+          };
+
+          environment.systemPackages = [
+            (pkgs.writeShellScriptBin "ntfy-alert" ''
+              set -euo pipefail
+              topic=$(<${config.sops.secrets.ntfy_topic.path})
+              curl -sS -d "$1" "https://ntfy.sh/$topic" > /dev/null
+            '')
+            # Highjack the sendmail command to use ntfy-alert
+            (pkgs.writeShellScriptBin "sendmail" ''
+              #!/bin/sh
+              /run/current-system/sw/bin/ntfy-alert "SMARTD: $(cat -)"
+            '')
+          ];
+
           # ZFS stuff
           boot = {
             kernelModules = [ "zfs" ];
@@ -91,16 +122,16 @@
           };
 
           networking.hostId = "1f666b7f"; # head -c4 /dev/urandom | od -A none -t x4
-          services.zfs = {
-            
-            # # TODO: Enable and add email/signal/sms notifications
+          services.zfs = {            
+            # TODO: Fix this
             # zed = {
+            #   enableMail = true;
             #   settings = {
-            #     ZED_EMAIL_ADDR = [];                # disables mail
+            #     ZED_DEBUG_LOG = "/var/log/zed.log";
+            #     ZED_EMAIL_ADDR = [ "zed@pinherio.s3n.io" ];
             #     ZED_NOTIFY_INTERVAL_SECS = "3600";
-            #     ZED_LOG_EXECS = "YES";              # default is YES, logs execs
+            #     ZED_LOG_EXECS = "YES";
             #     ZED_SYSLOG_PRIORITY = "daemon.info";
-            #     ZED_DEBUG_LOG = "/var/log/zed.log"; # optional
             #   };
             # };
 
@@ -111,19 +142,21 @@
             };
           };
 
-          # # TODO: Enable and add email/signal/sms notifications
-          # services.smartd = {
-          #   enable = true;
-          #   autodetect = false;
-          #   notifications.mail.enable = false;
+          services.smartd = {
+            enable = true;
+            autodetect = false;
+            notifications.mail = {
+              enable = true;
+              sender = "smartd@pinherio.s3n.io";
+            };
 
-          #   devices = builtins.map (i: {
-          #     device = "/dev/disk/by-id/usb-ST18000N_T001-3NF101_2024051400025-0:${toString i}";
-          #     # Short test: every Saturday @ 2AM
-          #     # Long test: every 2nd @ 3AM
-          #     options = "-a -d sat -n standby,10 -s (S/../../6/02|L/../../2/03)";
-          #   }) (builtins.genList (x: x) 5);
-          # };
+            devices = builtins.map (i: {
+              device = "/dev/disk/by-id/usb-ST18000N_T001-3NF101_2024051400025-0:${toString i}";
+              # Short test: every Saturday @ 2AM
+              # Long test: every 2nd @ 3AM
+              options = "-a -d sat -n standby,10 -s (S/../../6/02|L/../../2/03)";
+            }) (builtins.genList (x: x) 5);
+          };
 
           fileSystems."/mnt/mediapool" = {
             # NOTE: If the pool is degraded it might take a long time to import it (see https://github.com/NixOS/nixpkgs/issues/413060)

@@ -30,17 +30,6 @@
     };
   };
 
-  # NOTE: The yaml-file is encrypted with the auto-imported SSH pinheiro-nuc keys, it is only decryptable by the pinheiro-nuc machine
-  #       tl;dr: It was encrypted like this: `sops -e -i infra/secrets.yaml`
-  sops.secrets.cloudflare_s3n_io_ddns_api_token = {
-    sopsFile = ./infra/secrets.yaml;
-    format = "yaml";
-    mode = "0440";
-    owner = "root";
-    group = "docker";
-    path = "/run/secrets/cloudflare_s3n_io_ddns_api_token";
-  };
-
   # Allow the docker user to run docker
   users.users.${dockerUser}.extraGroups = [ "docker" ];
   # Configure the docker user with shared docker config + some handy scripts
