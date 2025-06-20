@@ -106,7 +106,7 @@
             (pkgs.writeShellScriptBin "ntfy-alert" ''
               set -euo pipefail
               topic=$(<${config.sops.secrets.ntfy_topic.path})
-              curl -sS -d "$1" "https://ntfy.sh/$topic" > /dev/null
+              ${pkgs.curl}/bin/curl -sS -d "$1" "https://ntfy.sh/$topic" > /dev/null
             '')
             # Highjack the sendmail command to use ntfy-alert
             (pkgs.writeShellScriptBin "sendmail" ''
@@ -114,6 +114,30 @@
               /run/current-system/sw/bin/ntfy-alert "SMARTD: $(cat -)"
             '')
           ];
+          
+          systemd = {
+            services.check-failed-units = {
+              description = "Alert on failed systemd units";
+              serviceConfig = {
+                Type = "oneshot";
+              };
+              script = ''
+                failed=$(systemctl --failed --no-legend)
+                if [ -n "$failed" ]; then
+                  /run/current-system/sw/bin/ntfy-alert "Failed systemd units on pinheiro-nuc:\n\n$failed"
+                fi
+              '';
+            };
+
+            timers.check-failed-units = {
+              wantedBy = [ "timers.target" ];
+              timerConfig = {
+                OnBootSec = "5min";
+                OnUnitActiveSec = "10min";
+                Persistent = true;
+              };
+            };
+          };
 
           # ZFS stuff
           boot = {
@@ -122,18 +146,17 @@
           };
 
           networking.hostId = "1f666b7f"; # head -c4 /dev/urandom | od -A none -t x4
-          services.zfs = {            
-            # TODO: Fix this
-            # zed = {
-            #   enableMail = true;
-            #   settings = {
-            #     ZED_DEBUG_LOG = "/var/log/zed.log";
-            #     ZED_EMAIL_ADDR = [ "zed@pinherio.s3n.io" ];
-            #     ZED_NOTIFY_INTERVAL_SECS = "3600";
-            #     ZED_LOG_EXECS = "YES";
-            #     ZED_SYSLOG_PRIORITY = "daemon.info";
-            #   };
-            # };
+          services.zfs = {
+            zed = {
+              settings = {
+                ZED_DEBUG_LOG = "/var/log/zed.log";
+                ZED_EMAIL_ADDR = [ "root" ];
+                ZED_EMAIL_PROG = "/run/current-system/sw/bin/sendmail"; # Use the highjacked sendmail command
+                ZED_NOTIFY_INTERVAL_SECS = "3600";
+                ZED_LOG_EXECS = "YES";
+                ZED_SYSLOG_PRIORITY = "daemon.info";
+              };
+            };
 
             autoScrub = {
               enable = true;
