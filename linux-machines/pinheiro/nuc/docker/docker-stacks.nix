@@ -1,6 +1,36 @@
 { pkgs, dockerUser, ... }: {
 
+  imports = [
+    ./modules/restic-stack-backup.nix
+  ];
+
   virtualisation.docker.enable = true;
+
+  environment.etc."restic/docker-stacks.env".text = ''
+    RESTIC_REPOSITORY="/backup/docker-stacks"
+    RESTIC_PASSWORD="supersecret"
+  '';
+
+  services.resticDockerStackBackup = {
+    envFile = "/etc/restic/docker-stacks.env";
+    stacks = {
+      infra = {
+        schedule = "Mon 03:00 UTC"; # weekly on Mondays at 03:00 UTC
+      };
+
+      lab = {
+        schedule = "Tue 03:00 UTC"; # weekly on Tuesdays at 03:00 UTC
+      };
+
+      automation = {
+        schedule = "*-*-* 04:00 UTC"; # daily at 04:00 UTC
+      };
+      
+      tedflix = {
+        schedule = "*-*-* 05:00 UTC"; # daily at 05:00 UTC
+      };
+    };
+  };
 
   systemd.services.docker-stack-tedflix-guard = {
     description = "Keep tedflix in sync with mediapool mount";
@@ -59,11 +89,6 @@
       labStack = mkDockerStack "lab" ./lab;
     in {
       packages = [
-        (pkgs.writeScriptBin "docker-volumes-backup"
-        (builtins.readFile ./scripts/docker-volumes-backup.sh))
-        (pkgs.writeScriptBin "docker-volumes-restore"
-        (builtins.readFile ./scripts/docker-volumes-restore.sh))
-
         infraStack
         automationStack
         tedflixStack
