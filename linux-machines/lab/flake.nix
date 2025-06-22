@@ -23,11 +23,9 @@
           inherit disko;
           mainDevice = "/dev/vda";
         })
-        (import ../basic-system-config.nix {
+        (import ../../basic-system-config.nix {
           hostName = "lab";
           timeZone = "Europe/Lisbon";
-        })
-        (import ../../shared/base-config.nix {
           username = "ted";
           email = "ted.steen@gmail.com";
           fullName = "Ted Steen";

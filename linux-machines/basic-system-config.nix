@@ -1,5 +1,10 @@
 # Bare minimum linux system configuration
-{ hostName, timeZone, ... }: {  
+{ hostName, timeZone, username, email, fullName, ... }: { 
+  imports = [
+    (import ../shared/base-config.nix {
+      inherit username email fullName;
+    })
+  ];
   networking = {
     hostName = hostName;
     nameservers = [ "1.1.1.1" "8.8.8.8" ];

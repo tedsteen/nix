@@ -35,12 +35,11 @@
         (import ../../basic-system-config.nix {
           hostName = "pinheiro-nuc";
           timeZone = "Europe/Lisbon";
-        })
-        (import ../../../shared/base-config.nix {
           username = "ted";
           email = "ted.steen@gmail.com";
           fullName = "Ted Steen";
         })
+
         ({ config, pkgs, ... }: {
           console.keyMap = "dvorak";
           
