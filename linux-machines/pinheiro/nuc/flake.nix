@@ -27,10 +27,7 @@
         sops-nix.nixosModules.sops
         ./hardware-configuration.nix
         ../../hardening-config.nix
-        ({ pkgs, ... }: import ./docker/docker-stacks.nix {
-          inherit pkgs;
-          dockerUser = "ted";
-        })
+        ./docker/modules/docker-stacks.nix
         (import ../../system-boot-config.nix {
           inherit disko;
           mainDevice = "/dev/sda";
@@ -41,12 +38,72 @@
         })
         ({ config, pkgs, ... }: {
           console.keyMap = "dvorak";
+          
+          virtualisation.docker.enable = true;
+          
+          environment.etc."restic/docker-stacks.env".text = ''
+            RESTIC_REPOSITORY="/backup/docker-stacks"
+            RESTIC_PASSWORD="password"
+          '';
+
+          services.dockerStack = {
+            resticEnvFile = "/etc/restic/docker-stacks.env";
+            stacks = {
+              infra = {
+                path = ./docker/infra;
+                backupSchedule = "Mon 03:00 UTC"; # weekly on Mondays at 03:00 UTC
+              };
+
+              automation = {
+                path = ./docker/automation;
+                backupSchedule = "*-*-* 04:00 UTC"; # daily at 04:00 UTC
+              };
+              
+              tedflix = {
+                path = ./docker/tedflix;
+                backupSchedule = "*-*-* 05:00 UTC"; # daily at 05:00 UTC
+              };
+
+              lab = {
+                path = ./docker/lab;
+                backupSchedule = "Tue 03:00 UTC"; # weekly on Tuesdays at 03:00 UTC
+              };
+            };
+          };
+
+          systemd.services.docker-stack-tedflix-guard = {
+            description = "Keep tedflix in sync with mediapool mount";
+            path = [ pkgs.bash pkgs.docker pkgs.util-linux ];
+            wantedBy = [ "multi-user.target" "mnt-mediapool.mount" ];
+            after = [ "docker.service" "mnt-mediapool.mount" ];
+            wants = [ "docker.service" "mnt-mediapool.mount" ];
+            unitConfig = {
+              BindsTo = [ "mnt-mediapool.mount" ]; # service stops if mount goes away
+              RequiresMountsFor = [ "/mnt/mediapool" ];
+            };
+            serviceConfig = {
+              Type = "oneshot";
+              RemainAfterExit = true;
+              ExecStart = pkgs.writeScript "tedflix-start-on-remount" ''
+                #!${pkgs.bash}/bin/bash
+                if mountpoint -q /mnt/mediapool; then
+                  echo "[+] mediapool mounted, starting the tedflix stack"
+                  docker compose -p tedflix start
+                fi
+              '';
+              ExecStop = pkgs.writeScript "tedflix-down-on-unmount" ''
+                #!${pkgs.bash}/bin/bash
+                echo "[+] mediapool unmounted, stopping the tedflix stack"
+                docker compose -p tedflix stop
+              '';
+            };
+          };
 
           users.users.ted = {
             isNormalUser = true;
             shell = pkgs.zsh;
-            # Sudo for ted
-            extraGroups = [ "wheel" ];
+            # Sudo and docker access for ted
+            extraGroups = [ "wheel" "docker" ];
             openssh.authorizedKeys.keys = [
               "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKeAaaHvF/6KmN2neKxeHyL0WEuVC5XIp0CHp1i3u6Ff ted@mbp-2025-05-04"
               "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOp8j7ztDOXAovDvPh6OaIoWWnHmr8n63/wdh11AvtZo ted@imac-2025-05-07"
@@ -55,6 +112,7 @@
           
           home-manager.users."ted" = {
             imports = [
+              ../../../shared/docker-config.nix
               (import ../../../shared/basic-shell-config.nix {
                 email = "ted.steen@gmail.com";
                 fullName = "Ted Steen";
