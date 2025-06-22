@@ -30,7 +30,12 @@
       modules = [
         nix-homebrew.darwinModules.nix-homebrew
         home-manager.darwinModules.home-manager
-        ./basic-system-config.nix
+        (import ./base-user-config.nix {
+          inherit pkgs;
+          username = "tedsteen";
+          fullName = "Ted Steen";
+          email = "ted.steen@gmail.com";
+        })
         {
           users.users.tedsteen = {
             name = "tedsteen";
@@ -39,10 +44,6 @@
 
           networking.computerName = "Ted's MacBook Pro";
           home-manager.users.tedsteen = {
-            imports = [
-              (import ./basic-ted-user-config.nix { inherit pkgs; username = "tedsteen";})
-            ];
-
             # The state versions are required and should stay at the version you
             # originally installed.
             # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
@@ -65,7 +66,12 @@
       modules = [
         nix-homebrew.darwinModules.nix-homebrew
         home-manager.darwinModules.home-manager
-        ./basic-system-config.nix
+        (import ./base-user-config.nix {
+          inherit pkgs;
+          username = "tedsteen";
+          fullName = "Ted Steen";
+          email = "ted.steen@gmail.com";
+        })
         {
           users.users.tedsteen = {
             name = "tedsteen";
@@ -74,10 +80,6 @@
 
           networking.computerName = "Steen's iMac";
           home-manager.users.tedsteen = {
-            imports = [
-              (import ./basic-ted-user-config.nix { inherit pkgs; username = "tedsteen";})
-            ];
-
             # The state versions are required and should stay at the version you
             # originally installed.
             # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!

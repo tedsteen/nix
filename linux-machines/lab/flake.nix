@@ -27,6 +27,12 @@
           hostName = "lab";
           timeZone = "Europe/Lisbon";
         })
+        (import ../../shared/base-config.nix {
+          username = "ted";
+          email = "ted.steen@gmail.com";
+          fullName = "Ted Steen";
+        })
+
         home-manager.nixosModules.home-manager
         ({ pkgs, ... }: {
 
@@ -41,13 +47,6 @@
           };
           
           home-manager.users."ted" = {
-            imports = [
-              (import ../../shared/basic-shell-config.nix {
-                email = "ted.steen@gmail.com";
-                fullName = "Ted Steen";
-              })
-            ];
-            
             # The state versions are required and should stay at the version you
             # originally installed.
             # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!

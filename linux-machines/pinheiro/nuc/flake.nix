@@ -36,6 +36,11 @@
           hostName = "pinheiro-nuc";
           timeZone = "Europe/Lisbon";
         })
+        (import ../../../shared/base-config.nix {
+          username = "ted";
+          email = "ted.steen@gmail.com";
+          fullName = "Ted Steen";
+        })
         ({ config, pkgs, ... }: {
           console.keyMap = "dvorak";
           
@@ -111,14 +116,6 @@
           };
           
           home-manager.users."ted" = {
-            imports = [
-              ../../../shared/docker-config.nix
-              (import ../../../shared/basic-shell-config.nix {
-                email = "ted.steen@gmail.com";
-                fullName = "Ted Steen";
-              })
-            ];
-            
             # The state versions are required and should stay at the version you
             # originally installed.
             # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
