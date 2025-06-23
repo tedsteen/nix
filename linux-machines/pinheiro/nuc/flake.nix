@@ -45,6 +45,7 @@
           
           virtualisation.docker.enable = true;
           
+          # TODO: Move to hetzner (https://www.hetzner.com/storage/storage-box/)
           environment.etc."restic/docker-stacks.env".text = ''
             RESTIC_REPOSITORY="/backup/docker-stacks"
             RESTIC_PASSWORD="password"

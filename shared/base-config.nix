@@ -37,6 +37,7 @@
       tree
       htop
       tmux
+      jq
     ];
 
     programs = {

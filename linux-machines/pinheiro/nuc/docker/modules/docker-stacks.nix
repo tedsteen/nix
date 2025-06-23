@@ -4,7 +4,7 @@ with lib;
   options.services.dockerStack = {
     resticEnvFile = mkOption {
       type        = types.path;
-      description = "File with RESTIC_* vars shared by every job.";
+      description = "Environment for restic.";
     };
 
     stacks = mkOption {
@@ -32,7 +32,7 @@ with lib;
     systemd.services = let
       mkBackupScript = name: pkgs.writeShellApplication {
         name = "restic-${name}-backup";
-        runtimeInputs = [ pkgs.restic pkgs.docker pkgs.bash ];
+        runtimeInputs = [ pkgs.restic pkgs.docker pkgs.bash pkgs.jq ];
         text = ''
           set -euo pipefail
           STACK_NAME=${name}
@@ -42,21 +42,41 @@ with lib;
             restic init
           fi
 
-          mapfile -t VOLUMES < <(docker volume ls --filter label=com.docker.compose.project=$STACK_NAME -q)
-          [[ "''${#VOLUMES[@]}" -eq 0 ]] && {
-            echo "no vols for $STACK_NAME, bailing"; exit 0; }
+          readarray -t VOLUMES < <(
+            docker volume ls \
+              --filter "label=com.docker.compose.project=$STACK_NAME" \
+              --format '{{json .}}' \
+            | jq -r '.Name'
+          )
+          
+          if ((''${#VOLUMES[@]} == 0)); then
+            echo "No volumes for $STACK_NAME, bailing"
+            exit 0
+          fi
+          
+          readarray -t MOUNTPOINTS < <(docker volume inspect "''${VOLUMES[@]}" | jq -r '.[].Mountpoint')
+          readarray -t RUNNING_SERVICES < <(
+            docker compose -p "$STACK_NAME" ps --format json | jq -r 'select(.State=="running") | .Service'
+          )
 
-          mapfile -t MOUNTPOINTS < <(docker volume inspect -f '{{ .Mountpoint }}' "''${VOLUMES[@]}")
+          start_stack() { :; } # no-op by default, will be overridden if there are running services
+          if ((''${#RUNNING_SERVICES[@]})); then
+            docker compose -p "$STACK_NAME" stop "''${RUNNING_SERVICES[@]}"
+            start_stack() {
+              docker compose -p "$STACK_NAME" start "''${RUNNING_SERVICES[@]}"
+            }
+            # Make sure the stack is started if the backup fails.
+            trap start_stack EXIT
+          fi
 
-          echo "Stopping stack $STACK_NAME"
-          docker compose -p "$STACK_NAME" stop || true
-          trap 'docker compose -p "$STACK_NAME" start || echo "Failed to restart!"' EXIT
+          RES_HOST="docker-$STACK_NAME"
+          restic backup "''${MOUNTPOINTS[@]}" --host $RES_HOST
+          
+          # The backup was successful. To avoid waiting for the pruning, remove the trap and manually run start_stack.
+          trap - EXIT
+          start_stack
 
-          restic backup "''${MOUNTPOINTS[@]}" \
-            --host "docker-$STACK_NAME" \
-            --tag stack --tag "$STACK_NAME"
-
-          restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 3 --prune
+          restic forget --host $RES_HOST --keep-daily 7 --keep-weekly 4 --keep-monthly 3 --prune
         '';
       };
     in mapAttrs' (name: _: nameValuePair (unitName name) {
@@ -99,6 +119,65 @@ with lib;
           ln -s $out/${name}/manage.sh $out/bin/docker-manage-stack-${name}
         '';
       };
-    in mapAttrsToList (name: sCfg: mkDockerStack name sCfg.path) cfg.stacks;
+    in mapAttrsToList (name: sCfg: mkDockerStack name sCfg.path) cfg.stacks ++ [
+      (pkgs.writeShellApplication {
+        name          = "restic-docker-stack-restore";
+        runtimeInputs = [ pkgs.restic pkgs.docker pkgs.bash pkgs.findutils pkgs.jq ];
+        text = ''
+          #!/usr/bin/env bash
+          set -euo pipefail
+
+          usage() { echo "Usage: $(basename "$0") <stack>"; exit 1; }
+
+          [[ $# -eq 1 ]] || usage
+          [[ "$1" =~ ^(-h|--help)$ ]] && usage
+          STACK_NAME="$1"
+          [[ -z "$STACK_NAME" ]] && usage
+
+          #TODO: source /etc/restic-env.sh
+          export RESTIC_REPOSITORY="/backup/docker-stacks"
+          export RESTIC_PASSWORD="password"
+
+          readarray -t VOLUMES < <(
+            docker volume ls \
+              --filter "label=com.docker.compose.project=$STACK_NAME" \
+              --format '{{json .}}' \
+            | jq -r '.Name'
+          )
+          
+          if ((''${#VOLUMES[@]} == 0)); then
+            echo "No volumes for $STACK_NAME, bailing"
+            exit 0
+          fi
+          
+          readarray -t MOUNTPOINTS < <(docker volume inspect "''${VOLUMES[@]}" | jq -r '.[].Mountpoint')
+
+          # TODO: Pick mountpoints (checkboxes, none by default)
+
+          restic --host docker-"$STACK_NAME" snapshots
+          # TODO: Make this comboboxes
+          read -rp "Pick a snapshot to see a dry-run [latest]: " SNAP
+          SNAP=''${SNAP:-latest}
+
+          restore() {
+            restic restore "$SNAP" \
+              --host "docker-$STACK_NAME" \
+              --target / \
+              "''${MOUNTPOINTS[@]/#/--include=}" \
+              --delete \
+              "$@"
+          }
+
+          restore --dry-run -vv | grep -v '^unchanged '
+
+          read -rp "Continue with actual restore? (WARNING: Make sure any docker containers affected are stopped) [y/N] " REPLY; echo
+          [[ $REPLY =~ ^[Yy]$ ]] || { echo "Aborted"; exit 0; }
+
+          restore
+
+          echo "$STACK_NAME is restored to $SNAP"
+        '';
+      })
+    ];
   });
 }
