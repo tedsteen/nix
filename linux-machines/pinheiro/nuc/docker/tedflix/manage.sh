@@ -21,10 +21,10 @@ case "$CMD" in
         docker compose -p tedflix down
         ;;
     start)
-        docker compose -p automation start
+        docker compose -p tedflix start
         ;;
     stop)
-        docker compose -p automation stop
+        docker compose -p tedflix stop
         ;;
     restart)
         docker compose -p tedflix restart

@@ -14,10 +14,10 @@ case "$CMD" in
         docker compose -p infra down
         ;;
     start)
-        docker compose -p automation start
+        docker compose -p infra start
         ;;
     stop)
-        docker compose -p automation stop
+        docker compose -p infra stop
         ;;
     restart)
         docker compose -p infra restart

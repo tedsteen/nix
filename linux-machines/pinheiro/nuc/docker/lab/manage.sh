@@ -13,10 +13,10 @@ case "$CMD" in
         docker compose -p lab down
         ;;
     start)
-        docker compose -p automation start
+        docker compose -p lab start
         ;;
     stop)
-        docker compose -p automation stop
+        docker compose -p lab stop
         ;;
     restart)
         docker compose -p lab restart
