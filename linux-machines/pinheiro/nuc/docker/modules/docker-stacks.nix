@@ -184,8 +184,6 @@ with lib;
           [[ $REPLY =~ ^[Yy]$ ]] || { echo "Aborted"; exit 0; }
 
           restore
-
-          echo "$STACK_NAME is restored to $SNAP"
         '';
       })
     ];
