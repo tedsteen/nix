@@ -122,7 +122,7 @@ with lib;
     in mapAttrsToList (name: sCfg: mkDockerStack name sCfg.path) cfg.stacks ++ [
       (pkgs.writeShellApplication {
         name          = "restic-docker-stack-restore";
-        runtimeInputs = [ pkgs.restic pkgs.docker pkgs.bash pkgs.findutils pkgs.jq ];
+        runtimeInputs = [ pkgs.restic pkgs.docker pkgs.bash pkgs.findutils pkgs.jq pkgs.gum ];
         text = ''
           #!/usr/bin/env bash
           set -euo pipefail
@@ -134,7 +134,8 @@ with lib;
           STACK_NAME="$1"
           [[ -z "$STACK_NAME" ]] && usage
 
-          #TODO: source /etc/restic-env.sh
+          #TODO: Source instead of hardcoding here, but the next line gives the error "the SC1091 (info): Not following: /etc/restic/docker-stacks.env was not specified as input (see shellcheck -x)."
+          #. "${cfg.resticEnvFile}"
           export RESTIC_REPOSITORY="/backup/docker-stacks"
           export RESTIC_PASSWORD="password"
 
@@ -152,25 +153,34 @@ with lib;
           
           readarray -t MOUNTPOINTS < <(docker volume inspect "''${VOLUMES[@]}" | jq -r '.[].Mountpoint')
 
-          # TODO: Pick mountpoints (checkboxes, none by default)
+          mapfile -t SELECTED_MPS < <(
+            printf '%s\n' "''${MOUNTPOINTS[@]}" | \
+            gum choose --header="Select mountpoints to include ⤵ " \
+                --no-limit | sed '/^$/d'
+          )
+
+          (( ''${#SELECTED_MPS[@]} )) || { echo "Nothing chosen, aborting"; exit 0; }
 
           restic --host docker-"$STACK_NAME" snapshots
-          # TODO: Make this comboboxes
-          read -rp "Pick a snapshot to see a dry-run [latest]: " SNAP
-          SNAP=''${SNAP:-latest}
+          SNAP=$(restic --host "docker-$STACK_NAME" snapshots --json \
+            | jq -r 'sort_by(.time) | reverse[] | "\(.short_id)"' \
+            | gum choose --header "Choose a snapshot to do a dry-run ⤵ ")
 
           restore() {
             restic restore "$SNAP" \
               --host "docker-$STACK_NAME" \
               --target / \
-              "''${MOUNTPOINTS[@]/#/--include=}" \
+              "''${SELECTED_MPS[@]/#/--include=}" \
               --delete \
               "$@"
           }
 
-          restore --dry-run -vv | grep -v '^unchanged '
+          restore --no-lock --dry-run -vv | grep -v '^unchanged '
 
-          read -rp "Continue with actual restore? (WARNING: Make sure any docker containers affected are stopped) [y/N] " REPLY; echo
+          echo
+          echo "Continue with actual restore of mountpoints ''${SELECTED_MPS[*]} from snapshot $SNAP?"
+          echo "WARNING: Make sure any docker containers affected are stopped"
+          read -rp "[y/N] " REPLY; echo
           [[ $REPLY =~ ^[Yy]$ ]] || { echo "Aborted"; exit 0; }
 
           restore
