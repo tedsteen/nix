@@ -28,11 +28,9 @@
         ./hardware-configuration.nix
         ../../hardening-config.nix
         ./docker/modules/docker-stacks.nix
-        (import ../../system-boot-config.nix {
+        (import ../../base-system-config.nix {
           inherit disko;
           mainDevice = "/dev/sda";
-        })
-        (import ../../basic-system-config.nix {
           hostName = "pinheiro-nuc";
           timeZone = "Europe/Lisbon";
           username = "ted";

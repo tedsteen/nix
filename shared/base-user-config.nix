@@ -1,4 +1,4 @@
-# Bare minimum configuration
+# Bare minimum user configuration
 { username, email, fullName }: { config, lib, pkgs, ... }: {
   home-manager.users.${username} = {
     nix = {

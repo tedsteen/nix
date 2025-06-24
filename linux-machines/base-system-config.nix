@@ -1,5 +1,11 @@
-{ disko, mainDevice, ... }: {
-  imports = [ disko.nixosModules.disko ];
+# Bare minimum linux system configuration with a user
+{ disko, mainDevice, hostName, timeZone, username, email, fullName, ... }: { 
+  imports = [
+    disko.nixosModules.disko
+    (import ../shared/base-user-config.nix {
+      inherit username email fullName;
+    })
+  ];
 
   disko.devices = {
     disk.main = {
@@ -34,5 +40,22 @@
   boot.loader = {
     systemd-boot.enable = true;
     efi.canTouchEfiVariables = true;
+  };
+
+  networking = {
+    hostName = hostName;
+    nameservers = [ "1.1.1.1" "8.8.8.8" ];
+    enableIPv6 = false;
+  };
+  
+  time.timeZone = timeZone;
+  environment.sessionVariables.EDITOR="nvim";
+
+  programs = {
+    command-not-found.enable = false;
+    zsh.enable = true;
+    neovim = {
+      enable = true;
+    };
   };
 }

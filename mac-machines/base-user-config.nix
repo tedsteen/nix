@@ -1,6 +1,6 @@
 {pkgs, username, email, fullName, ...}: {
   imports = [
-    (import ../shared/base-config.nix {
+    (import ../shared/base-user-config.nix {
         inherit username email fullName;
     })
   ];

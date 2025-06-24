@@ -19,11 +19,9 @@
       
       modules = [
         ./hardware-configuration.nix
-        (import ../system-boot-config.nix {
+        (import ../base-system-config.nix {
           inherit disko;
           mainDevice = "/dev/vda";
-        })
-        (import ../../basic-system-config.nix {
           hostName = "lab";
           timeZone = "Europe/Lisbon";
           username = "ted";
