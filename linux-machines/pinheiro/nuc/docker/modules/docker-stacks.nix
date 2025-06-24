@@ -134,10 +134,10 @@ with lib;
           STACK_NAME="$1"
           [[ -z "$STACK_NAME" ]] && usage
 
-          #TODO: Source instead of hardcoding here, but the next line gives the error "the SC1091 (info): Not following: /etc/restic/docker-stacks.env was not specified as input (see shellcheck -x)."
-          #. "${cfg.resticEnvFile}"
-          export RESTIC_REPOSITORY="/backup/docker-stacks"
-          export RESTIC_PASSWORD="password"
+          set -a
+          # shellcheck disable=SC1091
+          . "${cfg.resticEnvFile}"
+          set +a
 
           readarray -t VOLUMES < <(
             docker volume ls \
