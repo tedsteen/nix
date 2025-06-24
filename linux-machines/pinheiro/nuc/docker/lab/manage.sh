@@ -12,11 +12,17 @@ case "$CMD" in
     down)
         docker compose -p lab down
         ;;
+    start)
+        docker compose -p automation start
+        ;;
+    stop)
+        docker compose -p automation stop
+        ;;
     restart)
         docker compose -p lab restart
         ;;
     *)
-        echo "Usage: $(basename "$0") up|down|restart"
+        echo "Usage: $(basename "$0") up|down|start|stop|restart"
         exit 1
         ;;
 esac
