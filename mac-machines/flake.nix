@@ -30,8 +30,9 @@
       modules = [
         nix-homebrew.darwinModules.nix-homebrew
         home-manager.darwinModules.home-manager
-        (import ./base-user-config.nix {
+        (import ./base-and-user-config.nix {
           inherit pkgs;
+          computerName = "Ted's MacBook Pro";
           username = "tedsteen";
           fullName = "Ted Steen";
           email = "ted.steen@gmail.com";
@@ -42,7 +43,6 @@
             home = "/Users/tedsteen";
           };
 
-          networking.computerName = "Ted's MacBook Pro";
           home-manager.users.tedsteen = {
             # The state versions are required and should stay at the version you
             # originally installed.
@@ -66,8 +66,9 @@
       modules = [
         nix-homebrew.darwinModules.nix-homebrew
         home-manager.darwinModules.home-manager
-        (import ./base-user-config.nix {
+        (import ./base-and-user-config.nix {
           inherit pkgs;
+          computerName = "Steen's iMac";
           username = "tedsteen";
           fullName = "Ted Steen";
           email = "ted.steen@gmail.com";
@@ -78,7 +79,6 @@
             home = "/Users/tedsteen";
           };
 
-          networking.computerName = "Steen's iMac";
           home-manager.users.tedsteen = {
             # The state versions are required and should stay at the version you
             # originally installed.
