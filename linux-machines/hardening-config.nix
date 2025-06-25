@@ -10,7 +10,7 @@
         ignoreIP = [
             "10.0.0.0/8" "172.16.0.0/12" "192.168.0.0/16"
         ];
-        bantime = "1h"; # Ban IPs for one day on the first ban
+        bantime = "1h"; # Ban IPs for one hour on the first ban
         bantime-increment = {
             enable = true; # Enable increment of bantime after each violation
             multipliers = "1 2 4 8 16 32 64";

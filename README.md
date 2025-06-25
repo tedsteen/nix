@@ -6,7 +6,7 @@ Depends on the nix package manager: https://nixos.org/download/
 ## Managing linux machines
 Make sure your target machine is reachable over SSH using root or user with passwordless sudo.
 
-### Bootstraping a new machine
+### Bootstrapping a new machine
 ```bash
 ./create_machine.sh <user>@<ip> <path_to_linux_machine>
 ```
