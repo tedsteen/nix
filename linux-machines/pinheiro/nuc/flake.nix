@@ -137,9 +137,8 @@
             }
           ];
 
-          # NOTE: The yaml-file is encrypted with the auto-imported SSH pinheiro-nuc keys, it is only decryptable by the pinheiro-nuc machine
-          #       tl;dr: It was encrypted like this: `sops -e -i secrets.yaml`
           sops = {
+            # Encrypted with `sops -e -i secrets.yaml`, see `.sops.yaml` for recipients.
             defaultSopsFile = ./secrets.yaml;
             secrets = {
               cloudflare_s3n_io_ddns_api_token = {
