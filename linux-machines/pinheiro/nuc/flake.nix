@@ -165,6 +165,12 @@
               #!/bin/sh
               /run/current-system/sw/bin/ntfy-alert "SMARTD: $(cat -)"
             '')
+            # smartd-specific wrapper that picks up $SMARTD_MESSAGE
+            (pkgs.writeShellScriptBin "ntfy-smartd" ''
+              #!${pkgs.bash}/bin/bash
+              set -euo pipefail
+              /run/current-system/sw/bin/ntfy-alert "SMARTD: ''${SMARTD_MESSAGE:-unknown}"
+            '')
           ];
           
           systemd = {
@@ -220,16 +226,16 @@
           services.smartd = {
             enable = true;
             autodetect = false;
-            notifications.mail = {
-              enable = true;
-              sender = "smartd@pinherio.s3n.io";
-            };
 
             devices = builtins.map (i: {
               device = "/dev/disk/by-id/usb-ST18000N_T001-3NF101_2024051400025-0:${toString i}";
-              # Short test: every Saturday @ 2AM
-              # Long test: every 2nd @ 3AM
-              options = "-a -d sat -n standby,10 -s (S/../../6/02|L/../../2/03)";
+              options =
+                "-a " +                            # monitor everything
+                "-d sat " +                        # SAT layer
+                "-n standby,10 " +                 # don’t spin-up
+                "-s (S/../../6/02|L/01/../03) " +  # short Sat 02:00, long 1st of month 03:00, never same day as scrub
+                "-m <nomail> " +                   # *dummy* mail target (required)
+                "-M exec /run/current-system/sw/bin/ntfy-smartd";
             }) (builtins.genList (x: x) 5);
           };
 
