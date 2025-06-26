@@ -1,3 +1,8 @@
+## Swap a disk
+autoreplace is on
+See: https://chatgpt.com/share/685c7e48-8b60-800d-b9cd-8459808af46a
+And see: https://chatgpt.com/c/685d422a-7df4-800d-a780-25479c57e9e4
+
 ## Testing zfs in raidz1
 ```bash
 # Create a temporary test-pool
