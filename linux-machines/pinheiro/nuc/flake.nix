@@ -52,24 +52,25 @@
           services.dockerStack = {
             resticEnvFile = "/etc/restic/docker-stacks.env";
             stacks = {
+              # Run all backups on Saturday, from 01:00 CET to 02:30 CET
               infra = {
                 path = ./docker/infra;
-                backupSchedule = "Mon 03:00 UTC"; # weekly on Mondays at 03:00 UTC
+                backupSchedule = "Sat 01:00 CET";
               };
 
               automation = {
                 path = ./docker/automation;
-                backupSchedule = "*-*-* 04:00 UTC"; # daily at 04:00 UTC
-              };
-              
-              tedflix = {
-                path = ./docker/tedflix;
-                backupSchedule = "*-*-* 05:00 UTC"; # daily at 05:00 UTC
+                backupSchedule = "Sat 01:30 CET";
               };
 
               lab = {
                 path = ./docker/lab;
-                backupSchedule = "Tue 03:00 UTC"; # weekly on Tuesdays at 03:00 UTC
+                backupSchedule = "Sat 02:00 CET";
+              };
+
+              tedflix = {
+                path = ./docker/tedflix;
+                backupSchedule = "Sat 02:30 CET";
               };
             };
           };
@@ -197,6 +198,21 @@
             };
           };
 
+          services.smartd = {
+            enable = true;
+            autodetect = false;
+            devices = builtins.map (i: {
+              device = "/dev/disk/by-id/usb-ST18000N_T001-3NF101_2024051400025-0:${toString i}";
+              options =
+                "-a " +                                 # Monitor everything
+                "-d sat " +                             # SAT layer
+                "-n standby,10 " +                      # Don’t spin-up
+                "-s (S/../../7/02|L/../01-07/1/01) " +  # Short - Sun @ 01:00. Long - first Monday of the month @ 01:00
+                "-m <nomail> " +                        # *Dummy* mail target (required)
+                "-M exec /run/current-system/sw/bin/ntfy-smartd";
+            }) (builtins.genList (x: x) 5);
+          };
+
           # ZFS stuff
           boot = {
             kernelModules = [ "zfs" ];
@@ -218,25 +234,9 @@
 
             autoScrub = {
               enable = true;
-              interval = "monthly";
+              interval = "Mon *-*-08..14 01:00"; # 2nd Monday of the month @ 01:00
               pools = [ "mediapool" ];
             };
-          };
-
-          services.smartd = {
-            enable = true;
-            autodetect = false;
-
-            devices = builtins.map (i: {
-              device = "/dev/disk/by-id/usb-ST18000N_T001-3NF101_2024051400025-0:${toString i}";
-              options =
-                "-a " +                            # monitor everything
-                "-d sat " +                        # SAT layer
-                "-n standby,10 " +                 # don’t spin-up
-                "-s (S/../../6/02|L/01/../03) " +  # short Sat 02:00, long 1st of month 03:00, never same day as scrub
-                "-m <nomail> " +                   # *dummy* mail target (required)
-                "-M exec /run/current-system/sw/bin/ntfy-smartd";
-            }) (builtins.genList (x: x) 5);
           };
 
           fileSystems."/mnt/mediapool" = {
