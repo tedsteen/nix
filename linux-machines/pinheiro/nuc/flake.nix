@@ -206,7 +206,6 @@
               options =
                 "-a " +                                 # Monitor everything
                 "-d sat " +                             # SAT layer
-                "-n standby,10 " +                      # Don’t spin-up
                 "-s (S/../../7/02|L/../01-07/1/01) " +  # Short - Sun @ 01:00. Long - first Monday of the month @ 01:00
                 "-m <nomail> " +                        # *Dummy* mail target (required)
                 "-M exec /run/current-system/sw/bin/ntfy-smartd";
