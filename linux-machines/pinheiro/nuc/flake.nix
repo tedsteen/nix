@@ -164,7 +164,7 @@
             # Highjack the sendmail command to use ntfy-alert
             (pkgs.writeShellScriptBin "sendmail" ''
               #!/bin/sh
-              /run/current-system/sw/bin/ntfy-alert "SMARTD: $(cat -)"
+              /run/current-system/sw/bin/ntfy-alert "$(cat -)"
             '')
             # smartd-specific wrapper that picks up $SMARTD_MESSAGE
             (pkgs.writeShellScriptBin "ntfy-smartd" ''
