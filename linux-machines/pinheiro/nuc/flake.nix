@@ -157,6 +157,7 @@
 
           environment.systemPackages = [
             (pkgs.writeShellScriptBin "ntfy-alert" ''
+              #!/bin/sh
               set -euo pipefail
               topic=$(<${config.sops.secrets.ntfy_topic.path})
               ${pkgs.curl}/bin/curl -sS -d "$1" "https://ntfy.sh/$topic" > /dev/null
@@ -168,7 +169,7 @@
             '')
             # smartd-specific wrapper that picks up $SMARTD_MESSAGE
             (pkgs.writeShellScriptBin "ntfy-smartd" ''
-              #!${pkgs.bash}/bin/bash
+              #!/bin/sh
               set -euo pipefail
               /run/current-system/sw/bin/ntfy-alert "SMARTD: ''${SMARTD_MESSAGE:-unknown}"
             '')
