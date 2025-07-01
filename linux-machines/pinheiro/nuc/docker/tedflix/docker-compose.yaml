@@ -23,9 +23,7 @@ services:
       - 'traefik.http.services.tedflix_prowlarr.loadbalancer.server.port=9696'
       - 'traefik.docker.network=infra_traefik'
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/Lisbon
+      TZ: Europe/Lisbon
     networks:
       - infra_traefik
       - default # For access to flaresolverr
@@ -37,40 +35,39 @@ services:
     restart: unless-stopped
     pull_policy: always
     environment:
-      - LOG_LEVEL=info
-      - LOG_HTML=false
-      - CAPTCHA_SOLVER=none
-      - TZ=Europe/Lisbon
+      LOG_LEVEL: info
+      LOG_HTML: false
+      CAPTCHA_SOLVER: none
+      TZ: Europe/Lisbon
+  
+  ombi:
+    image: linuxserver/ombi:latest
+    restart: unless-stopped
+    pull_policy: always
+    labels:
+      - 'traefik.enable=true'
 
-  # TODO: Enable this when it's moved over to pinheiro  
-  # ombi:
-  #   image: linuxserver/ombi:latest
-  #   restart: unless-stopped
-  #   pull_policy: always
-  #   labels:
-  #     - 'traefik.enable=true'
+      - 'traefik.http.routers.tedflix_ombi_public.rule=Host(`ombi.hal.pub`)'
+      - 'traefik.http.routers.tedflix_ombi_public.entrypoints=web_public_secure'
+      - 'traefik.http.routers.tedflix_ombi_public.tls.certresolver=defaultcertresolver'
+      - 'traefik.http.routers.tedflix_ombi_public.service=tedflix_ombi_public'
+      - 'traefik.http.services.tedflix_ombi_public.loadbalancer.server.port=3579'
 
-  #     - 'traefik.http.routers.tedflix_ombi_public.rule=Host(`ombi.hal.pub`)'
-  #     - 'traefik.http.routers.tedflix_ombi_public.entrypoints=web_public_secure'
-  #     - 'traefik.http.routers.tedflix_ombi_public.tls.certresolver=defaultcertresolver'
-  #     - 'traefik.http.routers.tedflix_ombi_public.service=tedflix_ombi_public'
-  #     - 'traefik.http.services.tedflix_ombi_public.loadbalancer.server.port=3579'
+      - 'traefik.http.routers.tedflix_ombi.rule=Host(`ombi.pinheiro.s3n.io`)'
+      - 'traefik.http.routers.tedflix_ombi.entrypoints=web_private'
+      - 'traefik.http.routers.tedflix_ombi.service=tedflix_ombi'
+      - 'traefik.http.services.tedflix_ombi.loadbalancer.server.port=3579'
 
-  #     - 'traefik.http.routers.tedflix_ombi.rule=Host(`ombi.pinheiro.s3n.io`)'
-  #     - 'traefik.http.routers.tedflix_ombi.entrypoints=web_private'
-  #     - 'traefik.http.routers.tedflix_ombi.service=tedflix_ombi'
-  #     - 'traefik.http.services.tedflix_ombi.loadbalancer.server.port=3579'
-
-  #     - 'traefik.docker.network=infra_traefik'
-  #   environment:
-  #     PGID: 1000
-  #     PUID: 1000
-  #     TZ: Europe/Lisbon
-  #   networks:
-  #     - infra_traefik
-  #     - default # for mariadb
-  #   volumes:
-  #     - ombi_config:/config
+      - 'traefik.docker.network=infra_traefik'
+    environment:
+      PUID: 1000
+      PGID: 100
+      TZ: Europe/Lisbon
+    networks:
+      - infra_traefik
+      - default # for mariadb
+    volumes:
+      - ombi_config:/config
 
   radarr:
     image: linuxserver/radarr:latest
@@ -83,8 +80,8 @@ services:
       - 'traefik.http.services.tedflix_radarr.loadbalancer.server.port=7878'
       - 'traefik.docker.network=infra_traefik'
     environment:
-      PGID: 1000
       PUID: 1000
+      PGID: 100
       TZ: Europe/Lisbon
     networks:
       - infra_traefik
@@ -104,7 +101,7 @@ services:
       - 'traefik.docker.network=infra_traefik'
     environment:
       PUID: 1000
-      PGID: 1000
+      PGID: 100
       TZ: Europe/Lisbon
     volumes:
       - bazarr_config:/config
@@ -124,10 +121,9 @@ services:
       - 'traefik.http.services.tedflix_sonarr.loadbalancer.server.port=8989'
       - 'traefik.docker.network=infra_traefik'
     environment:
-      PGID: 1000
       PUID: 1000
+      PGID: 100
       TZ: Europe/Lisbon
-      VIRTUAL_HOST: 
     networks:
       - infra_traefik
     volumes:
@@ -140,12 +136,13 @@ services:
     healthcheck:
       test: curl https://am.i.mullvad.net/connected | grep -q "You are connected"
       interval: 5s
+      start_period: 5s
       start_interval: 2s
       retries: 10
     privileged: true # TODO: Fix this, it should not be needed instead set the right cap_add and sysctls (NET_ADMIN + net.ipv4.conf.all.src_valid_mark: "1")
     environment:
-      PGID: 1000
       PUID: 1000
+      PGID: 100
       TZ: Europe/Lisbon
     labels:
       - 'traefik.enable=true'
@@ -172,7 +169,7 @@ services:
       - 'traefik.docker.network=infra_traefik'
     environment:
       PLEX_UID: 1000
-      PLEX_GID: 1000
+      PLEX_GID: 100
       # ADVERTISE_IP: "http://pinheiro.s3n.io:1984/"
       # ALLOWED_NETWORKS: "0.0.0.0/0.0.0.0"
       TZ: Europe/Lisbon
@@ -182,8 +179,7 @@ services:
       - "32400:32400"
     volumes:
       - plex_config:/config
-      - ${TEDFLIX_PATH}:/media
-      - /tmp/transcode:/transcode
+      - ${TEDFLIX_PATH}:/media:ro
     devices:
       - "/dev/dri:/dev/dri"
 
