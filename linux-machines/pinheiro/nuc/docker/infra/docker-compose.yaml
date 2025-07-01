@@ -1,7 +1,7 @@
 services:
-  cloudflare-ddns:
+  ddns-pinheiro:
     image: favonia/cloudflare-ddns
-    user: "1000:${DOCKER_GID}"
+    user: "1000:131" # 131 is the docker group, needed to be able to read the secret (TODO: resolve this group id instead)
     restart: always
     read_only: true
     cap_drop: [all]
@@ -14,7 +14,24 @@ services:
       - IP6_PROVIDER=none
     secrets:
       - cloudflare_s3n_io_ddns_api_token
-  
+
+  ddns-pinheiro-nuc:
+    image: favonia/cloudflare-ddns
+    user: "1000:131" # 131 is the docker group, needed to be able to read the secret (TODO: resolve this group id instead)
+    restart: always
+    read_only: true
+    cap_drop: [all]
+    security_opt: [no-new-privileges:true]
+    network_mode: host
+    environment:
+      - TZ=Europe/Lisbon
+      - CLOUDFLARE_API_TOKEN_FILE=/run/secrets/cloudflare_s3n_io_ddns_api_token
+      - DOMAINS=nuc.pinheiro.s3n.io
+      - IP6_PROVIDER=none
+      - IP4_PROVIDER=local
+    secrets:
+      - cloudflare_s3n_io_ddns_api_token
+
   site-pinheiro:
     build: pinheiro
     restart: unless-stopped
