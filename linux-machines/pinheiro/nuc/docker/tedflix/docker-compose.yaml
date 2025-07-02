@@ -170,7 +170,7 @@ services:
     environment:
       PLEX_UID: 1000
       PLEX_GID: 100
-      # ADVERTISE_IP: "http://pinheiro.s3n.io:1984/"
+      ADVERTISE_IP: "https://pinheiro.s3n.io:1984/"
       # ALLOWED_NETWORKS: "0.0.0.0/0.0.0.0"
       TZ: Europe/Lisbon
     networks:
