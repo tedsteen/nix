@@ -88,14 +88,16 @@
             serviceConfig = {
               Type = "oneshot";
               RemainAfterExit = true;
-              ExecStart = pkgs.writeScript "tedflix-start-on-remount" ''
+              ExecStart = pkgs.writeScript "tedflix-start-on-mount" ''
                 #!${pkgs.bash}/bin/bash
                 if mountpoint -q /mnt/mediapool; then
-                  echo "[+] mediapool mounted, starting the tedflix stack"
-                  docker compose -p tedflix start
+                  echo "[+] mediapool mounted, starting the tedflix stack if it's there"
+                  if docker compose -p tedflix ps --all -q | grep -q .; then
+                      docker compose -p tedflix start
+                  fi
                 fi
               '';
-              ExecStop = pkgs.writeScript "tedflix-down-on-unmount" ''
+              ExecStop = pkgs.writeScript "tedflix-stop-on-unmount" ''
                 #!${pkgs.bash}/bin/bash
                 echo "[+] mediapool unmounted, stopping the tedflix stack"
                 docker compose -p tedflix stop
