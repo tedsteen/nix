@@ -3,21 +3,17 @@ set -e
 
 FILE=/config/settings.json
 DOWNLOAD_DIR=/media/downloads/complete/$(date +"%y%m")
-VPN_IPV4_ADDR=$(ip -4 addr show wg0 | awk '/inet / {print $2}' | cut -d/ -f1)
-VPN_IPV6_ADDR=$(ip -6 addr show wg0 | awk '/inet6 / {print $2}' | cut -d/ -f1)
+LAN_IP=$(cat /run/lan_ip)
 
 echo "Updating '$FILE':"
 echo "  DOWNLOAD_DIR='$DOWNLOAD_DIR'"
-echo "  VPN_IPV4_ADDR='$VPN_IPV4_ADDR'"
-echo "  VPN_IPV6_ADDR='$VPN_IPV6_ADDR'"
+echo "  LAN_IP'$LAN_IP'"
 
 cat <<EOF > $FILE
 {
     "alt-speed-enabled": false,
     "announce-ip-enabled": false,
     "anti-brute-force-enabled": false,
-    "bind-address-ipv4": "$VPN_IPV4_ADDR",
-    "bind-address-ipv6": "$VPN_IPV6_ADDR",
     "blocklist-enabled": false,
     "cache-size-mb": 4,
     "default-trackers": "",
@@ -50,7 +46,7 @@ cat <<EOF > $FILE
     "ratio-limit-enabled": false,
     "rename-partial-files": false,
     "rpc-authentication-required": false,
-    "rpc-bind-address": "0.0.0.0",
+    "rpc-bind-address": "$LAN_IP",
     "rpc-enabled": true,
     "rpc-host-whitelist-enabled": false,
     "rpc-port": 9091,
@@ -77,6 +73,5 @@ cat <<EOF > $FILE
 }
 EOF
 
-# Send SIGHUP to Transmission daemon to reload settings
-echo "Restarting transmission to apply new settings..."
-kill -HUP $(pidof transmission-daemon) >/dev/null 2>&1 || true
+echo "soft-reload Transmission"
+s6-svc -h /run/service/svc-transmission
