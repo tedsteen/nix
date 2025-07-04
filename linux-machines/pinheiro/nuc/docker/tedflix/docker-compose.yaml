@@ -166,23 +166,18 @@ services:
     pull_policy: always
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.tedflix_plex.rule=Host(`plex.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.tedflix_plex.entrypoints=web_private'
+      - 'traefik.http.routers.tedflix_plex.rule=Host(`tedflix.hal.pub`)'
+      - 'traefik.http.routers.tedflix_plex.entrypoints=web_public_secure'
       - 'traefik.http.services.tedflix_plex.loadbalancer.server.port=32400'
       - 'traefik.docker.network=infra_traefik'
     environment:
       PLEX_UID: 1000
       PLEX_GID: 100
-      ADVERTISE_IP: "https://pinheiro.s3n.io:1984/"
+      ADVERTISE_IP: "https://tedflix.hal.pub/"
       # ALLOWED_NETWORKS: "0.0.0.0/0.0.0.0"
       TZ: Europe/Lisbon
     networks:
       - infra_traefik
-    ports:
-      # TODO: Remove this and use the reverse proxy?
-      #       https://app.plex.tv/desktop/#!/settings/server/f6882cae19952e83662fdd495077bbcc5201744e/settings/network
-      #       https://app.plex.tv/desktop/#!/settings/server/f6882cae19952e83662fdd495077bbcc5201744e/settings/remoteAccess
-      - "32400:32400"
     volumes:
       - plex_config:/config
       - ${TEDFLIX_PATH}:/media:ro
