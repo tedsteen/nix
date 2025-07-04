@@ -130,35 +130,9 @@ services:
       - sonarr_config:/config
       - ${TEDFLIX_PATH}:/media
 
-  wireguard:
-    build: ./wireguard
-    restart: unless-stopped
-    healthcheck:
-      test: curl https://am.i.mullvad.net/connected | grep -q "You are connected"
-      interval: 5s
-      start_period: 5s
-      start_interval: 2s
-      retries: 10
-    cap_add:
-      - NET_ADMIN
-      - SYS_MODULE
-    # environment:
-    #   - PORTFORWARD_PORT=45000
-    #   - PORTFORWARD_IPADDRESS=172.20.0.3
-    sysctls:
-      - net.ipv4.conf.all.src_valid_mark=1
-    volumes:
-      - ${TEDFLIX_MULLVAD_CONFIG}:/etc/wireguard/wg0.conf
-    networks:
-      torrentnet:
-        ipv4_address: 172.20.0.2
-
   transmission:
     build: transmission
     restart: unless-stopped
-    depends_on:
-      wireguard:
-        condition: service_healthy
     healthcheck:
       test: curl https://am.i.mullvad.net/connected | grep -q "You are connected"
       interval: 5s
@@ -183,7 +157,7 @@ services:
       - ${TEDFLIX_PATH}:/media
     networks:
       infra_traefik:
-      torrentnet:
+      infra_wireguard:
         ipv4_address: 172.20.0.3
   
   plex:
@@ -205,7 +179,10 @@ services:
     networks:
       - infra_traefik
     ports:
-      - "32400:32400" #TODO: Remove this and use the reverse proxy?
+      # TODO: Remove this and use the reverse proxy?
+      #       https://app.plex.tv/desktop/#!/settings/server/f6882cae19952e83662fdd495077bbcc5201744e/settings/network
+      #       https://app.plex.tv/desktop/#!/settings/server/f6882cae19952e83662fdd495077bbcc5201744e/settings/remoteAccess
+      - "32400:32400"
     volumes:
       - plex_config:/config
       - ${TEDFLIX_PATH}:/media:ro
@@ -215,10 +192,8 @@ services:
 networks:
   infra_traefik:
     external: true
-  torrentnet:
-      ipam:
-        config:
-        - subnet: 172.20.0.0/29
+  infra_wireguard:
+    external: true
 
 volumes:
   mariadb_data:

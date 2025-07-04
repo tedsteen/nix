@@ -7,7 +7,7 @@ LAN_IP=$(cat /run/lan_ip)
 
 echo "Updating '$FILE':"
 echo "  DOWNLOAD_DIR='$DOWNLOAD_DIR'"
-echo "  LAN_IP'$LAN_IP'"
+echo "  LAN_IP='$LAN_IP'"
 
 cat <<EOF > $FILE
 {

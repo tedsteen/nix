@@ -181,11 +181,38 @@ services:
     tmpfs:
       - /tmp
 
+  wireguard:
+    build: ./wireguard
+    restart: unless-stopped
+    healthcheck:
+      test: curl https://am.i.mullvad.net/connected | grep -q "You are connected"
+      interval: 5s
+      start_period: 5s
+      start_interval: 2s
+      retries: 10
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    # environment:
+    #   - PORTFORWARD_PORT=45000
+    #   - PORTFORWARD_IPADDRESS=172.20.0.3
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    volumes:
+      - ${INFRA_WIREGUARD_CONFIG}:/etc/wireguard/wg0.conf
+    networks:
+      wireguard:
+        ipv4_address: 172.20.0.2
+
 networks:
   traefik:
     driver: bridge
   metrics:
     driver: bridge
+  wireguard:
+    ipam:
+      config:
+      - subnet: 172.20.0.0/29
 
 volumes:
   influxdb_data:

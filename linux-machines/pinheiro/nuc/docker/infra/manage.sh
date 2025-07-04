@@ -2,6 +2,8 @@
 set -e
 CMD=$1
 
+export INFRA_WIREGUARD_CONFIG=${INFRA_WIREGUARD_CONFIG:-"/run/secrets/infra_wireguard_config"}
+
 # Make sure we are relative to the script directory
 cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 

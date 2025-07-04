@@ -3,7 +3,6 @@ set -e
 CMD=$1
 # Default path for TEDFLIX if not set
 export TEDFLIX_PATH=${TEDFLIX_PATH:-"/mnt/mediapool/tedflix"}
-export TEDFLIX_MULLVAD_CONFIG=${TEDFLIX_MULLVAD_CONFIG:-"/run/secrets/tedflix_mullvad_config"}
 
 # Make sure the initial directory structure is set up with the right permissions
 if [ ! -d $TEDFLIX_PATH ]; then

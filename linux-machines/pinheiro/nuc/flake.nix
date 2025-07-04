@@ -154,7 +154,7 @@
                 owner = "root";
                 group = "docker";
               };
-              tedflix_mullvad_config = {
+              infra_wireguard_config = {
                 mode = "0440";
                 owner = "root";
                 group = "docker";
