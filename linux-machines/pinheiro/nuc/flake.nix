@@ -146,17 +146,17 @@
             secrets = {
               cloudflare_s3n_io_ddns_api_token = {
                 mode = "0440";
-                owner = "root";
+                owner = "ted";
                 group = "docker";
               };
               ntfy_topic = {
                 mode = "0440";
-                owner = "root";
+                owner = "ted";
                 group = "docker";
               };
               infra_wireguard_config = {
                 mode = "0440";
-                owner = "root";
+                owner = "ted";
                 group = "docker";
               };
             };

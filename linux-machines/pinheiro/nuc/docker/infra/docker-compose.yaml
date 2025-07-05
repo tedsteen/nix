@@ -1,7 +1,7 @@
 services:
   ddns-pinheiro:
     image: favonia/cloudflare-ddns
-    user: "1000:131" # 131 is the docker group, needed to be able to read the secret (TODO: resolve this group id instead)
+    user: "1000" # User ted has read access to the secret
     restart: always
     read_only: true
     cap_drop: [all]
@@ -17,7 +17,7 @@ services:
 
   ddns-pinheiro-nuc:
     image: favonia/cloudflare-ddns
-    user: "1000:131" # 131 is the docker group, needed to be able to read the secret (TODO: resolve this group id instead)
+    user: "1000" # User ted has read access to the secret
     restart: always
     read_only: true
     cap_drop: [all]
