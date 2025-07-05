@@ -134,7 +134,7 @@ services:
     build: transmission
     restart: unless-stopped
     healthcheck:
-      test: curl https://am.i.mullvad.net/connected | grep -q "You are connected"
+      test: ["CMD-SHELL", "curl -fsSL -o /dev/null http://localhost:9091/transmission/web/"]
       interval: 5s
       start_period: 5s
       start_interval: 2s
