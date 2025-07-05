@@ -144,7 +144,7 @@ services:
     environment:
       PUID: 1000
       PGID: 100
-      DEFAULT_GATEWAY: 172.20.0.2
+      DEFAULT_GATEWAY: 172.40.0.2
       TZ: Europe/Lisbon
     labels:
       - 'traefik.enable=true'
@@ -158,7 +158,7 @@ services:
     networks:
       infra_traefik:
       infra_wireguard:
-        ipv4_address: 172.20.0.3
+        ipv4_address: 172.40.0.3
   
   plex:
     image: plexinc/pms-docker:public

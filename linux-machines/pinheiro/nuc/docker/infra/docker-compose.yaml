@@ -195,14 +195,14 @@ services:
       - SYS_MODULE
     # environment:
     #   - PORTFORWARD_PORT=45000
-    #   - PORTFORWARD_IPADDRESS=172.20.0.3
+    #   - PORTFORWARD_IPADDRESS=172.40.0.3
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
     volumes:
       - ${INFRA_WIREGUARD_CONFIG}:/etc/wireguard/wg0.conf
     networks:
       wireguard:
-        ipv4_address: 172.20.0.2
+        ipv4_address: 172.40.0.2
 
 networks:
   traefik:
@@ -212,7 +212,7 @@ networks:
   wireguard:
     ipam:
       config:
-      - subnet: 172.20.0.0/29
+      - subnet: 172.40.0.0/29
 
 volumes:
   influxdb_data:
