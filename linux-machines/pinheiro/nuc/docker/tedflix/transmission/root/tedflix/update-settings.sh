@@ -3,11 +3,9 @@ set -e
 
 FILE=/config/settings.json
 DOWNLOAD_DIR=/media/downloads/complete/$(date +"%y%m")
-LAN_IP=$(cat /run/lan_ip)
 
 echo "Updating '$FILE':"
 echo "  DOWNLOAD_DIR='$DOWNLOAD_DIR'"
-echo "  LAN_IP='$LAN_IP'"
 
 cat <<EOF > $FILE
 {
@@ -46,7 +44,7 @@ cat <<EOF > $FILE
     "ratio-limit-enabled": false,
     "rename-partial-files": false,
     "rpc-authentication-required": false,
-    "rpc-bind-address": "$LAN_IP",
+    "rpc-bind-address": "0.0.0.0",
     "rpc-enabled": true,
     "rpc-host-whitelist-enabled": false,
     "rpc-port": 9091,
