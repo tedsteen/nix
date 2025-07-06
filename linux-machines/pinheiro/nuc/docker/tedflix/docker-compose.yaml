@@ -168,12 +168,13 @@ services:
       - 'traefik.enable=true'
       - 'traefik.http.routers.tedflix_plex.rule=Host(`tedflix.hal.pub`)'
       - 'traefik.http.routers.tedflix_plex.entrypoints=web_public_secure'
+      - 'traefik.http.routers.tedflix_plex.tls.certresolver=defaultcertresolver'
       - 'traefik.http.services.tedflix_plex.loadbalancer.server.port=32400'
       - 'traefik.docker.network=infra_traefik'
     environment:
       PLEX_UID: 1000
       PLEX_GID: 100
-      ADVERTISE_IP: "https://tedflix.hal.pub/"
+      ADVERTISE_IP: "https://tedflix.hal.pub/,http://tedflix.hal.pub/"
       # ALLOWED_NETWORKS: "0.0.0.0/0.0.0.0"
       TZ: Europe/Lisbon
     networks:
