@@ -109,6 +109,7 @@
     global.autoUpdate = true;
 
     masApps = {
+      "Calca" = 635758264;
       "DigiDoc4 Client" = 1370791134;
       "Messenger" = 1480068668;
       "The Unarchiver" = 425424353;
@@ -134,7 +135,6 @@
       "orbstack"
       "raycast"
       "signal"
-      "soulver"
       "spotify"
       "stats"
       "transmission"
