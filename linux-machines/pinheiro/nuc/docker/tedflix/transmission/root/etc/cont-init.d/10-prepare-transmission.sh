@@ -7,8 +7,8 @@ if [[ -n "$DEFAULT_GATEWAY" ]]; then
   ip route replace default via "$DEFAULT_GATEWAY"
   
   # Which dev now carries that GW?
-  VPN_IF=$(ip route get "$DEFAULT_GATEWAY" | grep -Po '(?<=(dev ))(\S+)')
-  
+  VPN_IF=$(ip route get "$DEFAULT_GATEWAY" | grep -o 'dev [^ ]*' | cut -d' ' -f2)
+
   [ -n "$VPN_IF" ] || { echo "No iface for $DEFAULT_GATEWAY" >&2; exit 1; }
   
   echo "RPC shield: blocking port 9091 on $VPN_IF (VPN path)"

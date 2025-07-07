@@ -1,7 +1,11 @@
 # TODO: Check https://github.com/cynicsketch/nix-mineral for inspiration
 {
-    # Note: SSH will be allowed through the firewall thanks to the default `services.openssh.openFirewall = true;`
-    networking.firewall.enable = true;
+    networking.firewall = {
+        # Note: SSH will be allowed through the firewall thanks to the default `services.openssh.openFirewall = true;`
+        enable = true;
+        # Accepts asymmetric routes (the wireguard transmission case in the docker stack)
+        checkReversePath = "loose";
+    };
 
     services.fail2ban = {
         enable = true;
