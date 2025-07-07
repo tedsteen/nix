@@ -1,29 +1,76 @@
 #!/usr/bin/env bash
 set -euo pipefail
+shopt -s nullglob nocaseglob extglob
 IFS=$'\n\t'
 
-DEST_DIR="${TR_TORRENT_DIR}/${TR_TORRENT_NAME}"
-[[ -d $DEST_DIR ]] || { echo "Dir not found: $DEST_DIR" >&2; exit 1; }
-cd -- "$DEST_DIR"
-
-echo "=== $(date '+%F %T') extracting ${TR_TORRENT_NAME}"
+TORRENT_PATH="${TR_TORRENT_DIR:-}/${TR_TORRENT_NAME:-}"
 
 unpack() {
-    local f="$1"
-    echo "→ $f"
-    if ! 7z x -aoa -y -- "$f"; then
-        local rc=$?
-        (( rc > 1 )) && { echo "7z rc=$rc, swapping to unrar…" >&2; unrar x -o+ -idq -- "$f"; }
-    fi
+  local f=$1
+  printf '→ %s\n' "$f"
+  if 7z x -aoa -y -spe -- "$f"; then
+    return 0
+  fi
+  local rc=$?
+  (( rc == 1 )) && return 0
+  printf '7z failed (rc=%d); swapping to unrar...\n' "$rc" >&2
+  unrar x -o+ -idq -- "$f" || true
 }
-export -f unpack
 
-# --- multi-part first volumes ---
-find . -type f -iname '*.part0*1.rar' -print0 |
-  sort -zu |
-  xargs -0 -n1 bash -c 'unpack "$1"' _
+archives=()
 
-# --- standalone archives (no .part*, no .r00) ---
-find . -type f -iname '*.rar' ! -iname '*.part*' ! -regex '.*\.r[0-9][0-9]$' -print0 |
-  sort -zu |
-  xargs -0 -n1 bash -c 'unpack "$1"' _
+# ── harvest archives
+if [[ -d $TORRENT_PATH ]]; then
+  while IFS= read -r -d '' f; do
+    base=$(basename -- "$f")
+    lf=${base,,}
+    part_no=
+
+    # one-shot formats
+    case $lf in
+      *.tar|*.tar.*|*.tgz|*.tbz2|*.txz) archives+=("$f"); continue ;;
+    esac
+
+    # RAR bundle
+    case $lf in
+      *.part*[0-9].rar)
+        part_no=${lf##*.part}; part_no=${part_no%%.rar}; part_no=${part_no##*(0)}
+        [[ $part_no = 1 ]] && archives+=("$f"); continue ;;
+      *.r[0-9][0-9]) continue ;;
+      *.rar) archives+=("$f"); continue ;;
+    esac
+
+    # 7-Zip multi-vol
+    case $lf in
+      *.7z.[0-9]*) [[ $lf = *.7z.0*1 ]] && archives+=("$f"); continue ;;
+      *.7z)        archives+=("$f"); continue ;;
+    esac
+
+    # ZIP circus
+    case $lf in
+      *.zip.[0-9]*) [[ $lf = *.zip.0*1 ]] && archives+=("$f"); continue ;;
+      *.part*[0-9].zip)
+        part_no=${lf##*.part}; part_no=${part_no%%.zip}; part_no=${part_no##*(0)}
+        [[ $part_no = 1 ]] && archives+=("$f"); continue ;;
+      *.z[0-9][0-9]) continue ;;
+      *.zip) archives+=("$f"); continue ;;
+    esac
+  done < <(find "$TORRENT_PATH" -type f -print0)
+
+elif [[ -f $TORRENT_PATH ]]; then
+  case "${TORRENT_PATH,,}" in
+    *.zip|*.rar|*.7z|*.tar|*.tar.*|*.tgz|*.tbz2|*.txz)
+      archives+=("$TORRENT_PATH") ;;
+  esac
+fi
+
+(( ${#archives[@]} == 0 )) && exit 0
+
+printf '=== %s extracting %s\n' "$(date '+%F %T')" "${TR_TORRENT_NAME:-unknown}"
+for f in "${archives[@]}"; do
+  (
+    dir=$(dirname -- "$f")
+    base=$(basename -- "$f")
+    cd -- "$dir" && unpack "$base"
+  )
+done
