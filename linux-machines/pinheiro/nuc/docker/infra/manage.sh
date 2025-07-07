@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 CMD=$1
-
+# Default path for INFRA_WIREGUARD_CONFIG if not set
 export INFRA_WIREGUARD_CONFIG=${INFRA_WIREGUARD_CONFIG:-"/run/secrets/infra_wireguard_config"}
 
 # Make sure we are relative to the script directory
