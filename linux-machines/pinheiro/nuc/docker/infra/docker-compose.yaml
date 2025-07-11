@@ -94,7 +94,7 @@ services:
       test: "curl -f http://localhost:8086/ping"
       interval: 2s
       timeout: 10s
-      retries: 10
+      retries: 5
     environment:
       TZ: Europe/Lisbon
       DOCKER_INFLUXDB_INIT_MODE: setup
@@ -189,7 +189,7 @@ services:
       interval: 5s
       start_period: 5s
       start_interval: 2s
-      retries: 10
+      retries: 3
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
