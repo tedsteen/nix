@@ -206,7 +206,7 @@
             (pkgs.writeShellScriptBin "ntfy-smartd" ''
               #!/bin/sh
               set -euo pipefail
-              /run/current-system/sw/bin/ntfy-alert "SMARTD: ''${SMARTD_MESSAGE:-unknown}"
+              /run/current-system/sw/bin/ntfy-alert "SMARTD:\n''${SMARTD_MESSAGE:-unknown}"
             '')
           ];
           
