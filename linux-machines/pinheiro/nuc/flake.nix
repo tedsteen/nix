@@ -75,6 +75,33 @@
             };
           };
 
+          systemd.services.docker-health-monitor = {
+            description = "Warn me if any Docker container is unhealthy";
+            path = [ pkgs.docker ];
+            after = [ "docker.service" ];
+            wants = [ "docker.service" ];
+            serviceConfig = {
+              Type = "oneshot";
+            };
+
+            script = ''
+              bad=$(docker ps --filter "health=unhealthy" --format '{{.Names}}')
+              if [ -n "$bad" ]; then
+                /run/current-system/sw/bin/ntfy-alert "Docker unhealthy:\n\n$bad"
+              fi
+            '';
+          };
+
+        systemd.timers.docker-health-monitor = {
+          wantedBy = [ "timers.target" ];
+          timerConfig = {
+            OnBootSec = "5m";         # first run after boot
+            OnUnitActiveSec = "5m";   # repeat cadence
+            Unit = "docker-health-monitor.service";
+            Persistent = true;        # catch-up after suspend
+          };
+        };
+
           systemd.services.docker-stack-tedflix-guard = {
             description = "Keep tedflix in sync with mediapool mount";
             path = [ pkgs.bash pkgs.docker pkgs.util-linux ];
@@ -101,6 +128,7 @@
                 #!${pkgs.bash}/bin/bash
                 echo "[+] mediapool unmounted, stopping the tedflix stack"
                 docker compose -p tedflix stop
+                /run/current-system/sw/bin/ntfy-alert "Mediapool was unmounted and tedflix stack was stopped."
               '';
             };
           };
@@ -167,7 +195,7 @@
               #!/bin/sh
               set -euo pipefail
               topic=$(<${config.sops.secrets.ntfy_topic.path})
-              ${pkgs.curl}/bin/curl -sS -d "$1" "https://ntfy.sh/$topic" > /dev/null
+              ${pkgs.curl}/bin/curl -sS -d "$(printf '%b' "$1")" "https://ntfy.sh/$topic" > /dev/null
             '')
             # Highjack the sendmail command to use ntfy-alert
             (pkgs.writeShellScriptBin "sendmail" ''
