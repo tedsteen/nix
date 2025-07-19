@@ -112,6 +112,7 @@
           (lib.mkIf dockerOn {
             dkrm   = "docker ps -aq -f status=exited | xargs -r docker rm -f";
             dkkill = "docker ps -q | xargs -r docker kill";
+            dkpruneall = "docker system prune --all --volumes";
           })
         ];
       };
