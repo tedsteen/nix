@@ -1,4 +1,4 @@
 creation_rules:
   - path_regex: secrets\.yaml$
-    # First recipient is the host
+    # First recipient is the host, generated on the host with `nix-shell -p ssh-to-age --run 'cat /etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age'`
     age: age1cj6g0jxh667g9suhefd4aundsc6t6ha3m8xjk5fgm9rketl9jpqqvd29lj,ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKeAaaHvF/6KmN2neKxeHyL0WEuVC5XIp0CHp1i3u6Ff ted@mbp-2025-05-04,ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOp8j7ztDOXAovDvPh6OaIoWWnHmr8n63/wdh11AvtZo ted@imac-2025-05-07

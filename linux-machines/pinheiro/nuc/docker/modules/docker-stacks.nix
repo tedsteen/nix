@@ -35,7 +35,7 @@ with lib;
         runtimeInputs = [ pkgs.restic pkgs.docker pkgs.bash pkgs.jq ];
         text = ''
           set -euo pipefail
-          STACK_NAME=${name}
+          STACK_NAME="${name}"
 
           if ! restic snapshots &>/dev/null; then
             echo "Initialising repo @ $RESTIC_REPOSITORY"
