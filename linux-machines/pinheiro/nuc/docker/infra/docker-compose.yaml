@@ -38,7 +38,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.pinheiro_site.rule=Host(`nuc.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.pinheiro_site.entrypoints=web_private'
+      - 'traefik.http.routers.pinheiro_site.entrypoints=web_private_secure'
       - 'traefik.docker.network=infra_traefik'
     networks:
       - traefik
@@ -48,43 +48,60 @@ services:
     restart: unless-stopped
     pull_policy: always
     command:
-      #- "--log.level=DEBUG"
+      #- '--log.level=DEBUG'
       - '--api.insecure=true'
       - '--providers.docker=true'
       - '--providers.docker.exposedbydefault=false'
 
-      # Private entrypoint for internal services
-      - '--entrypoints.web_private.address=:80'
-      
-      # Public entrypoint for secure (HTTPS) external access
-      - "--entryPoints.web_public_secure.address=:443"
-      - "--certificatesresolvers.defaultcertresolver.acme.tlschallenge=true"
-      - "--certificatesresolvers.defaultcertresolver.acme.email=ted.steen@gmail.com"
-      - "--certificatesresolvers.defaultcertresolver.acme.storage=/letsencrypt/acme.json"
+      # Private entrypoint for internal services (only used for redirects)
+      - '--entrypoints.web_private_do_not_use.address=:80'
+      # Redirect all public HTTP traffic to HTTPS
+      - '--entrypoints.web_private_do_not_use.http.redirections.entryPoint.to=web_private_secure'
+      - '--entrypoints.web_private_do_not_use.http.redirections.entryPoint.scheme=https'
+      - '--entrypoints.web_private_do_not_use.http.redirections.entrypoint.permanent=true'
+
+      # Private entrypoint for secure (HTTPS) internal access
+      - '--entryPoints.web_private_secure.address=:443'
+      - '--entryPoints.web_private_secure.http.tls.certresolver=privatecertresolver'
+      - '--certificatesresolvers.privatecertresolver.acme.email=ted.steen@gmail.com'
+      - '--certificatesresolvers.privatecertresolver.acme.storage=/letsencrypt/acme-private.json'
+      - '--certificatesresolvers.privatecertresolver.acme.dnsChallenge.provider=cloudflare'
+      - '--certificatesresolvers.privatecertresolver.acme.dnsChallenge.delayBeforeCheck=0'
 
       # Public entrypoint for external access (only used for redirects)
-      - '--entrypoints.web_public_do_not_use.address=:81'
+      - '--entrypoints.web_public_do_not_use.address=:1080'
       # Redirect all public HTTP traffic to HTTPS
-      - "--entrypoints.web_public_do_not_use.http.redirections.entryPoint.to=web_public_secure"
-      - "--entrypoints.web_public_do_not_use.http.redirections.entryPoint.scheme=https"
-      - "--entrypoints.web_public_do_not_use.http.redirections.entrypoint.permanent=true"
+      - '--entrypoints.web_public_do_not_use.http.redirections.entryPoint.to=web_public_secure'
+      - '--entrypoints.web_public_do_not_use.http.redirections.entryPoint.scheme=https'
+      - '--entrypoints.web_public_do_not_use.http.redirections.entrypoint.permanent=true'
+
+      # Public entrypoint for secure (HTTPS) external access
+      - '--entryPoints.web_public_secure.address=:10443'
+      - '--entryPoints.web_public_secure.http.tls.certresolver=publiccertresolver'
+      - '--certificatesresolvers.publiccertresolver.acme.tlschallenge=true'
+      - '--certificatesresolvers.publiccertresolver.acme.email=ted.steen@gmail.com'
+      - '--certificatesresolvers.publiccertresolver.acme.storage=/letsencrypt/acme.json'
     environment:
       TZ: Europe/Lisbon
+      CF_DNS_API_TOKEN_FILE: "/run/secrets/cloudflare_s3n_io_ddns_api_token"
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.infra_traefik.rule=Host(`traefik.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.infra_traefik.entrypoints=web_private'
+      - 'traefik.http.routers.infra_traefik.entrypoints=web_private_secure'
       - 'traefik.http.services.infra_traefik.loadbalancer.server.port=8080'
       - 'traefik.docker.network=infra_traefik'
     ports:
       - '80:80'
-      - '81:81'
-      - "443:443"
+      - '1080:1080'
+      - '443:443'
+      - '10443:10443'
     volumes:
-      - traefik_letsencrypt:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik_letsencrypt:/letsencrypt
     networks:
       - traefik
+    secrets:
+      - cloudflare_s3n_io_ddns_api_token
 
   influxdb:
     image: influxdb:alpine
@@ -106,7 +123,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.infra_influxdb.rule=Host(`influxdb.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.infra_influxdb.entrypoints=web_private'
+      - 'traefik.http.routers.infra_influxdb.entrypoints=web_private_secure'
       - 'traefik.http.services.infra_influxdb.loadbalancer.server.port=8086'
       - 'traefik.docker.network=infra_traefik'
     networks:
@@ -131,7 +148,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.infra_grafana.rule=Host(`grafana.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.infra_grafana.entrypoints=web_private'
+      - 'traefik.http.routers.infra_grafana.entrypoints=web_private_secure'
       - 'traefik.http.services.infra_grafana.loadbalancer.server.port=3000'
       - 'traefik.docker.network=infra_traefik'
     networks:
