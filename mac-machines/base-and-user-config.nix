@@ -154,23 +154,24 @@
       home.packages = with pkgs; [
         # General stuff
         cmake
-        #pkg-config
-        
-        # NOTE: The following two package is required for rust, [see](https://github.com/NixOS/nixpkgs/issues/206242).
-        #       Also see the LIBRARY_PATH further down, it's part of this fix
-        libiconv
-        
+        pkg-config
+
         # NES stuff
         cc65
         python3
 
         # Rust stuff
-        cargo
-        rustc
-        rustfmt
-        clippy
-        rust-analyzer
-        gdb
+        (rust-bin.stable.latest.default.override {
+          extensions = [ "rust-src" "rustfmt" "clippy" "rust-analyzer" ];
+          # Target for running on the [ESP32-C3-DevKit-RUST-1](https://www.espressif.com/en/dev-board/esp32-c3-devkit-rust-1-en)
+          targets = [ "riscv32imc-unknown-none-elf" ];
+        })
+        # TODO: add gdb
+        # NOTE: The following package is required for rust, [see](https://github.com/NixOS/nixpkgs/issues/206242).
+        #       Also see the LIBRARY_PATH further down, it's part of this fix
+        libiconv
+        # For flashing the ESP
+        espflash
 
         # Node stuff
         nodejs
