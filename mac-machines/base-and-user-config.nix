@@ -160,25 +160,12 @@
         cc65
         python3
 
-        # Rust stuff
-        (rust-bin.stable.latest.default.override {
-          extensions = [ "rust-src" "rustfmt" "clippy" "rust-analyzer" ];
-          # Target for running on the [ESP32-C3-DevKit-RUST-1](https://www.espressif.com/en/dev-board/esp32-c3-devkit-rust-1-en)
-          targets = [ "riscv32imc-unknown-none-elf" ];
-        })
-        # TODO: add gdb
-        # NOTE: The following package is required for rust, [see](https://github.com/NixOS/nixpkgs/issues/206242).
-        #       Also see the LIBRARY_PATH further down, it's part of this fix
-        libiconv
-        # For flashing the ESP
-        espflash
-
         # Node stuff
         nodejs
         pnpm
         yarn
       ];
-
+      
       # Home Manager is pretty good at managing dotfiles. The primary way to manage
       # plain files is through 'home.file'.
       home.file = {
@@ -212,13 +199,6 @@
       #
       home.sessionVariables = {
         # EDITOR = "emacs";
-        
-        # Part of the fix for rust, see the packages above
-        LIBRARY_PATH = "${pkgs.libiconv}/lib";
-        
-        # Use clang instead of gcc
-        CC = "clang";
-        CXX = "clang++";
       };
 
       # Let Home Manager install and manage itself.
@@ -236,11 +216,6 @@
         keybind = super+right=goto_split:right
         window-vsync = true
       '';
-
-      # programs.zsh.initContent = ''
-      #   # # TODO: Fix broken nix after macOS upgrade (not needed?)
-      #   # [[ ! $(command -v nix) && -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]] && source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-      # '';
 
       programs.zsh.shellAliases = {
         samba-nuc = "open smb://guest:guest@nuc.pinheiro.s3n.io/everything";

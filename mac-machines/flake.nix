@@ -3,11 +3,6 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
-    
-    rust-overlay = {
-      url = "github:oxalica/rust-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     darwin = {
       url = "github:lnl7/nix-darwin";
@@ -28,12 +23,10 @@
     };
   };
 
-  outputs = { self, nixpkgs, darwin, home-manager, nix-homebrew, rust-overlay, ... }: let
+  outputs = { self, nixpkgs, darwin, home-manager, nix-homebrew, ... }: let
     system = "aarch64-darwin";
-    pkgs = import nixpkgs {
-      inherit system;
-      overlays = [ (import rust-overlay) ];
-    };
+    pkgs = import nixpkgs { inherit system; };
+
   in {
     darwinConfigurations."teds-mbp" = darwin.lib.darwinSystem {
       inherit system pkgs;
