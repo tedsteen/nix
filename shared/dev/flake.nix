@@ -19,14 +19,28 @@
   in {
     devShells.${system}.default = pkgs.mkShell {
       packages = with pkgs; [
+        # General stuff
+        pkg-config
+        cmake
+
+        # Rust
         (rust-bin.stable.latest.default.override {
           extensions = [ "rust-src" "rustfmt" "clippy" "rust-analyzer" ];
           targets = [ "riscv32imc-unknown-none-elf" ];
         })
-        
-        pkg-config
-        espflash
         #TODO: gdb?
+
+        # ESP32
+        espflash
+        
+        # Node
+        nodejs
+        pnpm
+        yarn
+
+        # NES
+        cc65
+        python3
       ];
 
       buildInputs = with pkgs; [
@@ -37,7 +51,7 @@
         export CC="clang"
         export CXX="clang++"
         export MACOSX_DEPLOYMENT_TARGET="14"
-        echo "Rust dev environment!"
+        echo "Dev environment!"
         zsh
         exit
       '';

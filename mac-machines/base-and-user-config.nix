@@ -151,19 +151,7 @@
 
       # The home.packages option allows you to install Nix packages into your
       # environment.
-      home.packages = with pkgs; [
-        # General stuff
-        cmake
-        pkg-config
-
-        # NES stuff
-        cc65
-        python3
-
-        # Node stuff
-        nodejs
-        pnpm
-        yarn
+      home.packages = with pkgs; [                
       ];
       
       # Home Manager is pretty good at managing dotfiles. The primary way to manage
