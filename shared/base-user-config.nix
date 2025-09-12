@@ -88,6 +88,7 @@
             # base aliases
             ls    = lib.mkDefault "ls -hal --color=auto";
             jcurl = "curl -sS -H 'Content-Type: application/json' -H 'Accept: application/json'";
+            grep = "grep --color=auto";
 
             # git
             gs  = "git status";
@@ -106,7 +107,8 @@
             ta  = "tmux attach -t";
             tls = "tmux ls";
 
-            grep = "grep --color=auto";
+            # shortcuts
+            dev = "nix develop 'git+ssh://git@github.com/tedsteen/nix?dir=shared/dev'";
           }
 
           (lib.mkIf dockerOn {
