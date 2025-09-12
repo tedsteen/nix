@@ -212,6 +212,21 @@
 
       programs.ssh = {
         enable = true;
+        
+        enableDefaultConfig = false;
+        matchBlocks."*" = {
+          forwardAgent = false;
+          addKeysToAgent = "yes";
+          compression = false;
+          serverAliveInterval = 60;
+          serverAliveCountMax = 10;
+          hashKnownHosts = false;
+          userKnownHostsFile = "~/.ssh/known_hosts";
+          controlMaster = "no";
+          controlPath = "~/.ssh/master-%r@%n:%p";
+          controlPersist = "no";
+        };
+
         extraConfig = ''
           # Fix for ghostty https://ghostty.org/docs/help/terminfo#configure-ssh-to-fall-back-to-a-known-terminfo-entry
           Host *
