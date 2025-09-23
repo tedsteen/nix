@@ -108,7 +108,7 @@
             tls = "tmux ls";
 
             # shortcuts
-            dev = "nix develop 'git+ssh://git@github.com/tedsteen/nix?dir=shared/dev'";
+            dev = "nix develop path:${./dev}";
           }
 
           (lib.mkIf dockerOn {
