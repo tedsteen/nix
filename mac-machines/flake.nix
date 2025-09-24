@@ -21,11 +21,28 @@
         # nix-darwin.follows  = "darwin";
       };
     };
+
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    roro-ci = {
+      url = "path:/Users/tedsteen/git/roro/Room_CITools/nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.darwin.follows = "darwin";
+    };
   };
 
-  outputs = { self, nixpkgs, darwin, home-manager, nix-homebrew, ... }: let
+  outputs = { self, nixpkgs, darwin, home-manager, nix-homebrew, sops-nix, roro-ci, ... }: let
     system = "aarch64-darwin";
-    pkgs = import nixpkgs { inherit system; };
+    pkgs = import nixpkgs {
+      inherit system;
+      config = {
+        allowUnfree = true;
+        android_sdk.accept_license = true;
+      };
+    };
 
   in {
     darwinConfigurations."teds-mbp" = darwin.lib.darwinSystem {
@@ -36,12 +53,15 @@
         home-manager.darwinModules.home-manager
         (import ./base-and-user-config.nix {
           inherit pkgs;
-          computerName = "Ted's MacBook Pro";
           username = "tedsteen";
           fullName = "Ted Steen";
           email = "ted.steen@gmail.com";
         })
         {
+          
+          networking.computerName = "Ted's MacBook Pro";
+          networking.hostName = "teds-mbp";
+
           users.users.tedsteen = {
             name = "tedsteen";
             home = "/Users/tedsteen";
@@ -70,14 +90,19 @@
       modules = [
         nix-homebrew.darwinModules.nix-homebrew
         home-manager.darwinModules.home-manager
+        sops-nix.darwinModules.sops
+        roro-ci.darwinModules.github-runner
         (import ./base-and-user-config.nix {
           inherit pkgs;
-          computerName = "Steen's iMac";
           username = "tedsteen";
           fullName = "Ted Steen";
           email = "ted.steen@gmail.com";
         })
-        {
+        ({ config, lib, pkgs, ... } : {
+          
+          networking.computerName = "Steen's iMac";
+          networking.hostName = "steen-imac";
+
           users.users.tedsteen = {
             name = "tedsteen";
             home = "/Users/tedsteen";
@@ -90,11 +115,29 @@
             home.stateVersion = "24.11";
           };
 
+          sops = {
+            age.sshKeyPaths = [ "/Users/tedsteen/.ssh/random" ];
+            # Encrypted with `sops -e -i secrets.yaml`, see `.sops.yaml` for recipients.
+            defaultSopsFile = ./secrets.yaml;
+            secrets = {
+              roro_github_runner_pat = {
+                owner = "tedsteen";
+              };
+            };
+          };
+
+          roro.githubRunner = {
+            enable = true;
+            user = "tedsteen";
+            ueInstallsPath = "/Users/Shared/Epic\ Games";
+            tokenFile = config.sops.secrets.roro_github_runner_pat.path;
+          };
+
           # The state versions are required and should stay at the version you
           # originally installed.
           # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
           system.stateVersion = 6;
-        }
+        })
       ];
     };
   };

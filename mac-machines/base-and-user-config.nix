@@ -1,12 +1,10 @@
-{pkgs, computerName, username, email, fullName, ...}: {
+{pkgs, username, email, fullName, ...}: {
   imports = [
     (import ../shared/base-user-config.nix {
         inherit username email fullName;
     })
   ];
 
-  networking.computerName = "${computerName}";
-  nixpkgs.config.allowUnfree = true;
   security.pam.services.sudo_local.touchIdAuth = true;
   system = {
     primaryUser = "${username}";

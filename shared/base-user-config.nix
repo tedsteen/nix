@@ -1,10 +1,7 @@
 # Bare minimum user configuration
 { username, email, fullName }: { config, lib, pkgs, ... }: {
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
   home-manager.users.${username} = {
-    nix = {
-      settings.experimental-features = "nix-command flakes";
-    };
-
     home.file = {
       ".config/nvim" = {
         source = ./nvim;
