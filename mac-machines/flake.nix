@@ -28,7 +28,8 @@
     };
 
     roro-ci = {
-      url = "path:/Users/tedsteen/git/roro/Room_CITools/nix";
+      # TODO: Update to main when it's merged
+      url = "git+ssh://git@github.com/RoroInteractive/Room_CITools?dir=nix&ref=switch-to-nix";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.darwin.follows = "darwin";
     };
