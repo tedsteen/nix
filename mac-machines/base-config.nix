@@ -1,10 +1,5 @@
-{pkgs, username, email, fullName, ...}: {
-  imports = [
-    (import ../shared/base-user-config.nix {
-        inherit username email fullName;
-    })
-  ];
-
+# Base config shared by all my macs
+{pkgs, username, ...}: {
   security.pam.services.sudo_local.touchIdAuth = true;
   system = {
     primaryUser = "${username}";
@@ -127,9 +122,9 @@
       "ghostty"
       "gifox"
       "grandperspective"
-      "handbrake"
+      "handbrake-app"
       "iina"
-      "mullvadvpn"
+      "mullvad-vpn"
       "ocenaudio"
       "orbstack"
       "raycast"
@@ -143,9 +138,11 @@
     ];
   };
 
+  users.users.${username} = {
+    home = "/Users/${username}";
+  };
+
   home-manager.users.${username} = {
-      home.username = "${username}";
-      home.homeDirectory = "/Users/${username}";
 
       # The home.packages option allows you to install Nix packages into your
       # environment.
@@ -184,11 +181,8 @@
       #  /etc/profiles/per-user/${username}/etc/profile.d/hm-session-vars.sh
       #
       home.sessionVariables = {
-        # EDITOR = "emacs";
-      };
 
-      # Let Home Manager install and manage itself.
-      programs.home-manager.enable = true;
+      };
 
       home.file.".config/ghostty/config".text = ''
         background-opacity = 0.95
@@ -209,22 +203,6 @@
       };
 
       programs.ssh = {
-        enable = true;
-        
-        enableDefaultConfig = false;
-        matchBlocks."*" = {
-          forwardAgent = false;
-          addKeysToAgent = "yes";
-          compression = false;
-          serverAliveInterval = 60;
-          serverAliveCountMax = 10;
-          hashKnownHosts = false;
-          userKnownHostsFile = "~/.ssh/known_hosts";
-          controlMaster = "no";
-          controlPath = "~/.ssh/master-%r@%n:%p";
-          controlPersist = "no";
-        };
-
         extraConfig = ''
           # Fix for ghostty https://ghostty.org/docs/help/terminfo#configure-ssh-to-fall-back-to-a-known-terminfo-entry
           Host *

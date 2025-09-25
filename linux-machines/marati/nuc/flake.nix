@@ -16,31 +16,35 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    userbase = {
+      url = "../../../shared";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
   };
 
-  outputs = { nixpkgs, disko, home-manager, sops-nix, ... }: {
+  outputs = { nixpkgs, disko, home-manager, sops-nix, userbase, ... }: let
+    system = "x86_64-linux";
+    pkgs = import nixpkgs { inherit system; };
+  in {
     nixosConfigurations.default = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      
       modules = [
         home-manager.nixosModules.home-manager
         sops-nix.nixosModules.sops
+        userbase.homeManagerModules.userbase
         ./hardware-configuration.nix
         ./modules/docker-stacks.nix
         ../../hardening-config.nix
+        
         (import ../../base-system-config.nix {
           inherit disko;
           mainDevice = "/dev/sda";
           hostName = "marati-nuc";
           timeZone = "Europe/Tallinn";
-          username = "ted";
-          email = "ted.steen@gmail.com";
-          fullName = "Ted Steen";
         })
 
-        ({ config, pkgs, ... }: {
-          console.keyMap = "dvorak";
-
+        {
           users.users.ted = {
             isNormalUser = true;
             shell = pkgs.zsh;
@@ -51,12 +55,15 @@
               "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOp8j7ztDOXAovDvPh6OaIoWWnHmr8n63/wdh11AvtZo ted@imac-2025-05-07"
             ];
           };
-          
-          home-manager.users."ted" = {
+
+          userbase.users."ted" = {
+            fullName = "Ted Steen";
+            email = "ted.steen@gmail.com";
+            
             # The state versions are required and should stay at the version you
             # originally installed.
             # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
-            home.stateVersion = "24.11";
+            stateVersion = "24.11";
           };
           
           virtualisation.docker.enable = true;
@@ -109,7 +116,7 @@
           # originally installed.
           # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
           system.stateVersion = "24.11";
-        })
+        }
       ];
     };
   };

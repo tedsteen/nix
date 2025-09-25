@@ -16,15 +16,22 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    userbase = {
+      url = "../../../shared";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
   };
 
-  outputs = { nixpkgs, disko, home-manager, sops-nix, ... }: {
+  outputs = { nixpkgs, disko, home-manager, sops-nix, userbase, ... }: {
     nixosConfigurations.default = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       
       modules = [
         home-manager.nixosModules.home-manager
         sops-nix.nixosModules.sops
+        userbase.homeManagerModules.userbase
         ./hardware-configuration.nix
         ../../hardening-config.nix
         ./docker/modules/docker-stacks.nix
@@ -33,14 +40,30 @@
           mainDevice = "/dev/sda";
           hostName = "pinheiro-nuc";
           timeZone = "Europe/Lisbon";
-          username = "ted";
-          email = "ted.steen@gmail.com";
-          fullName = "Ted Steen";
         })
 
         ({ config, pkgs, ... }: {
-          console.keyMap = "dvorak";
+          users.users.ted = {
+            isNormalUser = true;
+            shell = pkgs.zsh;
+            # Sudo and docker access for ted
+            extraGroups = [ "wheel" "docker" ];
+            openssh.authorizedKeys.keys = [
+              "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKeAaaHvF/6KmN2neKxeHyL0WEuVC5XIp0CHp1i3u6Ff ted@mbp-2025-05-04"
+              "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOp8j7ztDOXAovDvPh6OaIoWWnHmr8n63/wdh11AvtZo ted@imac-2025-05-07"
+            ];
+          };
           
+          userbase.users."ted" = {
+            fullName = "Ted Steen";
+            email = "ted.steen@gmail.com";
+            
+            # The state versions are required and should stay at the version you
+            # originally installed.
+            # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
+            stateVersion = "24.11";
+          };
+
           virtualisation.docker.enable = true;
           
           # TODO: Move to hetzner (https://www.hetzner.com/storage/storage-box/)
@@ -131,24 +154,6 @@
                 /run/current-system/sw/bin/ntfy-alert "Mediapool was unmounted and tedflix stack was stopped."
               '';
             };
-          };
-
-          users.users.ted = {
-            isNormalUser = true;
-            shell = pkgs.zsh;
-            # Sudo and docker access for ted
-            extraGroups = [ "wheel" "docker" ];
-            openssh.authorizedKeys.keys = [
-              "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKeAaaHvF/6KmN2neKxeHyL0WEuVC5XIp0CHp1i3u6Ff ted@mbp-2025-05-04"
-              "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOp8j7ztDOXAovDvPh6OaIoWWnHmr8n63/wdh11AvtZo ted@imac-2025-05-07"
-            ];
-          };
-          
-          home-manager.users."ted" = {
-            # The state versions are required and should stay at the version you
-            # originally installed.
-            # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
-            home.stateVersion = "24.11";
           };
 
           # Lock down root and password access but let the user "ted" in with private key and enable passwordless sudo

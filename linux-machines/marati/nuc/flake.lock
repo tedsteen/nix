@@ -60,7 +60,8 @@
         "disko": "disko",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
-        "sops-nix": "sops-nix"
+        "sops-nix": "sops-nix",
+        "userbase": "userbase"
       }
     },
     "sops-nix": {
@@ -82,6 +83,25 @@
         "repo": "sops-nix",
         "type": "github"
       }
+    },
+    "userbase": {
+      "inputs": {
+        "home-manager": [
+          "home-manager"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "path": "../../../shared",
+        "type": "path"
+      },
+      "original": {
+        "path": "../../../shared",
+        "type": "path"
+      },
+      "parent": []
     }
   },
   "root": "root",

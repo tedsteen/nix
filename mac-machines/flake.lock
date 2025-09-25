@@ -97,7 +97,8 @@
         "nix-homebrew": "nix-homebrew",
         "nixpkgs": "nixpkgs",
         "roro-ci": "roro-ci",
-        "sops-nix": "sops-nix_2"
+        "sops-nix": "sops-nix",
+        "userbase": "userbase"
       }
     },
     "roro-ci": {
@@ -108,21 +109,22 @@
         "nixpkgs": [
           "nixpkgs"
         ],
-        "sops-nix": "sops-nix"
+        "sops-nix": [
+          "sops-nix"
+        ]
       },
       "locked": {
         "dir": "nix",
-        "lastModified": 1758722071,
+        "lastModified": 1758726299,
         "narHash": "sha256-x2sHxFhk/3YGzl/qI9JmFM/nmr3fmOA0uEP0CJUy4pI=",
-        "ref": "switch-to-nix",
-        "rev": "031515c9dacb694ec706ee22bda98b57fb6a0542",
-        "revCount": 102,
+        "ref": "refs/heads/main",
+        "rev": "1bce3042f1dce9d0df9542425b385415dfcd16eb",
+        "revCount": 97,
         "type": "git",
         "url": "ssh://git@github.com/RoroInteractive/Room_CITools"
       },
       "original": {
         "dir": "nix",
-        "ref": "switch-to-nix",
         "type": "git",
         "url": "ssh://git@github.com/RoroInteractive/Room_CITools"
       }
@@ -130,7 +132,6 @@
     "sops-nix": {
       "inputs": {
         "nixpkgs": [
-          "roro-ci",
           "nixpkgs"
         ]
       },
@@ -148,25 +149,24 @@
         "type": "github"
       }
     },
-    "sops-nix_2": {
+    "userbase": {
       "inputs": {
+        "home-manager": [
+          "home-manager"
+        ],
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1758425756,
-        "narHash": "sha256-L3N8zV6wsViXiD8i3WFyrvjDdz76g3tXKEdZ4FkgQ+Y=",
-        "owner": "Mic92",
-        "repo": "sops-nix",
-        "rev": "e0fdaea3c31646e252a60b42d0ed8eafdb289762",
-        "type": "github"
+        "path": "../shared",
+        "type": "path"
       },
       "original": {
-        "owner": "Mic92",
-        "repo": "sops-nix",
-        "type": "github"
-      }
+        "path": "../shared",
+        "type": "path"
+      },
+      "parent": []
     }
   },
   "root": "root",

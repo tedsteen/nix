@@ -1,10 +1,7 @@
 # Bare minimum linux system configuration with a user
-{ disko, mainDevice, hostName, timeZone, username, email, fullName, ... }: { 
+{ disko, mainDevice, hostName, timeZone, ... }: { 
   imports = [
     disko.nixosModules.disko
-    (import ../shared/base-user-config.nix {
-      inherit username email fullName;
-    })
   ];
 
   disko.devices = {

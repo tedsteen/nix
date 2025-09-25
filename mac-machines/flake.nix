@@ -1,5 +1,5 @@
 {
-  description = "Full darwin + home-manager + nix-homebrew config for tedsteen";
+  description = "Full darwin + home-manager + nix-homebrew config for my macs";
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
@@ -14,13 +14,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nix-homebrew = {
-      url = "github:zhaofengli/nix-homebrew";
-      inputs = {
-        # nixpkgs.follows = "nixpkgs";
-        # nix-darwin.follows  = "darwin";
-      };
-    };
+    nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
     sops-nix = {
       url = "github:Mic92/sops-nix";
@@ -28,14 +22,20 @@
     };
 
     roro-ci = {
-      # TODO: Update to main when it's merged
-      url = "git+ssh://git@github.com/RoroInteractive/Room_CITools?dir=nix&ref=switch-to-nix";
+      url = "git+ssh://git@github.com/RoroInteractive/Room_CITools?dir=nix";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.darwin.follows = "darwin";
+      inputs.sops-nix.follows = "sops-nix";
+    };
+
+    userbase = {
+      url = "../shared";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
     };
   };
 
-  outputs = { self, nixpkgs, darwin, home-manager, nix-homebrew, sops-nix, roro-ci, ... }: let
+  outputs = { self, nixpkgs, darwin, home-manager, nix-homebrew, sops-nix, roro-ci, userbase, ... }: let
     system = "aarch64-darwin";
     pkgs = import nixpkgs {
       inherit system;
@@ -44,7 +44,7 @@
         android_sdk.accept_license = true;
       };
     };
-
+    me = { username = "tedsteen"; fullName = "Ted Steen"; email = "ted.steen@gmail.com"; };
   in {
     darwinConfigurations."teds-mbp" = darwin.lib.darwinSystem {
       inherit system pkgs;
@@ -52,34 +52,28 @@
       modules = [
         nix-homebrew.darwinModules.nix-homebrew
         home-manager.darwinModules.home-manager
-        (import ./base-and-user-config.nix {
+        userbase.homeManagerModules.userbase
+        (import ./base-config.nix {
           inherit pkgs;
-          username = "tedsteen";
-          fullName = "Ted Steen";
-          email = "ted.steen@gmail.com";
+          username = "${me.username}";
         })
         {
-          
           networking.computerName = "Ted's MacBook Pro";
           networking.hostName = "teds-mbp";
-
-          users.users.tedsteen = {
-            name = "tedsteen";
-            home = "/Users/tedsteen";
-          };
-
-          home-manager.users.tedsteen = {
+          
+          userbase.users.${me.username} = {
+            fullName = "${me.fullName}";
+            email = "${me.email}";
+            
             # The state versions are required and should stay at the version you
             # originally installed.
             # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
-            home.stateVersion = "24.11";
+            stateVersion = "24.11";
           };
+
           # Enable touch to click on the trackpad
           system.defaults.trackpad.Clicking = true;
 
-          # The state versions are required and should stay at the version you
-          # originally installed.
-          # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
           system.stateVersion = 6;
         }
       ];
@@ -91,45 +85,43 @@
       modules = [
         nix-homebrew.darwinModules.nix-homebrew
         home-manager.darwinModules.home-manager
+        userbase.homeManagerModules.userbase
+
         sops-nix.darwinModules.sops
         roro-ci.darwinModules.github-runner
-        (import ./base-and-user-config.nix {
+        (import ./base-config.nix {
           inherit pkgs;
-          username = "tedsteen";
-          fullName = "Ted Steen";
-          email = "ted.steen@gmail.com";
+          username = "${me.username}";
         })
         ({ config, lib, pkgs, ... } : {
           
           networking.computerName = "Steen's iMac";
           networking.hostName = "steen-imac";
 
-          users.users.tedsteen = {
-            name = "tedsteen";
-            home = "/Users/tedsteen";
-          };
-
-          home-manager.users.tedsteen = {
+          userbase.users.${me.username} = {
+            fullName = "${me.fullName}";
+            email = "${me.email}";
+            
             # The state versions are required and should stay at the version you
             # originally installed.
             # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
-            home.stateVersion = "24.11";
+            stateVersion = "24.11";
           };
 
           sops = {
-            age.sshKeyPaths = [ "/Users/tedsteen/.ssh/random" ];
+            age.sshKeyPaths = [ "/Users/${me.username}/.ssh/random" ];
             # Encrypted with `sops -e -i secrets.yaml`, see `.sops.yaml` for recipients.
             defaultSopsFile = ./secrets.yaml;
             secrets = {
               roro_github_runner_pat = {
-                owner = "tedsteen";
+                owner = "${me.username}";
               };
             };
           };
 
           roro.githubRunner = {
             enable = true;
-            user = "tedsteen";
+            user = "${me.username}";
             ueInstallsPath = "/Users/Shared/Epic\ Games";
             tokenFile = config.sops.secrets.roro_github_runner_pat.path;
           };

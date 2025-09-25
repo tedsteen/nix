@@ -11,26 +11,30 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    
+    userbase = {
+      url = "../../shared";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
   };
 
-  outputs = { nixpkgs, disko, home-manager, ... }: {
+  outputs = { nixpkgs, disko, home-manager, userbase, ... }: let
+    system = "x86_64-linux";
+    pkgs = import nixpkgs { inherit system; };
+  in {
     nixosConfigurations.default = nixpkgs.lib.nixosSystem {
-      system = "aarch64-linux";
-      
       modules = [
+        home-manager.nixosModules.home-manager
+        userbase.homeManagerModules.userbase
         ./hardware-configuration.nix
         (import ../base-system-config.nix {
           inherit disko;
           mainDevice = "/dev/vda";
           hostName = "lab";
           timeZone = "Europe/Lisbon";
-          username = "ted";
-          email = "ted.steen@gmail.com";
-          fullName = "Ted Steen";
         })
-
-        home-manager.nixosModules.home-manager
-        ({ pkgs, ... }: {
+        {
 
           users.users.ted = {
             isNormalUser = true;
@@ -42,11 +46,14 @@
             ];
           };
           
-          home-manager.users."ted" = {
+          userbase.users."ted" = {
+            fullName = "Ted Steen";
+            email = "ted.steen@gmail.com";
+            
             # The state versions are required and should stay at the version you
             # originally installed.
             # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
-            home.stateVersion = "24.11";
+            stateVersion = "24.11";
           };
 
           # Lock down root and password access but let the user "ted" in with private key and enable passwordless sudo
@@ -73,7 +80,7 @@
           # originally installed.
           # DON'T CHANGE THEM UNLESS YOU KNOW WHAT YOU'RE DOING!
           system.stateVersion = "24.11";
-        })
+        }
       ];
     };
   };
