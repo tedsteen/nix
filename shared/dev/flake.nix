@@ -9,52 +9,64 @@
     };
   };
 
-  outputs = { self, nixpkgs, rust-overlay }:
+  outputs = { self, nixpkgs, rust-overlay, ... }:
   let
-    system = "aarch64-darwin";
-    pkgs = import nixpkgs {
-      inherit system;
-      overlays = [ (import rust-overlay) ];
-    };
+    lib = nixpkgs.lib;
+    systems = [
+      "aarch64-darwin" "x86_64-darwin"
+      "x86_64-linux"   "aarch64-linux"
+    ];
+    forAllSystems = f: lib.genAttrs systems (system:
+      let
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [ (import rust-overlay) ];
+        };
+      in f pkgs
+    );
   in {
-    devShells.${system}.default = pkgs.mkShell {
-      packages = with pkgs; [
-        # General stuff
-        pkg-config
-        cmake
+    devShells = forAllSystems (pkgs: {
+      default = pkgs.mkShell {
+        packages = with pkgs; [
+          # General
+          pkg-config
+          cmake
 
-        # Rust
-        (rust-bin.stable.latest.default.override {
-          extensions = [ "rust-src" "rustfmt" "clippy" "rust-analyzer" ];
-          targets = [ "riscv32imc-unknown-none-elf" ];
-        })
-        #TODO: gdb?
+          # Rust
+          (rust-bin.stable.latest.default.override {
+            extensions = [ "rust-src" "rustfmt" "clippy" "rust-analyzer" ];
+            targets = [ "riscv32imc-unknown-none-elf" ];
+          })
 
-        # ESP32
-        espflash
-        
-        # Node
-        nodejs
-        pnpm
-        yarn
+          # ESP32
+          espflash
 
-        # NES
-        cc65
-        python3
-      ];
+          # Node
+          nodejs
+          pnpm
+          yarn
 
-      buildInputs = with pkgs; [
-        apple-sdk_15
-      ];
+          # NES
+          cc65
+          python3
+        ];
 
-      shellHook = ''
-        export CC="clang"
-        export CXX="clang++"
-        export MACOSX_DEPLOYMENT_TARGET="14"
-        echo "Dev environment!"
-        zsh
-        exit
-      '';
-    };
+        # Only on macOS
+        buildInputs = lib.optionals pkgs.stdenv.isDarwin [ pkgs.apple-sdk_15 ];
+
+        shellHook = ''
+          export CC=clang
+          export CXX=clang++
+
+          if [[ "$(uname)" = "Darwin" ]]; then
+            export MACOSX_DEPLOYMENT_TARGET=14
+          fi
+
+          echo "Dev environment!"
+          zsh
+          exit
+        '';
+      };
+    });
   };
 }
