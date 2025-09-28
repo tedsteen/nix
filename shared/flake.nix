@@ -109,6 +109,10 @@
                     netstat -tulanp 2>/dev/null || ss -tulpn
                   fi
                 }
+
+                dev() {
+                  PROFILES="$*" nix develop --impure path:${./dev}
+                }
               '';
 
               shellAliases = lib.mkMerge [
@@ -134,9 +138,6 @@
                   tn  = "tmux new -s";
                   ta  = "tmux attach -t";
                   tls = "tmux ls";
-
-                  # shortcuts
-                  dev = "nix develop path:${./dev}";
                 }
 
                 (lib.mkIf dockerOn {

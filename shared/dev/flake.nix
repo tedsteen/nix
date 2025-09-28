@@ -26,31 +26,37 @@
     );
   in {
     devShells = forAllSystems (pkgs: {
-      default = pkgs.mkShell {
+      default = 
+      let
+        profiles = builtins.filter (s: s != "") (pkgs.lib.splitString " " (builtins.getEnv "PROFILES"));
+        has = n: pkgs.lib.elem n profiles;
+      in pkgs.mkShell {
         packages = with pkgs; [
-          # General
-          pkg-config
-          cmake
-
-          # Rust
-          (rust-bin.stable.latest.default.override {
-            extensions = [ "rust-src" "rustfmt" "clippy" "rust-analyzer" ];
-            targets = [ "riscv32imc-unknown-none-elf" ];
-          })
-
-          # ESP32
-          espflash
-
-          # Node
-          nodejs
-          pnpm
-          yarn
-
-          # NES
-          cc65
-          python3
-        ];
-
+            # General stuff
+            pkg-config
+            cmake
+          ]
+          ++ lib.optionals (has "rust") [
+            (rust-bin.stable.latest.default.override {
+              extensions = [ "rust-src" "rustfmt" "clippy" "rust-analyzer" ];
+              targets = lib.optionals (has "esp") [ "riscv32imc-unknown-none-elf" ];
+            })
+          ]
+          ++ lib.optionals (has "node") [
+            nodejs
+            pnpm
+            yarn
+          ]
+          ++ lib.optionals (has "esp")  [
+            espflash
+          ]
+          ++ lib.optionals (has "python")  [
+            python3
+          ]
+          ++ lib.optionals (has "nes")  [
+            cc65
+          ];
+        
         # Only on macOS
         buildInputs = lib.optionals pkgs.stdenv.isDarwin [ pkgs.apple-sdk_15 ];
 
