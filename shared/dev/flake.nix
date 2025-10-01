@@ -68,9 +68,7 @@
             export MACOSX_DEPLOYMENT_TARGET=14
           fi
 
-          echo "Dev environment!"
-          zsh
-          exit
+          echo "Dev environment (${lib.strings.concatStringsSep ", " profiles})"
         '';
       };
     });

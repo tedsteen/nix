@@ -111,7 +111,7 @@
                 }
 
                 dev() {
-                  PROFILES="$*" nix develop --impure path:${./dev}
+                  PROFILES="$*" nix develop --impure path:${./dev} --command zsh
                 }
               '';
 
