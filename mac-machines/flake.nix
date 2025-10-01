@@ -66,7 +66,7 @@
           };
 
           roro.githubRunner = {
-            enable = true;
+            enable = false;
             user = "${me.username}";
           };
 
