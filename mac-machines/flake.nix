@@ -21,8 +21,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    roro-ci = {
-      url = "git+ssh://git@github.com/RoroInteractive/Room_CITools?dir=nix";
+    roro-github-runner = {
+      url = "path:/Users/tedsteen/git/roro/Room_CITools/nix/github-runner";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.darwin.follows = "darwin";
       inputs.sops-nix.follows = "sops-nix";
@@ -35,26 +35,20 @@
     };
   };
 
-  outputs = { self, nixpkgs, darwin, home-manager, nix-homebrew, sops-nix, roro-ci, userbase, ... }: let
+  outputs = { self, nixpkgs, darwin, home-manager, nix-homebrew, sops-nix, roro-github-runner, userbase, ... }: let
     system = "aarch64-darwin";
-    pkgs = import nixpkgs {
-      inherit system;
-      config = {
-        allowUnfree = true;
-        android_sdk.accept_license = true;
-      };
-    };
     me = { username = "tedsteen"; fullName = "Ted Steen"; email = "ted.steen@gmail.com"; };
   in {
     darwinConfigurations."teds-mbp" = darwin.lib.darwinSystem {
-      inherit system pkgs;
-
+      inherit system;
       modules = [
         nix-homebrew.darwinModules.nix-homebrew
         home-manager.darwinModules.home-manager
         userbase.homeManagerModules.userbase
+        
+        sops-nix.darwinModules.sops
+        roro-github-runner.darwinModules.github-runner
         (import ./base-config.nix {
-          inherit pkgs;
           username = "${me.username}";
         })
         {
@@ -71,6 +65,11 @@
             stateVersion = "24.11";
           };
 
+          roro.githubRunner = {
+            enable = true;
+            user = "${me.username}";
+          };
+
           # Enable touch to click on the trackpad
           system.defaults.trackpad.Clicking = true;
 
@@ -80,17 +79,14 @@
     };
     
     darwinConfigurations."steen-imac" = darwin.lib.darwinSystem {
-      inherit system pkgs;
-
       modules = [
         nix-homebrew.darwinModules.nix-homebrew
         home-manager.darwinModules.home-manager
         userbase.homeManagerModules.userbase
 
-        sops-nix.darwinModules.sops
-        roro-ci.darwinModules.github-runner
+        #sops-nix.darwinModules.sops
+        roro-github-runner.darwinModules.github-runner
         (import ./base-config.nix {
-          inherit pkgs;
           username = "${me.username}";
         })
         ({ config, lib, pkgs, ... } : {
@@ -108,22 +104,9 @@
             stateVersion = "24.11";
           };
 
-          sops = {
-            age.sshKeyPaths = [ "/Users/${me.username}/.ssh/random" ];
-            # Encrypted with `sops -e -i secrets.yaml`, see `.sops.yaml` for recipients.
-            defaultSopsFile = ./secrets.yaml;
-            secrets = {
-              roro_github_runner_pat = {
-                owner = "${me.username}";
-              };
-            };
-          };
-
           roro.githubRunner = {
             enable = true;
             user = "${me.username}";
-            ueInstallsPath = "/Users/Shared/Epic\ Games";
-            tokenFile = config.sops.secrets.roro_github_runner_pat.path;
           };
 
           # The state versions are required and should stay at the version you

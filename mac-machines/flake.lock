@@ -24,11 +24,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1758447883,
-        "narHash": "sha256-yGA6MV0E4JSEXqLTb4ZZkmdJZcoQ8HUzihRRX12Bvpg=",
+        "lastModified": 1758805352,
+        "narHash": "sha256-BHdc43Lkayd+72W/NXRKHzX5AZ+28F3xaUs3a88/Uew=",
         "owner": "lnl7",
         "repo": "nix-darwin",
-        "rev": "25381509d5c91bbf3c30e23abc6d8476d2143cd1",
+        "rev": "c48e963a5558eb1c3827d59d21c5193622a1477c",
         "type": "github"
       },
       "original": {
@@ -44,11 +44,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1758719930,
-        "narHash": "sha256-DgHe1026Ob49CPegPMiWj1HNtlMTGQzfSZQQVlHC950=",
+        "lastModified": 1759261733,
+        "narHash": "sha256-G104PUPKBgJmcu4NWs0LUaPpSOTD4jiq4mamLWu3Oc0=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "142acd7a7d9eb7f0bb647f053b4ddfd01fdfbf1d",
+        "rev": "5a21f4819ee1be645f46d6b255d49f4271ef6723",
         "type": "github"
       },
       "original": {
@@ -77,11 +77,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1758427187,
-        "narHash": "sha256-pHpxZ/IyCwoTQPtFIAG2QaxuSm8jWzrzBGjwQZIttJc=",
+        "lastModified": 1759036355,
+        "narHash": "sha256-0m27AKv6ka+q270dw48KflE0LwQYrO7Fm4/2//KCVWg=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "554be6495561ff07b6c724047bdd7e0716aa7b46",
+        "rev": "e9f00bd893984bc8ce46c895c3bf7cac95331127",
         "type": "github"
       },
       "original": {
@@ -96,12 +96,12 @@
         "home-manager": "home-manager",
         "nix-homebrew": "nix-homebrew",
         "nixpkgs": "nixpkgs",
-        "roro-ci": "roro-ci",
+        "roro-github-runner": "roro-github-runner",
         "sops-nix": "sops-nix",
         "userbase": "userbase"
       }
     },
-    "roro-ci": {
+    "roro-github-runner": {
       "inputs": {
         "darwin": [
           "darwin"
@@ -114,19 +114,14 @@
         ]
       },
       "locked": {
-        "dir": "nix",
-        "lastModified": 1758726299,
-        "narHash": "sha256-x2sHxFhk/3YGzl/qI9JmFM/nmr3fmOA0uEP0CJUy4pI=",
-        "ref": "refs/heads/main",
-        "rev": "1bce3042f1dce9d0df9542425b385415dfcd16eb",
-        "revCount": 97,
-        "type": "git",
-        "url": "ssh://git@github.com/RoroInteractive/Room_CITools"
+        "lastModified": 1759322588,
+        "narHash": "sha256-nJt0WJZLfChODdOFdhCvHOZd3TLeHPWm/CwzrjTsPQQ=",
+        "path": "/Users/tedsteen/git/roro/Room_CITools/nix/github-runner",
+        "type": "path"
       },
       "original": {
-        "dir": "nix",
-        "type": "git",
-        "url": "ssh://git@github.com/RoroInteractive/Room_CITools"
+        "path": "/Users/tedsteen/git/roro/Room_CITools/nix/github-runner",
+        "type": "path"
       }
     },
     "sops-nix": {
@@ -136,11 +131,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1758425756,
-        "narHash": "sha256-L3N8zV6wsViXiD8i3WFyrvjDdz76g3tXKEdZ4FkgQ+Y=",
+        "lastModified": 1759188042,
+        "narHash": "sha256-f9QC2KKiNReZDG2yyKAtDZh0rSK2Xp1wkPzKbHeQVRU=",
         "owner": "Mic92",
         "repo": "sops-nix",
-        "rev": "e0fdaea3c31646e252a60b42d0ed8eafdb289762",
+        "rev": "9fcfabe085281dd793589bdc770a2e577a3caa5d",
         "type": "github"
       },
       "original": {

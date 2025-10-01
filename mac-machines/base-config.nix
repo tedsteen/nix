@@ -1,5 +1,5 @@
 # Base config shared by all my macs
-{pkgs, username, ...}: {
+{username, ...}: {
   security.pam.services.sudo_local.touchIdAuth = true;
   system = {
     primaryUser = "${username}";
@@ -146,7 +146,7 @@
 
       # The home.packages option allows you to install Nix packages into your
       # environment.
-      home.packages = with pkgs; [                
+      home.packages = [                
       ];
       
       # Home Manager is pretty good at managing dotfiles. The primary way to manage
