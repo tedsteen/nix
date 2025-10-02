@@ -28,10 +28,10 @@
     devShells = forAllSystems (pkgs: {
       default = 
       let
-        profiles = builtins.filter (s: s != "") (pkgs.lib.splitString " " (builtins.getEnv "PROFILES"));
-        has = n: pkgs.lib.elem n profiles;
+        profiles = lib.filter (s: s != "") (lib.splitString " " (builtins.getEnv "PROFILES"));
+        has = name: lib.elem name profiles;
       in pkgs.mkShell {
-        packages = with pkgs; [
+        nativeBuildInputs = with pkgs; [
             # General stuff
             pkg-config
             cmake
@@ -44,8 +44,7 @@
           ]
           ++ lib.optionals (has "node") [
             nodejs
-            pnpm
-            yarn
+            corepack
           ]
           ++ lib.optionals (has "esp")  [
             espflash
@@ -58,7 +57,8 @@
           ];
         
         # Only on macOS
-        buildInputs = lib.optionals pkgs.stdenv.isDarwin [ pkgs.apple-sdk_15 ];
+        # TODO: Check if this is needed
+        buildInputs = lib.optionals pkgs.stdenv.isDarwin [ pkgs.apple-sdk_14 ];
 
         shellHook = ''
           export CC=clang
