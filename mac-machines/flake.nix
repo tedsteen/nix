@@ -79,6 +79,7 @@
     };
     
     darwinConfigurations."steen-imac" = darwin.lib.darwinSystem {
+      inherit system;
       modules = [
         nix-homebrew.darwinModules.nix-homebrew
         home-manager.darwinModules.home-manager
