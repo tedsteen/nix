@@ -44,11 +44,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1759261733,
-        "narHash": "sha256-G104PUPKBgJmcu4NWs0LUaPpSOTD4jiq4mamLWu3Oc0=",
+        "lastModified": 1759337100,
+        "narHash": "sha256-CcT3QvZ74NGfM+lSOILcCEeU+SnqXRvl1XCRHenZ0Us=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "5a21f4819ee1be645f46d6b255d49f4271ef6723",
+        "rev": "004753ae6b04c4b18aa07192c1106800aaacf6c3",
         "type": "github"
       },
       "original": {
@@ -114,14 +114,22 @@
         ]
       },
       "locked": {
-        "lastModified": 1759322588,
-        "narHash": "sha256-nJt0WJZLfChODdOFdhCvHOZd3TLeHPWm/CwzrjTsPQQ=",
-        "path": "/Users/tedsteen/git/roro/Room_CITools/nix/github-runner",
-        "type": "path"
+        "dir": "nix/github-runner",
+        "lastModified": 1759435635,
+        "narHash": "sha256-5DUhcAFyLpQxrXglpz+HmFMg44O6zUjKncvI57jk4DQ=",
+        "ref": "refs/heads/main",
+        "rev": "464c3c4a1a606da0f6af8511dd97ac048ad88a30",
+        "revCount": 114,
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/RoroInteractive/Room_CITools"
       },
       "original": {
-        "path": "/Users/tedsteen/git/roro/Room_CITools/nix/github-runner",
-        "type": "path"
+        "dir": "nix/github-runner",
+        "rev": "464c3c4a1a606da0f6af8511dd97ac048ad88a30",
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/RoroInteractive/Room_CITools"
       }
     },
     "sops-nix": {
