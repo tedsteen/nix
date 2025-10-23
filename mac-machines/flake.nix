@@ -13,6 +13,12 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    
+    # # Enable this hack to fix the spotlight search for nix installed apps
+    # mac-app-util = {
+    #   url = "github:hraban/mac-app-util";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
@@ -35,7 +41,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, darwin, home-manager, nix-homebrew, sops-nix, roro-github-runner, userbase, ... }: let
+  outputs = { self, nixpkgs, darwin, home-manager, /* mac-app-util,*/ nix-homebrew, sops-nix, roro-github-runner, userbase, ... }: let
     system = "aarch64-darwin";
     me = { username = "tedsteen"; fullName = "Ted Steen"; email = "ted.steen@gmail.com"; };
   in {
@@ -44,14 +50,20 @@
       modules = [
         nix-homebrew.darwinModules.nix-homebrew
         home-manager.darwinModules.home-manager
+        # # Enable this hack to fix the spotlight search for nix installed apps (on a darwin level)
+        # mac-app-util.darwinModules.default
         userbase.homeManagerModules.userbase
         
         sops-nix.darwinModules.sops
         roro-github-runner.darwinModules.github-runner
-        (import ./base-config.nix {
-          username = "${me.username}";
-        })
+        ./base-config.nix
+        
+        # # Enable this hack to fix the spotlight search for nix installed apps
+        # { home-manager.sharedModules = [ mac-app-util.homeManagerModules.default ]; }
+
         {
+          macBaseConfig.username = "${me.username}";
+
           networking.computerName = "Ted's MacBook Pro";
           networking.hostName = "teds-mbp";
           
@@ -83,15 +95,20 @@
       modules = [
         nix-homebrew.darwinModules.nix-homebrew
         home-manager.darwinModules.home-manager
+        # # Enable this hack to fix the spotlight search for nix installed apps
+        # mac-app-util.darwinModules.default
         userbase.homeManagerModules.userbase
 
         #sops-nix.darwinModules.sops
         roro-github-runner.darwinModules.github-runner
-        (import ./base-config.nix {
-          username = "${me.username}";
-        })
-        ({ config, lib, pkgs, ... } : {
-          
+        ./base-config.nix
+
+        # # Enable this hack to fix the spotlight search for nix installed apps
+        # { home-manager.sharedModules = [ mac-app-util.homeManagerModules.default ]; }
+
+        ({ config, lib, ... } : {
+          macBaseConfig.username = "${me.username}";
+
           networking.computerName = "Steen's iMac";
           networking.hostName = "steen-imac";
 
