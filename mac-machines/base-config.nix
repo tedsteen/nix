@@ -134,7 +134,6 @@
       "transmission"
       "utm"
       "visual-studio-code"
-      # TODO: Check out zed
     ];
   };
 
@@ -146,7 +145,7 @@
 
       # The home.packages option allows you to install Nix packages into your
       # environment.
-      home.packages = [                
+      home.packages = [
       ];
       
       # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -196,18 +195,24 @@
         keybind = super+right=goto_split:right
         window-vsync = true
       '';
+      programs = {
+        zed-editor = {
+          enable = true;
+        };
 
-      programs.zsh.shellAliases = {
-        samba-nuc = "open smb://guest:guest@nuc.pinheiro.s3n.io/everything";
-        samba-mister = "open smb://root:1@mister/sdcard";
-      };
+        zsh.shellAliases = {
+          samba-nuc = "open smb://guest:guest@nuc.pinheiro.s3n.io/everything";
+          samba-mister = "open smb://root:1@mister/sdcard";
+        };
 
-      programs.ssh = {
-        extraConfig = ''
-          # Fix for ghostty https://ghostty.org/docs/help/terminfo#configure-ssh-to-fall-back-to-a-known-terminfo-entry
-          Host *
-            SetEnv TERM=xterm-256color
-        '';
-      };
+        ssh = {
+          extraConfig = ''
+            # Fix for ghostty https://ghostty.org/docs/help/terminfo#configure-ssh-to-fall-back-to-a-known-terminfo-entry
+            Host *
+              SetEnv TERM=xterm-256color
+          '';
+        };
+      }
+      
   };
 }
