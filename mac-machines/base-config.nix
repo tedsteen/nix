@@ -143,6 +143,7 @@ in {
         "transmission"
         "utm"
         "visual-studio-code"
+        "zed"
       ];
     };
 
@@ -205,10 +206,6 @@ in {
           window-vsync = true
         '';
         programs = {
-          zed-editor = {
-            enable = true;
-          };
-
           zsh.shellAliases = {
             samba-nuc = "open smb://guest:guest@nuc.pinheiro.s3n.io/everything";
             samba-mister = "open smb://root:1@mister/sdcard";
