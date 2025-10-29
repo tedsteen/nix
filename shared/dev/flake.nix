@@ -36,18 +36,27 @@
             pkg-config
             cmake
           ]
+          # TODO: A special config for extensia on rust (havent figured out how to use espup with the oxalica overlay)
+          ++ lib.optionals (has "rust-extensia") [
+            rustup
+            espup # For targets not yet available in rust (like the esp32s3 xtensa cpu)
+            probe-rs
+          ]
           ++ lib.optionals (has "rust") [
             (rust-bin.stable.latest.default.override {
               extensions = [ "rust-src" "rustfmt" "clippy" "rust-analyzer" ];
-              targets = lib.optionals (has "esp") [ "riscv32imc-unknown-none-elf" ];
+              targets = lib.optionals (has "embedded") [ "riscv32imc-unknown-none-elf" "thumbv7em-none-eabi" ];
             })
+            # cargo-generate
           ]
           ++ lib.optionals (has "node") [
             nodejs
             corepack
           ]
-          ++ lib.optionals (has "esp")  [
-            espflash
+          ++ lib.optionals (has "embedded")  [
+            # espflash
+            probe-rs
+
           ]
           ++ lib.optionals (has "python")  [
             python3
@@ -69,6 +78,8 @@
           fi
 
           echo "Dev environment (${lib.strings.concatStringsSep ", " profiles})"
+        '' + lib.optionalString (has "rust-extensia") ''
+          . ~/export-esp.sh
         '';
       };
     });
