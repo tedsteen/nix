@@ -111,7 +111,7 @@
                 }
 
                 dev() {
-                  PROFILES="$*" nix develop --impure path:${./dev} --command zsh
+                  PROFILES="$*" nix develop --impure path:${./dev} --no-write-lock-file --command zsh
                 }
               '';
 

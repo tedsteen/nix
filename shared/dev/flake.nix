@@ -7,9 +7,13 @@
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    zig = {
+      url = "github:mitchellh/zig-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, rust-overlay, ... }:
+  outputs = { self, nixpkgs, rust-overlay, zig, ... }:
   let
     lib = nixpkgs.lib;
     systems = [
@@ -22,10 +26,11 @@
           inherit system;
           overlays = [ (import rust-overlay) ];
         };
-      in f pkgs
+        zigPkg = zig.packages.${system}.default;
+      in f pkgs zigPkg
     );
   in {
-    devShells = forAllSystems (pkgs: {
+    devShells = forAllSystems (pkgs: zigPkg: {
       default = 
       let
         profiles = lib.filter (s: s != "") (lib.splitString " " (builtins.getEnv "PROFILES"));
@@ -63,6 +68,9 @@
           ]
           ++ lib.optionals (has "nes")  [
             cc65
+          ]
+          ++ lib.optionals (has "zig") [
+            zigPkg
           ];
         
         # Only on macOS
