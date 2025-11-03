@@ -45,7 +45,7 @@
           ++ lib.optionals (has "rust-extensia") [
             rustup
             espup # For targets not yet available in rust (like the esp32s3 xtensa cpu)
-            probe-rs
+            probe-rs-tools
           ]
           ++ lib.optionals (has "rust") [
             (rust-bin.stable.latest.default.override {
@@ -60,7 +60,7 @@
           ]
           ++ lib.optionals (has "embedded")  [
             # espflash
-            probe-rs
+            probe-rs-tools
 
           ]
           ++ lib.optionals (has "python")  [
