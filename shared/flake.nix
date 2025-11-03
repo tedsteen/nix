@@ -198,9 +198,12 @@
 
             git = {
               enable = true;
-              userEmail = u.email;
-              userName = u.fullName;
-              extraConfig = {
+              settings = {
+                user = {
+                  user.email = u.email;
+                  user.name = u.fullName;
+                };
+
                 init.defaultBranch = "master";
                 fetch.prune = true;
                 pull.rebase = true;
