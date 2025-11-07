@@ -50,8 +50,10 @@
       modules = [
         nix-homebrew.darwinModules.nix-homebrew
         home-manager.darwinModules.home-manager
+
         # # Enable this hack to fix the spotlight search for nix installed apps (on a darwin level)
         # mac-app-util.darwinModules.default
+        
         userbase.homeManagerModules.userbase
         
         sops-nix.darwinModules.sops
@@ -95,8 +97,10 @@
       modules = [
         nix-homebrew.darwinModules.nix-homebrew
         home-manager.darwinModules.home-manager
+        
         # # Enable this hack to fix the spotlight search for nix installed apps
         # mac-app-util.darwinModules.default
+
         userbase.homeManagerModules.userbase
 
         #sops-nix.darwinModules.sops
@@ -123,7 +127,7 @@
           };
 
           roro.githubRunner = {
-            enable = true;
+            enable = false;
             user = "${me.username}";
           };
 
