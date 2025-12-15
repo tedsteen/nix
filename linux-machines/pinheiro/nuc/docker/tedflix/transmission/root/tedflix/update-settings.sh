@@ -22,7 +22,7 @@ cat <<EOF > $FILE
     "encryption": 1,
     "idle-seeding-limit": 30,
     "idle-seeding-limit-enabled": false,
-    "incomplete-dir": "/media/downloads/incomplete",
+    "incomplete-dir": "/tmp/unfinished-downloads",
     "incomplete-dir-enabled": true,
     "lpd-enabled": false,
     "message-level": 2,
