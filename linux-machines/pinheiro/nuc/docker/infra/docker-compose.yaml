@@ -210,13 +210,12 @@ services:
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
-    # environment:
-    #   - PORTFORWARD_PORT=45000
-    #   - PORTFORWARD_IPADDRESS=172.40.0.3
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
     volumes:
       - ${INFRA_WIREGUARD_CONFIG}:/etc/wireguard/wg0.conf
+    dns:
+      - 10.64.0.1 # NOTE!! This can't be in the wg0.conf because docker owns the resolv.conf and openresolv will clash with it, so instead we comment out the DNS part of the wg0.conf and put it here...
     networks:
       wireguard:
         ipv4_address: 172.40.0.2

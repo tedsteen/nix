@@ -1,6 +1,4 @@
-FROM alpine:3.22.0
-
-ENV DNS_SERVERS=8.8.8.8,1.1.1.1
+FROM alpine:3.23
 
 # Install wireguard-tools and iptables
 RUN apk add wireguard-tools iptables curl
