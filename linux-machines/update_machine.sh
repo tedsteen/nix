@@ -4,9 +4,9 @@ export MACHINE=${2:-"./lab"}
 
 export NIX_CONFIG="extra-experimental-features = nix-command flakes"
 nix run nixpkgs#nixos-rebuild -- \
-  --fast \
+  --no-reexec \
   --flake "$MACHINE#default" \
   --build-host "$TARGET_HOST" \
   --target-host "$TARGET_HOST" \
-  --use-remote-sudo \
+  --sudo \
   switch
