@@ -290,6 +290,12 @@
         home-manager.useGlobalPkgs = true;
         home-manager.useUserPackages = true;
         home-manager.users = lib.mapAttrs mkUserCfg cfg;
+        
+        # To be able to set users.users.*.shell to zsh you need to enable the zsh program here.
+        programs.zsh.enable = true;
+        users.users = lib.mapAttrs (_: _: {
+          shell = pkgs.zsh;
+        }) cfg;
       };
     };
   };

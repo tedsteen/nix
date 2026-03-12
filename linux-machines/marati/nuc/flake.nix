@@ -47,7 +47,6 @@
         {
           users.users.ted = {
             isNormalUser = true;
-            shell = pkgs.zsh;
             # Sudo and docker access for ted
             extraGroups = [ "wheel" "docker" ];
             openssh.authorizedKeys.keys = [
