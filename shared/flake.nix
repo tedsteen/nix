@@ -211,6 +211,11 @@
                 updatetime = 250;
               };
 
+              colorschemes.catppuccin = {
+                enable = true;
+                settings.flavour = "mocha";
+              };
+
               diagnostic.settings = {
                 severity_sort = true;
                 virtual_text = true;
