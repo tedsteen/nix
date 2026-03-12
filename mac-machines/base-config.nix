@@ -151,10 +151,16 @@ in {
       home = "/Users/${username}";
     };
 
+    # # Allow installing unfree packages like claude-code
+    # nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+    #         "claude-code"
+    # ];
+
     home-manager.users.${username} = {
         # The home.packages option allows you to install Nix packages into your
         # environment.
         home.packages = [
+          # pkgs.claude-code
           # pkgs.utm
         ];
         
@@ -217,6 +223,51 @@ in {
               Host *
                 SetEnv TERM=xterm-256color
             '';
+          };
+
+          nixvim = {
+            plugins = {
+              lsp.servers.taplo.enable = true;
+
+              conform-nvim.settings.formatters_by_ft.rust = [ "rustfmt" ];
+
+              treesitter.grammarPackages = lib.mkAfter (with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [
+                rust
+                toml
+              ]);
+
+              crates = {
+                enable = true;
+                settings = {
+                  autoload = true;
+                  autoupdate = true;
+                  smart_insert = true;
+                };
+              };
+
+              rustaceanvim = {
+                enable = true;
+                settings = {
+                  tools = {
+                    enable_clippy = true;
+                  };
+
+                  server = {
+                    default_settings = {
+                      "rust-analyzer" = {
+                        cargo = {
+                          allFeatures = true;
+                          buildScripts.enable = true;
+                        };
+                        check.command = "clippy";
+                        completion.autoimport.enable = true;
+                        procMacro.enable = true;
+                      };
+                    };
+                  };
+                };
+              };
+            };
           };
         };
     };

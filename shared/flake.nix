@@ -7,12 +7,15 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }: {
+  outputs = { nixvim, ... }: {
     # Single HM module you can import from other flakes.
     homeManagerModules.userbase = { lib, pkgs, config, ... }: {
-    
       options.userbase.users = lib.mkOption {
         type = lib.types.attrsOf (lib.types.submodule ({ name, ... }: {
           options = {
@@ -31,30 +34,23 @@
         dockerOn = pkgs.stdenv.isDarwin || (config.virtualisation.docker.enable or false);
         
         mkUserCfg = username: u: {
+          imports = [ nixvim.homeModules.nixvim ];
+
           # Let Home Manager install and manage itself.
           programs.home-manager.enable = true;
 
           home.stateVersion = u.stateVersion;
 
           home.file = {
-            ".config/nvim" = {
-              source = ./nvim;
-              recursive = true;
-            };
-
             ".tmux.conf".text = ''
               set -g mouse on
             '';
           };
 
-          home.packages = with pkgs; [    
-            # nvim dependencies
-            gcc
-            unzip
-            fd
-            ripgrep
-            gnumake
+          home.sessionVariables.EDITOR = lib.mkDefault "nvim";
+          home.sessionVariables.VISUAL = lib.mkDefault "nvim";
 
+          home.packages = with pkgs; [    
             # git
             difftastic
             git-lfs
@@ -189,11 +185,86 @@
               };
             };
 
-            neovim = {
+            nixvim = {
               enable = true;
-              defaultEditor = true;
               viAlias = true;
               vimAlias = true;
+
+              extraPackages = with pkgs; [
+                fd
+                ripgrep
+                shellcheck
+                shfmt
+              ];
+
+              opts = {
+                number = true;
+                relativenumber = true;
+                expandtab = true;
+                shiftwidth = 2;
+                tabstop = 2;
+                smartindent = true;
+                ignorecase = true;
+                smartcase = true;
+                signcolumn = "yes";
+                termguicolors = true;
+                updatetime = 250;
+              };
+
+              diagnostic.settings = {
+                severity_sort = true;
+                virtual_text = true;
+              };
+
+              plugins = {
+                lsp = {
+                  enable = true;
+                  servers.bashls = {
+                    enable = true;
+                    filetypes = [ "bash" "sh" ];
+                  };
+                };
+
+                treesitter = {
+                  enable = true;
+                  grammarPackages = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [
+                    bash
+                    lua
+                    markdown
+                    nix
+                    query
+                    regex
+                    vim
+                    vimdoc
+                  ];
+
+                  highlight.enable = true;
+                  indent.enable = true;
+                };
+
+                lint = {
+                  enable = true;
+                  lintersByFt = {
+                    bash = [ "shellcheck" ];
+                    sh = [ "shellcheck" ];
+                  };
+                };
+
+                conform-nvim = {
+                  enable = true;
+                  settings = {
+                    format_on_save = {
+                      lsp_format = "fallback";
+                      timeout_ms = 500;
+                    };
+
+                    formatters_by_ft = {
+                      bash = [ "shfmt" ];
+                      sh = [ "shfmt" ];
+                    };
+                  };
+                };
+              };
             };
 
             git = {
