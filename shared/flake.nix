@@ -32,8 +32,7 @@
         cfg = config.userbase.users;
         # TODO: Right now we just assume that docker is installed when on macOS. We should actually check for it.
         dockerOn = pkgs.stdenv.isDarwin || (config.virtualisation.docker.enable or false);
-        
-        mkUserCfg = username: u: {
+        mkUserCfg = _: u: {
           imports = [ nixvim.homeModules.nixvim ];
 
           # Let Home Manager install and manage itself.
@@ -70,30 +69,21 @@
           programs = {
             zsh = {
               enable = true;
-              # TODO: Or use marlonrichert/zsh-autocomplete?
               enableCompletion = true;
               autosuggestion.enable = true;
+              syntaxHighlighting.enable = true;
+              historySubstringSearch.enable = true;
+              setOptions = [ "interactivecomments" ];
+              plugins = [
+                {
+                  name = "you-should-use";
+                  src = pkgs."zsh-you-should-use";
+                  file = "share/zsh/plugins/you-should-use/you-should-use.plugin.zsh";
+                }
+              ];
 
               initContent = ''
-                # Enable comments in zsh
-                setopt interactivecomments
-                
                 setopt INC_APPEND_HISTORY        # Write to the history file immediately, not when the shell exits.
-                setopt HIST_IGNORE_DUPS          # Don't record an entry that was just recorded again.
-
-                source "${pkgs.zinit}/share/zinit/zinit.zsh"
-                # TODO: Enable?
-                # zinit compile
-                
-                zinit light zdharma-continuum/fast-syntax-highlighting
-                
-                # TODO: Look into this. Perhaps enableCompletion = true is enough?
-                # zinit light marlonrichert/zsh-autocomplete
-
-                zinit light MichaelAquilina/zsh-you-should-use
-                zinit light zsh-users/zsh-history-substring-search
-                # Make up/down arrows for zsh-history-substring-search work
-                bindkey '^[[A' history-substring-search-up && bindkey '^[[B' history-substring-search-down
 
                 mkcd() { mkdir -p "$@" && cd "$@"; }
 
@@ -275,10 +265,8 @@
             git = {
               enable = true;
               settings = {
-                user = {
-                  user.email = u.email;
-                  user.name = u.fullName;
-                };
+                user.email = u.email;
+                user.name = u.fullName;
 
                 init.defaultBranch = "master";
                 fetch.prune = true;
