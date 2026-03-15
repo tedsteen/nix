@@ -1,0 +1,260 @@
+{
+  "nodes": {
+    "brew-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1769363988,
+        "narHash": "sha256-BiGPeulrDVetXP+tjxhMcGLUROZAtZIhU5m4MqawCfM=",
+        "owner": "Homebrew",
+        "repo": "brew",
+        "rev": "d01011cac6d72032c75fd2cd9489909e95d9faf2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Homebrew",
+        "ref": "5.0.12",
+        "repo": "brew",
+        "type": "github"
+      }
+    },
+    "darwin": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1773000227,
+        "narHash": "sha256-zm3ftUQw0MPumYi91HovoGhgyZBlM4o3Zy0LhPNwzXE=",
+        "owner": "lnl7",
+        "repo": "nix-darwin",
+        "rev": "da529ac9e46f25ed5616fd634079a5f3c579135f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "lnl7",
+        "repo": "nix-darwin",
+        "type": "github"
+      }
+    },
+    "disko": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1773506317,
+        "narHash": "sha256-qWKbLUJpavIpvOdX1fhHYm0WGerytFHRoh9lVck6Bh0=",
+        "owner": "nix-community",
+        "repo": "disko",
+        "rev": "878ec37d6a8f52c6c801d0e2a2ad554c75b9353c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "disko",
+        "type": "github"
+      }
+    },
+    "flake-parts": {
+      "inputs": {
+        "nixpkgs-lib": [
+          "userbase",
+          "nixvim",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1769996383,
+        "narHash": "sha256-AnYjnFWgS49RlqX7LrC4uA+sCCDBj0Ry/WOJ5XWAsa0=",
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "rev": "57928607ea566b5db3ad13af0e57e921e6b12381",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "flake-parts",
+        "type": "github"
+      }
+    },
+    "home-manager": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1773422513,
+        "narHash": "sha256-MPjR48roW7CUMU6lu0+qQGqj92Kuh3paIulMWFZy+NQ=",
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "rev": "ef12a9a2b0f77c8fa3dda1e7e494fca668909056",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "nix-homebrew": {
+      "inputs": {
+        "brew-src": "brew-src"
+      },
+      "locked": {
+        "lastModified": 1769437432,
+        "narHash": "sha256-8d7KnCpT2LweRvSzZYEGd9IM3eFX+A78opcnDM0+ndk=",
+        "owner": "zhaofengli",
+        "repo": "nix-homebrew",
+        "rev": "a5409abd0d5013d79775d3419bcac10eacb9d8c5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "zhaofengli",
+        "repo": "nix-homebrew",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1773389992,
+        "narHash": "sha256-wvfdLLWJ2I9oEpDd9PfMA8osfIZicoQ5MT1jIwNs9Tk=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "c06b4ae3d6599a672a6210b7021d699c351eebda",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixvim": {
+      "inputs": {
+        "flake-parts": "flake-parts",
+        "nixpkgs": [
+          "userbase",
+          "nixpkgs"
+        ],
+        "systems": "systems"
+      },
+      "locked": {
+        "lastModified": 1772402258,
+        "narHash": "sha256-3DmCFOdmbkFML1/G9gj8Wb+rCCZFPOQtNoMCpqOF8SA=",
+        "owner": "nix-community",
+        "repo": "nixvim",
+        "rev": "21ae25e13b01d3b4cdc750b5f9e7bad68b150c10",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "nixvim",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "darwin": "darwin",
+        "disko": "disko",
+        "home-manager": "home-manager",
+        "nix-homebrew": "nix-homebrew",
+        "nixpkgs": "nixpkgs",
+        "roro-github-runner": "roro-github-runner",
+        "sops-nix": "sops-nix",
+        "userbase": "userbase"
+      }
+    },
+    "roro-github-runner": {
+      "inputs": {
+        "darwin": [
+          "darwin"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "sops-nix": [
+          "sops-nix"
+        ]
+      },
+      "locked": {
+        "dir": "nix/github-runner",
+        "lastModified": 1759488201,
+        "narHash": "sha256-scuFfeQtnl/cQvf+gcI9lu2VBfYsFk9fUi3M3Fh2v48=",
+        "ref": "refs/heads/main",
+        "rev": "4b0f3ceb054c8985115fbb82c9af8d331e542707",
+        "revCount": 98,
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/RoroInteractive/Room_CITools"
+      },
+      "original": {
+        "dir": "nix/github-runner",
+        "rev": "4b0f3ceb054c8985115fbb82c9af8d331e542707",
+        "submodules": true,
+        "type": "git",
+        "url": "ssh://git@github.com/RoroInteractive/Room_CITools"
+      }
+    },
+    "sops-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1773550941,
+        "narHash": "sha256-wa/++bL2QeMUreNFBZEWluQfOYB0MnQIeGNMuaX9sfs=",
+        "owner": "Mic92",
+        "repo": "sops-nix",
+        "rev": "c469b6885f0dcd5c7c56bd935a0f08dbcd9e79e1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Mic92",
+        "repo": "sops-nix",
+        "type": "github"
+      }
+    },
+    "systems": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "userbase": {
+      "inputs": {
+        "home-manager": [
+          "home-manager"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "nixvim": "nixvim"
+      },
+      "locked": {
+        "path": "./shared",
+        "type": "path"
+      },
+      "original": {
+        "path": "./shared",
+        "type": "path"
+      },
+      "parent": []
+    }
+  },
+  "root": "root",
+  "version": 7
+}
