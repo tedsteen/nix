@@ -1,13 +1,18 @@
 #!/bin/sh
-set -e
+set -eu
 
 FILE=/config/settings.json
 DOWNLOAD_DIR=/media/downloads/complete/$(date +"%y%m")
+TMP_FILE=$(mktemp "${FILE}.tmp.XXXXXX")
+
+trap 'rm -f "$TMP_FILE"' EXIT
 
 echo "Updating '$FILE':"
 echo "  DOWNLOAD_DIR='$DOWNLOAD_DIR'"
 
-cat <<EOF > $FILE
+mkdir -p "$DOWNLOAD_DIR"
+
+cat <<EOF > "$TMP_FILE"
 {
     "alt-speed-enabled": false,
     "announce-ip-enabled": false,
@@ -54,8 +59,8 @@ cat <<EOF > $FILE
     "rpc-whitelist-enabled": false,
     "scrape-paused-torrents-enabled": true,
     "script-torrent-added-enabled": false,
-    "script-torrent-done-enabled": true,
-    "script-torrent-done-filename": "/tedflix/unpack.sh",
+    "script-torrent-done-enabled": false,
+    "script-torrent-done-filename": "",
     "script-torrent-done-seeding-enabled": false,
     "seed-queue-enabled": false,
     "speed-limit-down-enabled": false,
@@ -70,6 +75,8 @@ cat <<EOF > $FILE
     "watch-dir-enabled": false
 }
 EOF
+
+mv "$TMP_FILE" "$FILE"
 
 echo "soft-reload Transmission"
 s6-svc -h /run/service/svc-transmission

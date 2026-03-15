@@ -158,6 +158,28 @@ services:
       infra_traefik:
       infra_wireguard:
         ipv4_address: 172.40.0.3
+
+  unpackerr:
+    image: ghcr.io/unpackerr/unpackerr:latest
+    restart: unless-stopped
+    pull_policy: always
+    user: "1000:100"
+    depends_on:
+      - sonarr
+      - radarr
+      - transmission
+    environment:
+      UN_LOG_FILE: /media/downloads/unpackerr.log
+      UN_SONARR_0_URL: http://sonarr:8989
+      UN_SONARR_0_API_KEY: be2ed6d5c3204e29bd844a5571a41615
+      UN_SONARR_0_PATHS_0: /media/downloads
+      UN_RADARR_0_URL: http://radarr:7878
+      UN_RADARR_0_API_KEY: da60ccab217c4015997d62af67cd41fd
+      UN_RADARR_0_PATHS_0: /media/downloads
+    volumes:
+      - ${TEDFLIX_PATH}:/media
+    networks:
+      - infra_traefik
   
   plex:
     image: plexinc/pms-docker:public
