@@ -34,7 +34,7 @@ in {
   config = {
     security.pam.services.sudo_local.touchIdAuth = true;
     system = {
-      primaryUser = "${username}";
+      primaryUser = username;
       activationScripts.kickStartScript.text = ''
         /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
       '';
@@ -107,7 +107,7 @@ in {
     nix-homebrew = {
       enable = true;
       enableRosetta = true;
-      user = "${username}";
+      user = username;
     };
 
     homebrew = {

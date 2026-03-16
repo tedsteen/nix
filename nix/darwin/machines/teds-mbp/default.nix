@@ -13,7 +13,6 @@ in
     inputs.home-manager.darwinModules.home-manager
     inputs.userbase.homeManagerModules.userbase
     inputs.sops-nix.darwinModules.sops
-    inputs.roro-github-runner.darwinModules.github-runner
     ../../modules/base.nix
   ];
 
@@ -23,11 +22,6 @@ in
 
   networking.computerName = "Ted's MacBook Pro";
   networking.hostName = "teds-mbp";
-
-  roro.githubRunner = {
-    enable = false;
-    user = me.username;
-  };
 
   system.defaults.trackpad.Clicking = true;
 

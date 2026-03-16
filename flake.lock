@@ -163,40 +163,8 @@
         "home-manager": "home-manager",
         "nix-homebrew": "nix-homebrew",
         "nixpkgs": "nixpkgs",
-        "roro-github-runner": "roro-github-runner",
         "sops-nix": "sops-nix",
         "userbase": "userbase"
-      }
-    },
-    "roro-github-runner": {
-      "inputs": {
-        "darwin": [
-          "darwin"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "sops-nix": [
-          "sops-nix"
-        ]
-      },
-      "locked": {
-        "dir": "nix/github-runner",
-        "lastModified": 1759488201,
-        "narHash": "sha256-scuFfeQtnl/cQvf+gcI9lu2VBfYsFk9fUi3M3Fh2v48=",
-        "ref": "refs/heads/main",
-        "rev": "4b0f3ceb054c8985115fbb82c9af8d331e542707",
-        "revCount": 98,
-        "submodules": true,
-        "type": "git",
-        "url": "ssh://git@github.com/RoroInteractive/Room_CITools"
-      },
-      "original": {
-        "dir": "nix/github-runner",
-        "rev": "4b0f3ceb054c8985115fbb82c9af8d331e542707",
-        "submodules": true,
-        "type": "git",
-        "url": "ssh://git@github.com/RoroInteractive/Room_CITools"
       }
     },
     "sops-nix": {

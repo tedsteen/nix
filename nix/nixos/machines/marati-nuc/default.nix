@@ -1,4 +1,4 @@
-{ ... }:
+{ inputs, ... }:
 let
   me = {
     fullName = "Ted Steen";
@@ -14,6 +14,7 @@ let
 in
 {
   imports = [
+    inputs.sops-nix.nixosModules.sops
     ../../modules/base.nix
     ../../modules/docker-stacks.nix
     ./hardware-configuration.nix

@@ -12,7 +12,6 @@ in
     inputs.nix-homebrew.darwinModules.nix-homebrew
     inputs.home-manager.darwinModules.home-manager
     inputs.userbase.homeManagerModules.userbase
-    inputs.roro-github-runner.darwinModules.github-runner
     ../../modules/base.nix
   ];
 
@@ -20,11 +19,6 @@ in
 
   networking.computerName = "Steen's iMac";
   networking.hostName = "steen-imac";
-
-  roro.githubRunner = {
-    enable = false;
-    user = me.username;
-  };
 
   system.stateVersion = 6;
 }

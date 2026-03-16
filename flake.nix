@@ -26,13 +26,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    roro-github-runner = {
-      url = "git+ssh://git@github.com/RoroInteractive/Room_CITools?dir=nix/github-runner&rev=4b0f3ceb054c8985115fbb82c9af8d331e542707&submodules=1";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.darwin.follows = "darwin";
-      inputs.sops-nix.follows = "sops-nix";
-    };
-
     userbase = {
       url = "path:./shared";
       inputs.nixpkgs.follows = "nixpkgs";
