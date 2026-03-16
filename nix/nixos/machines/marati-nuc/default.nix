@@ -1,4 +1,17 @@
-{ lib, ... }:
+{ ... }:
+let
+  me = {
+    fullName = "Ted Steen";
+    email = "ted.steen@gmail.com";
+    homeStateVersion = "24.11";
+    authorizedKeys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKeAaaHvF/6KmN2neKxeHyL0WEuVC5XIp0CHp1i3u6Ff ted@mbp-2025-05-04"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOp8j7ztDOXAovDvPh6OaIoWWnHmr8n63/wdh11AvtZo ted@imac-2025-05-07"
+    ];
+    extraGroups = [ "docker" ];
+    sudoNoPassword = true;
+  };
+in
 {
   imports = [
     ../../modules/base.nix
@@ -6,14 +19,15 @@
     ./hardware-configuration.nix
   ];
 
-  ted.nixos = {
-    disk.device = "/dev/sda";
-    hostName = "marati-nuc";
-    timeZone = "Europe/Tallinn";
-    stateVersion = "24.11";
-  };
+  nixosBaseConfig.users.ted = me;
 
-  users.users.ted.extraGroups = lib.mkAfter [ "docker" ];
+  disko.devices.disk.main.device = "/dev/sda";
+
+  networking.hostName = "marati-nuc";
+
+  time.timeZone = "Europe/Tallinn";
+
+  system.stateVersion = "24.11";
 
   virtualisation.docker.enable = true;
 

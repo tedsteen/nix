@@ -2,11 +2,34 @@
 {config, lib, pkgs, ...}:
 let
   cfg = config.macBaseConfig;
-  username = cfg.username;
+  user = cfg.user;
+  username = user.username;
 in {
-  options.macBaseConfig.username = lib.mkOption {
-    type = lib.types.str;
-    description = "Primary user for mac base-config";
+  options.macBaseConfig.user = lib.mkOption {
+    type = lib.types.submodule {
+      options = {
+        username = lib.mkOption {
+          type = lib.types.str;
+          description = "Primary user for mac base-config.";
+        };
+
+        fullName = lib.mkOption {
+          type = lib.types.str;
+          description = "Full name for the primary user.";
+        };
+
+        email = lib.mkOption {
+          type = lib.types.str;
+          description = "Email for the primary user.";
+        };
+
+        homeStateVersion = lib.mkOption {
+          type = lib.types.str;
+          description = "Home Manager state version for the primary user.";
+        };
+      };
+    };
+    description = "Primary user managed by the shared mac base-config.";
   };
   config = {
     security.pam.services.sudo_local.touchIdAuth = true;
@@ -133,6 +156,12 @@ in {
 
     users.users.${username} = {
       home = "/Users/${username}";
+    };
+
+    userbase.users.${username} = {
+      fullName = user.fullName;
+      email = user.email;
+      stateVersion = user.homeStateVersion;
     };
 
     home-manager.users.${username} = {

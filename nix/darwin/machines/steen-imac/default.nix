@@ -4,6 +4,7 @@ let
     username = "tedsteen";
     fullName = "Ted Steen";
     email = "ted.steen@gmail.com";
+    homeStateVersion = "24.11";
   };
 in
 {
@@ -15,16 +16,10 @@ in
     ../../modules/base.nix
   ];
 
-  macBaseConfig.username = me.username;
+  macBaseConfig.user = me;
 
   networking.computerName = "Steen's iMac";
   networking.hostName = "steen-imac";
-
-  userbase.users.${me.username} = {
-    fullName = me.fullName;
-    email = me.email;
-    stateVersion = "24.11";
-  };
 
   roro.githubRunner = {
     enable = false;

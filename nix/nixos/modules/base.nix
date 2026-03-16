@@ -1,7 +1,11 @@
 { inputs, lib, config, ... }:
 
 let
-  cfg = config.ted.nixos;
+  cfg = config.nixosBaseConfig;
+  mkSudoRule = username: {
+    users = [ username ];
+    commands = [{ command = "ALL"; options = [ "NOPASSWD" ]; }];
+  };
 in
 {
   imports = [
@@ -11,67 +15,49 @@ in
     inputs.userbase.homeManagerModules.userbase
   ];
 
-  options.ted.nixos = {
-    disk.device = lib.mkOption {
-      type = lib.types.str;
-      example = "/dev/sda";
-      description = "Primary system disk device path used by disko.";
-    };
+  options.nixosBaseConfig.users = lib.mkOption {
+    type = lib.types.attrsOf (lib.types.submodule ({ ... }: {
+      options = {
+        fullName = lib.mkOption {
+          type = lib.types.str;
+          description = "Full name for the user.";
+        };
 
-    hostName = lib.mkOption {
-      type = lib.types.str;
-      description = "System hostname.";
-    };
+        email = lib.mkOption {
+          type = lib.types.str;
+          description = "Email for the user.";
+        };
 
-    timeZone = lib.mkOption {
-      type = lib.types.str;
-      description = "System timezone.";
-    };
+        homeStateVersion = lib.mkOption {
+          type = lib.types.str;
+          description = "Home Manager state version for the user.";
+        };
 
-    stateVersion = lib.mkOption {
-      type = lib.types.str;
-      description = "NixOS state version for this machine.";
-    };
+        authorizedKeys = lib.mkOption {
+          type = lib.types.listOf lib.types.str;
+          default = [ ];
+          description = "SSH keys allowed for the user.";
+        };
 
-    user = {
-      name = lib.mkOption {
-        type = lib.types.str;
-        default = "ted";
-        description = "Primary login user.";
+        extraGroups = lib.mkOption {
+          type = lib.types.listOf lib.types.str;
+          default = [ ];
+          description = "Additional Unix groups for the user.";
+        };
+
+        sudoNoPassword = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "Whether the user gets passwordless sudo.";
+        };
       };
-
-      fullName = lib.mkOption {
-        type = lib.types.str;
-        default = "Ted Steen";
-        description = "Full name for the primary user.";
-      };
-
-      email = lib.mkOption {
-        type = lib.types.str;
-        default = "ted.steen@gmail.com";
-        description = "Email for the primary user.";
-      };
-
-      homeStateVersion = lib.mkOption {
-        type = lib.types.str;
-        default = "24.11";
-        description = "Home Manager state version for the primary user.";
-      };
-
-      authorizedKeys = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        default = [
-          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKeAaaHvF/6KmN2neKxeHyL0WEuVC5XIp0CHp1i3u6Ff ted@mbp-2025-05-04"
-          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOp8j7ztDOXAovDvPh6OaIoWWnHmr8n63/wdh11AvtZo ted@imac-2025-05-07"
-        ];
-        description = "SSH keys allowed for the primary user.";
-      };
-    };
+    }));
+    default = { };
+    description = "Users managed by the shared NixOS base-config.";
   };
 
   config = {
     disko.devices.disk.main = {
-      device = cfg.disk.device;
       type = "disk";
       content = {
         type = "gpt";
@@ -104,7 +90,6 @@ in
     };
 
     networking = {
-      hostName = cfg.hostName;
       nameservers = [ "1.1.1.1" "8.8.8.8" ];
       enableIPv6 = false;
       firewall = {
@@ -112,8 +97,6 @@ in
         checkReversePath = "loose";
       };
     };
-
-    time.timeZone = cfg.timeZone;
 
     programs.command-not-found.enable = false;
 
@@ -167,25 +150,24 @@ in
       };
     };
 
-    security.sudo.extraRules = [
-      {
-        users = [ cfg.user.name ];
-        commands = [{ command = "ALL"; options = [ "NOPASSWD" ]; }];
-      }
-    ];
+    security.sudo.extraRules = lib.flatten (lib.mapAttrsToList
+      (username: user: lib.optional user.sudoNoPassword (mkSudoRule username))
+      cfg.users);
 
-    users.users.${cfg.user.name} = {
-      isNormalUser = true;
-      extraGroups = [ "wheel" ];
-      openssh.authorizedKeys.keys = cfg.user.authorizedKeys;
-    };
+    users.users = lib.mapAttrs
+      (username: user: {
+        isNormalUser = true;
+        extraGroups = [ "wheel" ] ++ user.extraGroups;
+        openssh.authorizedKeys.keys = user.authorizedKeys;
+      })
+      cfg.users;
 
-    userbase.users.${cfg.user.name} = {
-      fullName = cfg.user.fullName;
-      email = cfg.user.email;
-      stateVersion = cfg.user.homeStateVersion;
-    };
-
-    system.stateVersion = cfg.stateVersion;
+    userbase.users = lib.mapAttrs
+      (_: user: {
+        fullName = user.fullName;
+        email = user.email;
+        stateVersion = user.homeStateVersion;
+      })
+      cfg.users;
   };
 }

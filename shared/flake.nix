@@ -151,8 +151,8 @@
 
                 cmd_duration = {
                   min_time = 1000;
-                  format = " [⧗$duration]($style) ";
-                  style = "dimmed 8";
+                  format = " [⧗ $duration]($style) ";
+                  style = "dimmed 6";
                 };
               };
             };
