@@ -3,12 +3,6 @@ with lib;
 
 {
   options.services.dockerStack = {
-    commands = mkOption {
-      type = types.attrsOf types.str;
-      readOnly = true;
-      description = "Generated compose commands keyed by stack name.";
-    };
-
     stacks = mkOption {
       type = types.attrsOf (types.submodule ({ ... }: {
         options = {
@@ -36,8 +30,6 @@ with lib;
         "docker compose --env-file ${escapeShellArg "${stackRoot}/${name}.env"} --project-name ${escapeShellArg name} -f ${escapeShellArg "${stackRoot}/${name}/docker-compose.yaml"}";
     in
     {
-      services.dockerStack.commands = mapAttrs (name: _: composeCommand name) config.services.dockerStack.stacks;
-
       environment.etc = listToAttrs (concatLists (mapAttrsToList (name: { path, env, ... }: [
         (nameValuePair "docker-stacks/${name}" { source = path; })
         (nameValuePair "docker-stacks/${name}.env" {

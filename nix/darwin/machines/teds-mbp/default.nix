@@ -1,12 +1,4 @@
 { inputs, ... }:
-let
-  me = {
-    username = "tedsteen";
-    fullName = "Ted Steen";
-    email = "ted.steen@gmail.com";
-    homeStateVersion = "24.11";
-  };
-in
 {
   imports = [
     inputs.nix-homebrew.darwinModules.nix-homebrew
@@ -16,7 +8,12 @@ in
     ../../modules/base.nix
   ];
 
-  macBaseConfig.user = me;
+  macBaseConfig.user = {
+    username = "tedsteen";
+    fullName = "Ted Steen";
+    email = "ted.steen@gmail.com";
+    homeStateVersion = "24.11";
+  };
 
   sops.defaultSopsFile = ../../secrets.yaml;
 

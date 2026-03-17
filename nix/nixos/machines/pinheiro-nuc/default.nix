@@ -1,6 +1,16 @@
-{ inputs, config, lib, pkgs, ... }:
+{ inputs, config, pkgs, ... }:
 let
-  me = {
+  ntfyAlertCommand = "/run/current-system/sw/bin/ntfy-alert";
+in
+{
+  imports = [
+    inputs.sops-nix.nixosModules.sops
+    ../../modules/base.nix
+    ../../modules/docker-stacks.nix
+    ./hardware-configuration.nix
+  ];
+
+  nixosBaseConfig.users.ted = {
     fullName = "Ted Steen";
     email = "ted.steen@gmail.com";
     homeStateVersion = "24.11";
@@ -11,19 +21,6 @@ let
     extraGroups = [ "docker" ];
     sudoNoPassword = true;
   };
-  tedflixMediaPath = "/mnt/mediapool/tedflix";
-  ntfyAlertCommand = "/run/current-system/sw/bin/ntfy-alert";
-  tedflixComposeCommand = config.services.dockerStack.commands.tedflix;
-in
-{
-  imports = [
-    inputs.sops-nix.nixosModules.sops
-    ../../modules/base.nix
-    ../../modules/docker-stacks.nix
-    ./hardware-configuration.nix
-  ];
-
-  nixosBaseConfig.users.ted = me;
 
   disko.devices.disk.main.device = "/dev/sda";
 
@@ -34,6 +31,11 @@ in
   system.stateVersion = "24.11";
 
   virtualisation.docker.enable = true;
+
+  systemd.services.docker = {
+    after = [ "mnt-mediapool.mount" ];
+    wants = [ "mnt-mediapool.mount" ];
+  };
 
   services.dockerStack = {
     stacks = {
@@ -55,83 +57,31 @@ in
       tedflix = {
         path = ./docker/tedflix;
         env = {
-          TEDFLIX_PATH = tedflixMediaPath;
+          TEDFLIX_PATH = "/mnt/mediapool/tedflix";
         };
       };
     };
   };
 
   systemd.services.docker-health-monitor = {
-    description = "Warn me if any Docker container is unhealthy";
+    description = "Alert when a Docker container becomes unhealthy";
     path = [ pkgs.docker ];
     after = [ "docker.service" ];
     wants = [ "docker.service" ];
-    serviceConfig.Type = "oneshot";
-
-    script = ''
-      bad=$(docker ps --filter "health=unhealthy" --format '{{.Names}}')
-      if [ -n "$bad" ]; then
-        ${ntfyAlertCommand} "Docker unhealthy on pinheiro-nuc:\n\n$bad"
-      fi
-    '';
-  };
-
-  systemd.timers.docker-health-monitor = {
-    wantedBy = [ "timers.target" ];
-    timerConfig = {
-      OnBootSec = "5m";       # First run after boot.
-      OnUnitActiveSec = "5m"; # Repeat cadence.
-      Unit = "docker-health-monitor.service";
-      Persistent = true;      # Catch up after downtime.
-    };
-  };
-
-  # Keep only tedflix tied to the mediapool mount. The other stacks should keep
-  # running even if that pool disappears for a while.
-  systemd.services.docker-stack-tedflix-guard = {
-    description = "Keep tedflix in sync with mediapool mount";
-    path = [ pkgs.coreutils pkgs.docker pkgs.gnugrep pkgs.util-linux ];
-    wantedBy = [ "mnt-mediapool.mount" ];
-    after = [ "docker.service" "mnt-mediapool.mount" ];
-    wants = [ "docker.service" "mnt-mediapool.mount" ];
-    bindsTo = [ "mnt-mediapool.mount" ];
-    partOf = [ "mnt-mediapool.mount" ];
-    unitConfig.RequiresMountsFor = [ "/mnt/mediapool" ];
+    wantedBy = [ "multi-user.target" ];
     serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-      ExecStartPre = pkgs.writeShellScript "tedflix-prepare-media-path" ''
-        media_path=${lib.escapeShellArg tedflixMediaPath}
-
-        if [ ! -d "$media_path/downloads/complete" ] \
-          || [ ! -d "$media_path/downloads/incomplete" ] \
-          || [ ! -d "$media_path/downloads/manual" ] \
-          || [ ! -d "$media_path/movies" ] \
-          || [ ! -d "$media_path/tv" ]; then
-          mkdir -p \
-            "$media_path"/downloads/{complete,incomplete,manual} \
-            "$media_path"/movies \
-            "$media_path"/tv
-          chown -R 1000:100 "$media_path"
-        fi
-      '';
-      ExecStart = pkgs.writeShellScript "tedflix-start-on-mount" ''
-        echo "[+] mediapool mounted, starting the tedflix stack if it's there"
-        if ${tedflixComposeCommand} ps --all -q | grep -q .; then
-          ${tedflixComposeCommand} start
-        fi
-      '';
-      ExecStop = pkgs.writeShellScript "tedflix-stop-on-unmount" ''
-        if mountpoint -q /mnt/mediapool; then
-          echo "[+] mediapool is still mounted, skipping tedflix stop/alert"
-          exit 0
-        fi
-
-        echo "[+] mediapool unmounted, stopping the tedflix stack"
-        ${tedflixComposeCommand} stop
-        ${ntfyAlertCommand} "Mediapool was unmounted and tedflix stack was stopped."
-      '';
+      Type = "simple";
+      Restart = "always";
     };
+    script = ''
+      docker events --filter 'event=health_status' --format '{{.Actor.Attributes.name}}|{{.Action}}' | \
+        while IFS='|' read -r name action; do
+          case "$action" in
+            *unhealthy*) ${ntfyAlertCommand} "Docker container unhealthy on pinheiro-nuc: $name" ;;
+            *healthy*)   ${ntfyAlertCommand} "Docker container healthy again on pinheiro-nuc: $name" ;;
+          esac
+        done
+    '';
   };
 
   sops = {
@@ -179,29 +129,6 @@ in
       ${ntfyAlertCommand} "SMARTD:\n''${SMARTD_MESSAGE:-unknown}"
     '')
   ];
-
-  systemd = {
-    services.check-failed-units = {
-      description = "Alert on failed systemd units";
-      path = [ pkgs.systemd ];
-      serviceConfig.Type = "oneshot";
-      script = ''
-        failed=$(systemctl list-units --state=failed --type=service --plain --no-pager --legend=false)
-        if [ -n "$failed" ]; then
-          ${ntfyAlertCommand} "Failed systemd services on pinheiro-nuc:\n\n$failed"
-        fi
-      '';
-    };
-
-    timers.check-failed-units = {
-      wantedBy = [ "timers.target" ];
-      timerConfig = {
-        OnBootSec = "5min";
-        OnUnitActiveSec = "10min";
-        Persistent = true;
-      };
-    };
-  };
 
   services.smartd = {
     enable = true;

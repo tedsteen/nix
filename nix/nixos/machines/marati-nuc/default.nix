@@ -1,6 +1,13 @@
 { inputs, ... }:
-let
-  me = {
+{
+  imports = [
+    inputs.sops-nix.nixosModules.sops
+    ../../modules/base.nix
+    ../../modules/docker-stacks.nix
+    ./hardware-configuration.nix
+  ];
+
+  nixosBaseConfig.users.ted = {
     fullName = "Ted Steen";
     email = "ted.steen@gmail.com";
     homeStateVersion = "24.11";
@@ -11,16 +18,6 @@ let
     extraGroups = [ "docker" ];
     sudoNoPassword = true;
   };
-in
-{
-  imports = [
-    inputs.sops-nix.nixosModules.sops
-    ../../modules/base.nix
-    ../../modules/docker-stacks.nix
-    ./hardware-configuration.nix
-  ];
-
-  nixosBaseConfig.users.ted = me;
 
   disko.devices.disk.main.device = "/dev/sda";
 
