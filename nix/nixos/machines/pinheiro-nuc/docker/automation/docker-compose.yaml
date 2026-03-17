@@ -10,13 +10,8 @@ services:
       start_period: 5s
       timeout: 5s
       retries: 5
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.automation_home-assistant.rule=Host(`home-assistant.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.automation_home-assistant.entrypoints=web_private_secure'
-      - 'traefik.http.services.automation_home-assistant.loadbalancer.server.port=8123'
-      - 'traefik.docker.network=infra_traefik'
     ports:
+      - '18123:8123'
       - "5683:5683/udp"
       - "5683:5683/tcp"
     environment:
@@ -34,12 +29,8 @@ services:
     depends_on:
       home-assistant:
         condition: service_healthy
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.automation_nodered.rule=Host(`nodered.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.automation_nodered.entrypoints=web_private_secure'
-      - 'traefik.http.services.automation_nodered.loadbalancer.server.port=1880'
-      - 'traefik.docker.network=infra_traefik'
+    ports:
+      - '127.0.0.1:11880:1880'
     environment:
       TZ: Europe/Lisbon
     networks:

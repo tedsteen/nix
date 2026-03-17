@@ -1,9 +1,10 @@
-{ inputs, ... }:
+{ inputs, config, lib, ... }:
 {
   imports = [
     inputs.sops-nix.nixosModules.sops
     ../../modules/base.nix
     ../../modules/docker-stacks.nix
+    ../../modules/tailscale-service-host.nix
     ./hardware-configuration.nix
   ];
 
@@ -29,6 +30,20 @@
 
   virtualisation.docker.enable = true;
 
+  services.tailscale = {
+    enable = true;
+    authKeyFile = config.sops.secrets.tailscale_auth_key.path;
+  };
+
+  services.tailscaleServiceHost = {
+    enable = true;
+    advertiseTags = [ "marati-services-host" ];
+    services = {
+      "marati-home".target = "http://127.0.0.1:28080";
+      "marati-traefik".target = "http://127.0.0.1:28081";
+    };
+  };
+
   sops = {
     defaultSopsFile = ./secrets.yaml;
     secrets = {
@@ -36,6 +51,11 @@
         mode = "0440";
         owner = "ted";
         group = "docker";
+      };
+      tailscale_auth_key = {
+        mode = "0400";
+        owner = "root";
+        group = "root";
       };
     };
   };

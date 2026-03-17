@@ -1,4 +1,4 @@
-{ inputs, config, pkgs, ... }:
+{ inputs, config, pkgs, lib, ... }:
 let
   ntfyAlertCommand = "/run/current-system/sw/bin/ntfy-alert";
 in
@@ -7,6 +7,7 @@ in
     inputs.sops-nix.nixosModules.sops
     ../../modules/base.nix
     ../../modules/docker-stacks.nix
+    ../../modules/tailscale-service-host.nix
     ./hardware-configuration.nix
   ];
 
@@ -35,6 +36,30 @@ in
   systemd.services.docker = {
     after = [ "mnt-mediapool.mount" ];
     wants = [ "mnt-mediapool.mount" ];
+  };
+
+  services.tailscale = {
+    enable = true;
+    authKeyFile = config.sops.secrets.tailscale_auth_key.path;
+  };
+
+  services.tailscaleServiceHost = {
+    enable = true;
+    advertiseTags = [ "pinheiro-services-host" ];
+    services = {
+      "pinheiro-home".target = "http://127.0.0.1:18080";
+      "pinheiro-traefik".target = "http://127.0.0.1:18081";
+      "pinheiro-influxdb".target = "http://127.0.0.1:18086";
+      "pinheiro-grafana".target = "http://127.0.0.1:13000";
+      "pinheiro-home-assistant".target = "http://127.0.0.1:18123";
+      "pinheiro-nodered".target = "http://127.0.0.1:11880";
+      "pinheiro-prowlarr".target = "http://127.0.0.1:19696";
+      "pinheiro-ombi".target = "http://127.0.0.1:13579";
+      "pinheiro-radarr".target = "http://127.0.0.1:17878";
+      "pinheiro-bazarr".target = "http://127.0.0.1:16767";
+      "pinheiro-sonarr".target = "http://127.0.0.1:18989";
+      "pinheiro-transmission".target = "http://127.0.0.1:19091";
+    };
   };
 
   services.dockerStack = {
@@ -101,6 +126,11 @@ in
         mode = "0440";
         owner = "ted";
         group = "docker";
+      };
+      tailscale_auth_key = {
+        mode = "0400";
+        owner = "root";
+        group = "root";
       };
     };
   };

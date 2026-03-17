@@ -22,7 +22,7 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.sites_cors_proxy.rule=Host(`cors-proxy.s3n.io`)'
-      - 'traefik.http.routers.sites_cors_proxy.entrypoints=web_public_secure'
+      - 'traefik.http.routers.sites_cors_proxy.entrypoints=web_public'
       - 'traefik.http.services.sites_cors_proxy.loadbalancer.server.port=8080'
       - 'traefik.docker.network=infra_traefik'
     networks:
@@ -35,7 +35,7 @@ services:
     labels:
       - 'traefik.enable=true'      
       - 'traefik.http.routers.lab_whoami.rule=Host(`whoami.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.lab_whoami.entrypoints=web_public_secure'
+      - 'traefik.http.routers.lab_whoami.entrypoints=web_public'
     networks:
       - infra_traefik
 
