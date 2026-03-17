@@ -12,10 +12,8 @@ let
     sudoNoPassword = true;
   };
   tedflixMediaPath = "/mnt/mediapool/tedflix";
-  dockerStackComposeCommand = name:
-    "${pkgs.docker}/bin/docker compose --env-file /etc/docker-stacks/${name}.env --project-name ${name} -f /etc/docker-stacks/${name}/docker-compose.yaml";
   ntfyAlertCommand = "/run/current-system/sw/bin/ntfy-alert";
-  tedflixComposeCommand = dockerStackComposeCommand "tedflix";
+  tedflixComposeCommand = config.services.dockerStack.commands.tedflix;
 in
 {
   imports = [
