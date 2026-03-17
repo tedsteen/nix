@@ -273,6 +273,7 @@
                 pull.rebase = true;
                 push.autoSetupRemote = true;
                 diff.external = "difft";
+                rerere.enabled = true;
               };
             };
           };
