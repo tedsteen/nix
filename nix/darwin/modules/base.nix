@@ -147,6 +147,7 @@ in {
         "signal"
         "spotify"
         "stats"
+        "tailscale"
         "transmission"
         "utm"
         "visual-studio-code"
