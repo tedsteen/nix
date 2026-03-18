@@ -28,7 +28,19 @@ in
 
   services.tailscale = {
     enable = true;
-    extraUpFlags = [ "--ssh" ];
+    useRoutingFeatures = "server";
+    extraUpFlags = [ "--ssh" "--advertise-exit-node" ];
+  };
+  # Improve UDP forwarding throughput for the Tailscale exit node.
+  systemd.services.tailscale-udp-gro = {
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = "${pkgs.ethtool}/bin/ethtool -K enp1s0 rx-udp-gro-forwarding on rx-gro-list off";
+    };
   };
   networking.firewall = {
     trustedInterfaces = [ "tailscale0" ];
