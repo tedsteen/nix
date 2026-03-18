@@ -26,6 +26,15 @@ in
 
   networking.hostName = "pinheiro-nuc";
 
+  services.tailscale = {
+    enable = true;
+    extraUpFlags = [ "--ssh" ];
+  };
+  networking.firewall = {
+    trustedInterfaces = [ "tailscale0" ];
+    allowedUDPPorts = [ config.services.tailscale.port ];
+  };
+
   time.timeZone = "Europe/Lisbon";
 
   system.stateVersion = "24.11";

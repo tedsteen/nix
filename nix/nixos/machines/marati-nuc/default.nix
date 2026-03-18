@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ inputs, config, ... }:
 {
   imports = [
     inputs.sops-nix.nixosModules.sops
@@ -22,6 +22,15 @@
   disko.devices.disk.main.device = "/dev/sda";
 
   networking.hostName = "marati-nuc";
+
+  services.tailscale = {
+    enable = true;
+    extraUpFlags = [ "--ssh" ];
+  };
+  networking.firewall = {
+    trustedInterfaces = [ "tailscale0" ];
+    allowedUDPPorts = [ config.services.tailscale.port ];
+  };
 
   time.timeZone = "Europe/Tallinn";
 
