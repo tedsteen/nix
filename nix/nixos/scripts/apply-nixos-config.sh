@@ -27,7 +27,7 @@ if [ -z "${MACHINE_NAME}" ]; then
 fi
 
 echo "==> Applying flake ${FLAKE} to ${TARGET_HOST} (mode: switch)"
-nix run nixpkgs#nixos-rebuild -- switch \
+nix run github:NixOS/nixpkgs/nixos-unstable#nixos-rebuild -- switch \
   --flake "${FLAKE}" \
   --target-host "${TARGET_HOST}" \
   --build-host "${TARGET_HOST}" \

@@ -2,11 +2,12 @@
   description = "Root flake for all NixOS and nix-darwin machines";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-25.11-darwin";
 
     darwin = {
-      url = "github:lnl7/nix-darwin";
-      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:nix-darwin/nix-darwin/nix-darwin-25.11";
+      inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
 
     disko = {
@@ -15,7 +16,7 @@
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -33,7 +34,7 @@
     };
   };
 
-  outputs = inputs@{ darwin, nixpkgs, ... }:
+  outputs = inputs@{ darwin, nixpkgs, nixpkgs-darwin, ... }:
     let
       mkNixosMachine = machine: nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
