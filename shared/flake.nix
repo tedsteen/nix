@@ -2,13 +2,13 @@
   description = "Userbase: reusable HM module for my minimal user configuration";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs.url = "nixpkgs/nixos-25.11";
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixvim = {
-      url = "github:nix-community/nixvim";
+      url = "github:nix-community/nixvim/nixos-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -233,8 +233,10 @@
                     vimdoc
                   ];
 
-                  highlight.enable = true;
-                  indent.enable = true;
+                  settings = {
+                    highlight.enable = true;
+                    indent.enable = true;
+                  };
                 };
 
                 lint = {
