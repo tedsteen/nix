@@ -15,33 +15,11 @@ services:
     secrets:
       - cloudflare_s3n_io_ddns_api_token
 
-  ddns-pinheiro-nuc:
-    image: favonia/cloudflare-ddns
-    user: "1000" # User ted has read access to the secret
-    restart: always
-    read_only: true
-    cap_drop: [all]
-    security_opt: [no-new-privileges:true]
-    network_mode: host
-    environment:
-      - TZ=Europe/Lisbon
-      - CLOUDFLARE_API_TOKEN_FILE=/run/secrets/cloudflare_s3n_io_ddns_api_token
-      - DOMAINS=nuc.pinheiro.s3n.io
-      - IP6_PROVIDER=none
-      - IP4_PROVIDER=local
-    secrets:
-      - cloudflare_s3n_io_ddns_api_token
-
   site-pinheiro:
     build: pinheiro
     restart: unless-stopped
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.pinheiro_site.rule=Host(`nuc.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.pinheiro_site.entrypoints=web_private_secure'
-      - 'traefik.docker.network=infra_traefik'
-    networks:
-      - traefik
+    ports:
+      - '80:80'
   
   traefik:
     image: 'traefik:latest'
@@ -52,21 +30,6 @@ services:
       - '--api.insecure=true'
       - '--providers.docker=true'
       - '--providers.docker.exposedbydefault=false'
-
-      # Private entrypoint for internal services (only used for redirects)
-      - '--entrypoints.web_private_do_not_use.address=:80'
-      # Redirect all public HTTP traffic to HTTPS
-      - '--entrypoints.web_private_do_not_use.http.redirections.entryPoint.to=web_private_secure'
-      - '--entrypoints.web_private_do_not_use.http.redirections.entryPoint.scheme=https'
-      - '--entrypoints.web_private_do_not_use.http.redirections.entrypoint.permanent=true'
-
-      # Private entrypoint for secure (HTTPS) internal access
-      - '--entryPoints.web_private_secure.address=:443'
-      - '--entryPoints.web_private_secure.http.tls.certresolver=privatecertresolver'
-      - '--certificatesresolvers.privatecertresolver.acme.email=ted.steen@gmail.com'
-      - '--certificatesresolvers.privatecertresolver.acme.storage=/letsencrypt/acme-private.json'
-      - '--certificatesresolvers.privatecertresolver.acme.dnsChallenge.provider=cloudflare'
-      - '--certificatesresolvers.privatecertresolver.acme.dnsChallenge.delayBeforeCheck=0'
 
       # Public entrypoint for external access (only used for redirects)
       - '--entrypoints.web_public_do_not_use.address=:1080'
@@ -83,25 +46,15 @@ services:
       - '--certificatesresolvers.publiccertresolver.acme.storage=/letsencrypt/acme.json'
     environment:
       TZ: Europe/Lisbon
-      CF_DNS_API_TOKEN_FILE: "/run/secrets/cloudflare_s3n_io_ddns_api_token"
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.infra_traefik.rule=Host(`traefik.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.infra_traefik.entrypoints=web_private_secure'
-      - 'traefik.http.services.infra_traefik.loadbalancer.server.port=8080'
-      - 'traefik.docker.network=infra_traefik'
     ports:
-      - '80:80'
+      - '18081:8080'
       - '1080:1080'
-      - '443:443'
       - '10443:10443'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - traefik_letsencrypt:/letsencrypt
     networks:
       - traefik
-    secrets:
-      - cloudflare_s3n_io_ddns_api_token
 
   influxdb:
     image: influxdb:alpine
@@ -120,15 +73,10 @@ services:
       DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: MyInitialAdminToken0==
       DOCKER_INFLUXDB_INIT_ORG: pinheiro
       DOCKER_INFLUXDB_INIT_BUCKET: everything
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.infra_influxdb.rule=Host(`influxdb.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.infra_influxdb.entrypoints=web_private_secure'
-      - 'traefik.http.services.infra_influxdb.loadbalancer.server.port=8086'
-      - 'traefik.docker.network=infra_traefik'
+    ports:
+      - '18086:8086'
     networks:
       - metrics
-      - traefik
     volumes:
       - influxdb_data:/var/lib/influxdb2
       - influxdb_config:/etc/influxdb2
@@ -145,15 +93,10 @@ services:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
       - GF_SECURITY_ALLOW_EMBEDDING=true
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.infra_grafana.rule=Host(`grafana.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.infra_grafana.entrypoints=web_private_secure'
-      - 'traefik.http.services.infra_grafana.loadbalancer.server.port=3000'
-      - 'traefik.docker.network=infra_traefik'
+    ports:
+      - '13000:3000'
     networks:
       - metrics
-      - traefik
     volumes:
       - grafana:/var/lib/grafana
 
@@ -198,38 +141,9 @@ services:
     tmpfs:
       - /tmp
 
-  wireguard:
-    build: ./wireguard
-    restart: unless-stopped
-    healthcheck:
-      test: curl https://am.i.mullvad.net/connected | grep -q "You are connected"
-      interval: 5s
-      start_period: 5s
-      start_interval: 2s
-      retries: 3
-    cap_add:
-      - NET_ADMIN
-      - SYS_MODULE
-    sysctls:
-      - net.ipv4.conf.all.src_valid_mark=1
-    volumes:
-      - ${INFRA_WIREGUARD_CONFIG}:/etc/wireguard/wg0.conf
-    dns:
-      - 10.64.0.1 # NOTE!! This can't be in the wg0.conf because docker owns the resolv.conf and openresolv will clash with it, so instead we comment out the DNS part of the wg0.conf and put it here...
-    networks:
-      wireguard:
-        ipv4_address: 172.40.0.2
-
 networks:
   traefik:
-    driver: bridge
   metrics:
-    driver: bridge
-  wireguard:
-    driver: bridge
-    ipam:
-      config:
-      - subnet: 172.40.0.0/29
 
 volumes:
   influxdb_data:

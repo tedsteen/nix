@@ -1,32 +1,45 @@
 services:
+  wireguard:
+    build: wireguard
+    restart: unless-stopped
+    healthcheck:
+      test: curl -fsSL https://am.i.mullvad.net/connected | grep -q "You are connected"
+      interval: 5s
+      start_period: 10s
+      start_interval: 2s
+      retries: 3
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    volumes:
+      - ${WIREGUARD_CONFIG}:/etc/wireguard/wg0.conf:ro
+    ports:
+      - '19091:9091'
+    networks:
+      default:
+        aliases:
+          - transmission # sonarr/radarr/unpackerr resolve "transmission" to this container
+
   mariadb:
     build: mariadb
     restart: unless-stopped
-    pull_policy: always
-    expose:
-      - 3306
     environment:
       MYSQL_ROOT_PASSWORD: password
       MARIADB_AUTO_UPGRADE: 1
       MYSQL_INITDB_SKIP_TZINFO: 1
     volumes:
       - mariadb_data:/var/lib/mysql
-  
+
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     restart: unless-stopped
     pull_policy: always
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.tedflix_prowlarr.rule=Host(`prowlarr.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.tedflix_prowlarr.entrypoints=web_private_secure'
-      - 'traefik.http.services.tedflix_prowlarr.loadbalancer.server.port=9696'
-      - 'traefik.docker.network=infra_traefik'
+    ports:
+      - '19696:9696'
     environment:
       TZ: Europe/Lisbon
-    networks:
-      - infra_traefik
-      - default # For access to flaresolverr
     volumes:
       - prowlarr_config:/config
 
@@ -39,7 +52,7 @@ services:
       LOG_HTML: false
       CAPTCHA_SOLVER: none
       TZ: Europe/Lisbon
-  
+
   ombi:
     image: linuxserver/ombi:latest
     restart: unless-stopped
@@ -52,12 +65,9 @@ services:
       - 'traefik.http.routers.tedflix_ombi_public.service=tedflix_ombi_public'
       - 'traefik.http.services.tedflix_ombi_public.loadbalancer.server.port=3579'
 
-      - 'traefik.http.routers.tedflix_ombi.rule=Host(`ombi.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.tedflix_ombi.entrypoints=web_private_secure'
-      - 'traefik.http.routers.tedflix_ombi.service=tedflix_ombi'
-      - 'traefik.http.services.tedflix_ombi.loadbalancer.server.port=3579'
-
       - 'traefik.docker.network=infra_traefik'
+    ports:
+      - '13579:3579'
     environment:
       PUID: 1000
       PGID: 100
@@ -72,18 +82,12 @@ services:
     image: linuxserver/radarr:latest
     restart: unless-stopped
     pull_policy: always
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.tedflix_radarr.rule=Host(`radarr.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.tedflix_radarr.entrypoints=web_private_secure'
-      - 'traefik.http.services.tedflix_radarr.loadbalancer.server.port=7878'
-      - 'traefik.docker.network=infra_traefik'
+    ports:
+      - '17878:7878'
     environment:
       PUID: 1000
       PGID: 100
       TZ: Europe/Lisbon
-    networks:
-      - infra_traefik
     volumes:
       - radarr_config:/config
       - ${TEDFLIX_PATH}:/media
@@ -92,12 +96,8 @@ services:
     image: lscr.io/linuxserver/bazarr:latest
     restart: unless-stopped
     pull_policy: always
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.tedflix_bazarr.rule=Host(`bazarr.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.tedflix_bazarr.entrypoints=web_private_secure'
-      - 'traefik.http.services.tedflix_bazarr.loadbalancer.server.port=6767'
-      - 'traefik.docker.network=infra_traefik'
+    ports:
+      - '16767:6767'
     environment:
       PUID: 1000
       PGID: 100
@@ -106,58 +106,44 @@ services:
       - bazarr_config:/config
       - ${TEDFLIX_PATH}/movies:/movies
       - ${TEDFLIX_PATH}/tv:/tv
-    networks:
-      - infra_traefik
 
   sonarr:
     image: linuxserver/sonarr:latest
     restart: unless-stopped
     pull_policy: always
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.tedflix_sonarr.rule=Host(`sonarr.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.tedflix_sonarr.entrypoints=web_private_secure'
-      - 'traefik.http.services.tedflix_sonarr.loadbalancer.server.port=8989'
-      - 'traefik.docker.network=infra_traefik'
+    ports:
+      - '18989:8989'
     environment:
       PUID: 1000
       PGID: 100
       TZ: Europe/Lisbon
-    networks:
-      - infra_traefik
     volumes:
       - sonarr_config:/config
       - ${TEDFLIX_PATH}:/media
 
   transmission:
     build: transmission
+    network_mode: service:wireguard
     restart: unless-stopped
+    depends_on:
+      wireguard:
+        condition: service_healthy
     healthcheck:
       test: curl -fsSL -o /dev/null http://localhost:9091/transmission/web/ && curl -fsSL https://am.i.mullvad.net/connected | grep -q "You are connected"
-      interval: 5s
-      start_period: 5s
-      start_interval: 2s
+      interval: 10s
+      start_period: 30s
       retries: 3
-    cap_add:
-      - NET_ADMIN
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
     environment:
       PUID: 1000
       PGID: 100
-      DEFAULT_GATEWAY: 172.40.0.2
       TZ: Europe/Lisbon
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.tedflix_transmission.rule=Host(`transmission.pinheiro.s3n.io`)'
-      - 'traefik.http.routers.tedflix_transmission.entrypoints=web_private_secure'
-      - 'traefik.http.services.tedflix_transmission.loadbalancer.server.port=9091'
-      - 'traefik.docker.network=infra_traefik'
     volumes:
       - transmission_config:/config
       - ${TEDFLIX_PATH}:/media
-    networks:
-      infra_traefik:
-      infra_wireguard:
-        ipv4_address: 172.40.0.3
 
   unpackerr:
     image: ghcr.io/unpackerr/unpackerr:latest
@@ -178,13 +164,17 @@ services:
       UN_RADARR_0_PATHS_0: /media/downloads
     volumes:
       - ${TEDFLIX_PATH}:/media
-    networks:
-      - infra_traefik
-  
+
   plex:
     image: plexinc/pms-docker:public
     restart: unless-stopped
     pull_policy: always
+    ports:
+      - "32400:32400"
+      - "32410:32410/udp"
+      - "32412:32412/udp"
+      - "32413:32413/udp"
+      - "32414:32414/udp"
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.tedflix_plex.rule=Host(`tedflix.hal.pub`)'
@@ -194,8 +184,9 @@ services:
     environment:
       PLEX_UID: 1000
       PLEX_GID: 100
-      ADVERTISE_IP: "https://tedflix.hal.pub/,http://tedflix.hal.pub/"
-      # ALLOWED_NETWORKS: "0.0.0.0/0.0.0.0"
+      # NOTE: Local access _must_ be ip!
+      ADVERTISE_IP: "https://tedflix.hal.pub/,http://192.168.7.143:32400"
+      ALLOWED_NETWORKS: "192.168.0.0/16"
       TZ: Europe/Lisbon
     networks:
       - infra_traefik
@@ -207,8 +198,6 @@ services:
 
 networks:
   infra_traefik:
-    external: true
-  infra_wireguard:
     external: true
 
 volumes:

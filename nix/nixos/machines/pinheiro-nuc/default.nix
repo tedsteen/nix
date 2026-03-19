@@ -29,7 +29,7 @@ in
   services.tailscale = {
     enable = true;
     useRoutingFeatures = "server";
-    extraUpFlags = [ "--ssh" "--advertise-exit-node" ];
+    extraSetFlags = [ "--ssh" "--advertise-exit-node" ];
   };
   # Improve UDP forwarding throughput for the Tailscale exit node.
   systemd.services.tailscale-udp-gro = {
@@ -42,11 +42,6 @@ in
       ExecStart = "${pkgs.ethtool}/bin/ethtool -K enp1s0 rx-udp-gro-forwarding on rx-gro-list off";
     };
   };
-  networking.firewall = {
-    trustedInterfaces = [ "tailscale0" ];
-    allowedUDPPorts = [ config.services.tailscale.port ];
-  };
-
   time.timeZone = "Europe/Lisbon";
 
   system.stateVersion = "24.11";
@@ -62,9 +57,6 @@ in
     stacks = {
       infra = {
         path = ./docker/infra;
-        env = {
-          INFRA_WIREGUARD_CONFIG = "/run/secrets/infra_wireguard_config";
-        };
       };
 
       automation = {
@@ -79,6 +71,7 @@ in
         path = ./docker/tedflix;
         env = {
           TEDFLIX_PATH = "/mnt/mediapool/tedflix";
+          WIREGUARD_CONFIG = "/run/secrets/infra_wireguard_config";
         };
       };
     };

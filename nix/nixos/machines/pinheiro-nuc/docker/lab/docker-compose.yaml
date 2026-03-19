@@ -8,8 +8,6 @@ services:
     environment:
       EULA: true
       TZ: Europe/Lisbon
-    networks:
-      - infra_traefik
     volumes:
       - minecraft_data:/data
   
@@ -32,6 +30,8 @@ services:
     image: "traefik/whoami"
     restart: unless-stopped
     pull_policy: always
+    ports:
+      - "18082:80"
     labels:
       - 'traefik.enable=true'      
       - 'traefik.http.routers.lab_whoami.rule=Host(`whoami.pinheiro.s3n.io`)'

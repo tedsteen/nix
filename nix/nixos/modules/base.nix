@@ -91,10 +91,6 @@ in
     networking = {
       nameservers = [ "1.1.1.1" "8.8.8.8" ];
       enableIPv6 = false;
-      firewall = {
-        enable = true;
-        checkReversePath = "loose";
-      };
     };
 
     programs.command-not-found.enable = false;

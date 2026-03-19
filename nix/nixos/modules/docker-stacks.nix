@@ -47,7 +47,7 @@ with lib;
           # Keep the main stack commands as aliases so zsh can reuse docker
           # compose completion for subcommands and arguments.
           (nameValuePair stackAlias command)
-          (nameValuePair "${stackAlias}-deploy" "${command} up --pull always --build --remove-orphans -d")
+          (nameValuePair "${stackAlias}-deploy" "${command} up --build --remove-orphans -d")
         ]
       ) config.services.dockerStack.stacks));
     };
