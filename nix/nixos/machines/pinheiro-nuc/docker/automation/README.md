@@ -1,12 +1,6 @@
 ## First time setup
 ### Home Assistant
-* Allow access through reverse proxy by adding this to `configuration.yaml`
-    ```yaml
-    http:
-    use_x_forwarded_for: true
-    trusted_proxies:
-        - 172.18.0.0/16 # Docker bridge network range
-    ```
+* Home Assistant is exposed directly on the host at `http://pinheiro-nuc/home-assistant` (redirects to `:18123`)
 * Add `influx_db_token: <token-created-when-setting-up-influxdb>` to `secrets.yaml`
 * Connect HA to influxdb by adding this to `configuration.yaml`
     ```yaml

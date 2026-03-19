@@ -180,7 +180,6 @@ services:
       - 'traefik.http.routers.tedflix_plex.rule=Host(`tedflix.hal.pub`)'
       - 'traefik.http.routers.tedflix_plex.entrypoints=web_public_secure'
       - 'traefik.http.services.tedflix_plex.loadbalancer.server.port=32400'
-      - 'traefik.docker.network=infra_traefik'
     environment:
       PLEX_UID: 1000
       PLEX_GID: 100

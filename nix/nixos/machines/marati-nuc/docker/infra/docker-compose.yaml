@@ -15,23 +15,6 @@ services:
     secrets:
       - cf_dns_api_token
 
-  ddns-marati-nuc:
-    image: favonia/cloudflare-ddns
-    user: "1000" # User ted has read access to the secret
-    restart: always
-    read_only: true
-    cap_drop: [all]
-    security_opt: [no-new-privileges:true]
-    network_mode: host
-    environment:
-      - TZ=Europe/Tallinn
-      - CLOUDFLARE_API_TOKEN_FILE=/run/secrets/cf_dns_api_token
-      - DOMAINS=nuc.marati.s3n.io
-      - IP6_PROVIDER=none
-      - IP4_PROVIDER=local
-    secrets:
-      - cf_dns_api_token
-  
   whoami:
     image: "traefik/whoami"
     restart: unless-stopped

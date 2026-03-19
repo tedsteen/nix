@@ -22,7 +22,6 @@ services:
       - 'traefik.http.routers.sites_cors_proxy.rule=Host(`cors-proxy.s3n.io`)'
       - 'traefik.http.routers.sites_cors_proxy.entrypoints=web_public_secure'
       - 'traefik.http.services.sites_cors_proxy.loadbalancer.server.port=8080'
-      - 'traefik.docker.network=infra_traefik'
     networks:
       - infra_traefik
   
