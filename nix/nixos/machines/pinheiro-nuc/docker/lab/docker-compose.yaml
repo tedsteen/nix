@@ -17,6 +17,8 @@ services:
     pull_policy: always
     stop_signal: SIGKILL
     stop_grace_period: 0s
+    ports:
+      - "18083:8080"
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.sites_cors_proxy.rule=Host(`cors-proxy.s3n.io`)'
