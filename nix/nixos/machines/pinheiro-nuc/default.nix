@@ -29,7 +29,19 @@ in
   services.tailscale = {
     enable = true;
     useRoutingFeatures = "server";
-    extraSetFlags = [ "--ssh" "--advertise-exit-node" ];
+    authKeyFile = config.sops.secrets.tailscale_auth_key.path;
+    extraUpFlags = [
+      "--ssh"
+      "--advertise-exit-node"
+    ];
+    extraSetFlags = [
+      "--ssh"
+      "--advertise-exit-node"
+    ];
+  };
+  networking.firewall = {
+    trustedInterfaces = [ "tailscale0" ];
+    allowedUDPPorts = [ config.services.tailscale.port ];
   };
   # Improve UDP forwarding throughput for the Tailscale exit node.
   systemd.services.tailscale-udp-gro = {
@@ -115,6 +127,11 @@ in
         mode = "0440";
         owner = "ted";
         group = "docker";
+      };
+      tailscale_auth_key = {
+        mode = "0400";
+        owner = "root";
+        group = "root";
       };
     };
   };
