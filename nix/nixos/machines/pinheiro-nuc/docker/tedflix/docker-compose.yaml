@@ -1,27 +1,4 @@
 services:
-  wireguard:
-    build: wireguard
-    restart: unless-stopped
-    healthcheck:
-      test: curl -fsSL https://am.i.mullvad.net/connected | grep -q "You are connected"
-      interval: 5s
-      start_period: 10s
-      start_interval: 2s
-      retries: 3
-    cap_add:
-      - NET_ADMIN
-      - SYS_MODULE
-    sysctls:
-      - net.ipv4.conf.all.src_valid_mark=1
-    volumes:
-      - ${WIREGUARD_CONFIG}:/etc/wireguard/wg0.conf:ro
-    ports:
-      - '19091:9091'
-    networks:
-      default:
-        aliases:
-          - transmission # sonarr/radarr/unpackerr resolve "transmission" to this container
-
   mariadb:
     build: mariadb
     restart: unless-stopped
@@ -123,20 +100,23 @@ services:
 
   transmission:
     build: transmission
-    network_mode: service:wireguard
     restart: unless-stopped
-    depends_on:
-      wireguard:
-        condition: service_healthy
     healthcheck:
       test: curl -fsSL -o /dev/null http://localhost:9091/transmission/web/ && curl -fsSL https://am.i.mullvad.net/connected | grep -q "You are connected"
       interval: 10s
       start_period: 30s
       retries: 3
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
     ulimits:
       nofile:
         soft: 65536
         hard: 65536
+    ports:
+      - '19091:9091'
     environment:
       PUID: 1000
       PGID: 100
@@ -144,6 +124,7 @@ services:
     volumes:
       - transmission_config:/config
       - ${TEDFLIX_PATH}:/media
+      - ${WIREGUARD_CONFIG}:/etc/wireguard/wg0.conf:ro
 
   unpackerr:
     image: ghcr.io/unpackerr/unpackerr:latest
