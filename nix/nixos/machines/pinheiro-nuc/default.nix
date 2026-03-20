@@ -51,7 +51,17 @@ in
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
-      ExecStart = "${pkgs.ethtool}/bin/ethtool -K enp1s0 rx-udp-gro-forwarding on rx-gro-list off";
+      ExecStart = pkgs.writeShellScript "tailscale-udp-gro" ''
+        set -eu
+
+        iface="$(${pkgs.iproute2}/bin/ip route show default | ${pkgs.gawk}/bin/awk '/default/ { print $5; exit }')"
+        [ -n "$iface" ] || exit 0
+
+        ${pkgs.ethtool}/bin/ethtool -K "$iface" rx-udp-gro-forwarding on rx-gro-list off || {
+          echo "tailscale-udp-gro: skipping optional GRO tuning for interface $iface" >&2
+          exit 0
+        }
+      '';
     };
   };
   time.timeZone = "Europe/Lisbon";
