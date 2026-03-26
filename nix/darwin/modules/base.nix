@@ -103,6 +103,35 @@ in {
         loginwindow.GuestEnabled = false;
       };
     };
+    
+    nix = {
+      gc = {
+        automatic = true;
+        interval = { Weekday = 7; Hour = 3; Minute = 15; };
+        options = "--delete-older-than 14d";
+      };
+
+      optimise = {
+        automatic = true;
+        interval = { Weekday = 7; Hour = 4; Minute = 15; };
+      };
+
+      settings = {
+        trusted-users = [ "@admin" "tedsteen" ];
+        builders-use-substitutes = true;
+      };
+
+      linux-builder = {
+        enable = true;
+        systems = [ "aarch64-linux" "x86_64-linux" ];
+        supportedFeatures = [ "kvm" "benchmark" "big-parallel" ];
+        config = { lib, ... }: {
+          boot.binfmt.emulatedSystems = [ "x86_64-linux" ];
+          virtualisation.cores = lib.mkForce 8;
+          virtualisation.memorySize = lib.mkForce 16384;
+        };
+      };
+    };
 
     nix-homebrew = {
       enable = true;
@@ -147,7 +176,7 @@ in {
         "signal"
         "spotify"
         "stats"
-        "tailscale"
+        "tailscale-app"
         "transmission"
         "utm"
         "visual-studio-code"
@@ -166,7 +195,9 @@ in {
     };
 
     home-manager.users.${username} = {
-      home.packages = [ ];
+      home.packages = with pkgs; [
+        go
+      ];
 
       home.file.".config/ghostty/config".text = ''
         background-opacity = 0.95
