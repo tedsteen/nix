@@ -10,10 +10,20 @@ Connect it all...
 * Add apps `Sonarr` and `Radarr` (Sonarr and Radarr addresses are `http://sonarr:8989` and `http://radarr:7878` respectively)
 ### Sonarr
 * Add transmission download client using host `transmission` and port `9091`
+  * Set category / TV category to `sonarr`
 * Add Indexers via prowlarr (URL is http://prowlarr:9696/<your-indexer>)
 ### Radarr
-Add transmission download client using host `transmission` and port `9091`
+* Add transmission download client using host `transmission` and port `9091`
+  * Set category / movie category to `radarr`
 * Add Indexers via prowlarr (URL is http://prowlarr:9696/<your-indexer>)
+
+### Transmission categories
+Transmission does not expose categories the same way clients like qBittorrent do. When Sonarr or Radarr is configured with a category, new downloads are placed in a category subdirectory under Transmission's download directory, for example:
+
+* `/media/downloads/complete/<yymm>/sonarr/...`
+* `/media/downloads/complete/<yymm>/radarr/...`
+
+Keep the categories configured in Sonarr and Radarr so they only track their own downloads instead of the entire shared Transmission queue. This also keeps Unpackerr from repeatedly inspecting unrelated or manually added completed torrents.
 ### Bazarr
 * Go through the [guides](https://trash-guides.info/Bazarr/)
   * Sonar address is `sonarr`, Radarr address is `radarr`.
