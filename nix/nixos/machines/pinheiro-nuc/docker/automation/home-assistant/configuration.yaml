@@ -1,0 +1,52 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+homeassistant:
+  packages: !include_dir_named packages
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+smartir:
+
+climate:
+  - platform: smartir
+    name: Office AC
+    unique_id: office_ac
+    device_code: 5120 #1118
+    controller_data: remote.office_ir_remote
+
+  - platform: smartir
+    name: Guestroom AC
+    unique_id: guestroom_ac
+    device_code: 5120 #1118
+    controller_data: remote.guestroom_ir_remote
+
+  - platform: smartir
+    name: Livingroom AC
+    unique_id: livingroom_ac
+    device_code: 5120 #1118
+    controller_data: remote.livingroom_ir_remote
+
+  - platform: smartir
+    name: Kids room AC
+    unique_id: kids_room_ac
+    device_code: 5120 #1118
+    controller_data: remote.kids_room_ir_remote
+
+  - platform: smartir
+    name: Master bedroom AC
+    unique_id: master_bedroom_ac
+    device_code: 5120 #1118
+    controller_data: remote.master_bedroom_ir_remote
+
+  - platform: smartir
+    name: Kitchen AC
+    unique_id: kitchen_ac
+    device_code: 5120 #1118
+    controller_data: remote.kitchen_ir_remote

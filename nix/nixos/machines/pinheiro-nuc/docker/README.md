@@ -6,3 +6,15 @@ dcs-infra-deploy      # Pulls, builds, and deploys the infra stack
 dcs-automation ps     # Runs `docker compose ps` for the automation stack
 dcs-tedflix down      # Stops and removes the tedflix stack
 ```
+
+## Declarative boundary
+Nix owns the stack definitions copied into `/etc/docker-stacks`, the per-stack environment files, the SOPS-backed secrets referenced by Compose, and the `dcs-*` aliases.
+
+Docker named volumes are application-owned runtime state. Deploying the NixOS config or rerunning `dcs-<stack>-deploy` will not recreate their contents. The main non-declarative volumes are:
+
+* `infra_otel_lgtm`: LGTM storage and any Grafana UI changes. Dashboards in `infra/grafana/dashboards` are provisioned from the repo.
+* `infra_traefik_letsencrypt`: Traefik ACME certificate state.
+* `automation_hass_config`: Home Assistant auth, integrations, registries, and UI-managed automations. The top-level `configuration.yaml` and observability package are mounted from the repo.
+* `automation_nodered_data`: Node-RED flows, credentials, and settings. Required palettes are installed from the repo-owned Node-RED `package.json`.
+* `lab_minecraft_data`: Minecraft world state.
+* `tedflix_*`: Tedflix application config and media-app databases. The Tedflix stack is currently documented as a proof of concept.

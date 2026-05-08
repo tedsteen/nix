@@ -1,0 +1,8 @@
+{
+  "name": "pinheiro-node-red",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "node-red-contrib-home-assistant-websocket": "0.80.3"
+  }
+}

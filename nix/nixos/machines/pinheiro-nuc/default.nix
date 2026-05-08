@@ -68,11 +68,209 @@ in
 
   system.stateVersion = "24.11";
 
-  virtualisation.docker.enable = true;
+  virtualisation.docker = {
+    enable = true;
+    daemon.settings."log-driver" = "journald";
+  };
 
   systemd.services.docker = {
     after = [ "mnt-mediapool.mount" ];
     wants = [ "mnt-mediapool.mount" ];
+  };
+
+  services.opentelemetry-collector = {
+    enable = true;
+    package = pkgs.opentelemetry-collector-contrib;
+    validateConfigFile = true;
+    settings = {
+      extensions = {
+        health_check.endpoint = "127.0.0.1:13133";
+        "file_storage/journald".directory = ".";
+      };
+
+      receivers = {
+        otlp.protocols = {
+          grpc.endpoint = "0.0.0.0:4317";
+          http.endpoint = "0.0.0.0:4318";
+        };
+
+        hostmetrics = {
+          collection_interval = "30s";
+          scrapers = {
+            cpu.metrics."system.cpu.utilization".enabled = true;
+            disk = { };
+            filesystem = {
+              exclude_mount_points = {
+                match_type = "regexp";
+                mount_points = [
+                  "^/dev($|/.*)"
+                  "^/proc($|/.*)"
+                  "^/run($|/.*)"
+                  "^/sys($|/.*)"
+                  "^/var/lib/docker($|/.*)"
+                ];
+              };
+              exclude_fs_types = {
+                match_type = "strict";
+                fs_types = [
+                  "autofs"
+                  "binfmt_misc"
+                  "bpf"
+                  "cgroup2"
+                  "configfs"
+                  "debugfs"
+                  "devpts"
+                  "devtmpfs"
+                  "fusectl"
+                  "hugetlbfs"
+                  "iso9660"
+                  "mqueue"
+                  "nsfs"
+                  "overlay"
+                  "proc"
+                  "procfs"
+                  "pstore"
+                  "rpc_pipefs"
+                  "securityfs"
+                  "selinuxfs"
+                  "squashfs"
+                  "sysfs"
+                  "tracefs"
+                ];
+              };
+              metrics."system.filesystem.utilization".enabled = true;
+            };
+            load = { };
+            memory.metrics."system.memory.utilization".enabled = true;
+            network = { };
+            paging = { };
+            processes = { };
+          };
+        };
+
+        docker_stats = {
+          collection_interval = "30s";
+          endpoint = "unix:///var/run/docker.sock";
+          container_labels_to_metric_labels = {
+            "com.docker.compose.project" = "docker.compose.project";
+            "com.docker.compose.service" = "docker.compose.service";
+          };
+        };
+
+        journald = {
+          all = true;
+          directory = "/var/log/journal";
+          storage = "file_storage/journald";
+        };
+
+        "prometheus/home_assistant".config.scrape_configs = [
+          {
+            job_name = "home-assistant";
+            scrape_interval = "60s";
+            metrics_path = "/api/prometheus";
+            static_configs = [
+              { targets = [ "127.0.0.1:18123" ]; }
+            ];
+          }
+        ];
+      };
+
+      processors = {
+        batch = { };
+        "resource/home-assistant".attributes = [
+          {
+            key = "service.namespace";
+            value = "pinheiro";
+            action = "upsert";
+          }
+          {
+            key = "service.name";
+            value = "home-assistant";
+            action = "upsert";
+          }
+          {
+            key = "host.name";
+            value = "pinheiro-nuc";
+            action = "upsert";
+          }
+        ];
+        "resource/pinheiro-nuc".attributes = [
+          {
+            key = "service.namespace";
+            value = "pinheiro";
+            action = "upsert";
+          }
+          {
+            key = "service.name";
+            value = "pinheiro-nuc";
+            action = "upsert";
+          }
+          {
+            key = "host.name";
+            value = "pinheiro-nuc";
+            action = "upsert";
+          }
+        ];
+      };
+
+      exporters."otlphttp/lgtm".endpoint = "http://127.0.0.1:14318";
+
+      service = {
+        extensions = [
+          "health_check"
+          "file_storage/journald"
+        ];
+        pipelines = {
+          traces = {
+            receivers = [ "otlp" ];
+            processors = [ "batch" ];
+            exporters = [ "otlphttp/lgtm" ];
+          };
+          metrics = {
+            receivers = [ "otlp" ];
+            processors = [ "batch" ];
+            exporters = [ "otlphttp/lgtm" ];
+          };
+          "metrics/host" = {
+            receivers = [
+              "hostmetrics"
+              "docker_stats"
+            ];
+            processors = [
+              "resource/pinheiro-nuc"
+              "batch"
+            ];
+            exporters = [ "otlphttp/lgtm" ];
+          };
+          "metrics/home-assistant" = {
+            receivers = [ "prometheus/home_assistant" ];
+            processors = [
+              "resource/home-assistant"
+              "batch"
+            ];
+            exporters = [ "otlphttp/lgtm" ];
+          };
+          logs = {
+            receivers = [
+              "otlp"
+              "journald"
+            ];
+            processors = [
+              "resource/pinheiro-nuc"
+              "batch"
+            ];
+            exporters = [ "otlphttp/lgtm" ];
+          };
+        };
+      };
+    };
+  };
+
+  systemd.services.opentelemetry-collector = {
+    after = [ "docker.service" ];
+    path = [ pkgs.systemd ];
+    wants = [ "docker.service" ];
+    serviceConfig.SupplementaryGroups = [ "docker" ];
   };
 
   services.dockerStack = {

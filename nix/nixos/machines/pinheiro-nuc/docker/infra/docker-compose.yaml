@@ -56,73 +56,25 @@ services:
     networks:
       - traefik
 
-  influxdb:
-    image: influxdb:alpine
+  docker-otel-lgtm:
+    image: grafana/otel-lgtm:latest
     restart: unless-stopped
     pull_policy: always
-    healthcheck:
-      test: "curl -f http://localhost:8086/ping"
-      interval: 2s
-      timeout: 10s
-      retries: 5
     environment:
       TZ: Europe/Lisbon
-      DOCKER_INFLUXDB_INIT_MODE: setup
-      DOCKER_INFLUXDB_INIT_USERNAME: ted
-      DOCKER_INFLUXDB_INIT_PASSWORD: password
-      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: MyInitialAdminToken0==
-      DOCKER_INFLUXDB_INIT_ORG: pinheiro
-      DOCKER_INFLUXDB_INIT_BUCKET: everything
+      GF_AUTH_DISABLE_LOGIN_FORM: true
+      GF_AUTH_ANONYMOUS_ENABLED: true
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_SECURITY_ALLOW_EMBEDDING: true
     ports:
-      - '18086:8086'
+      - '3000:3000'
+      - '127.0.0.1:14318:4318'
     networks:
       - metrics
     volumes:
-      - influxdb_data:/var/lib/influxdb2
-      - influxdb_config:/etc/influxdb2
-
-  grafana:
-    image: grafana/grafana:latest
-    restart: unless-stopped
-    pull_policy: always
-    depends_on:
-      influxdb:
-        condition: service_healthy
-    environment:
-      - GF_AUTH_DISABLE_LOGIN_FORM=true
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
-      - GF_SECURITY_ALLOW_EMBEDDING=true
-    ports:
-      - '13000:3000'
-    networks:
-      - metrics
-    volumes:
-      - grafana:/var/lib/grafana
-
-  telegraf:
-    build: ./telegraf
-    restart: unless-stopped
-    privileged: true
-    hostname: "pinheiro-nuc"
-    depends_on:
-      influxdb:
-        condition: service_healthy
-    environment:
-      TZ: Europe/Lisbon
-      INFLUXDB_ADMIN_TOKEN: MyInitialAdminToken0==
-      HOST_MOUNT_PREFIX: /hostfs
-      HOST_ETC: /hostfs/etc
-      HOST_PROC: /hostfs/proc
-      HOST_SYS: /hostfs/sys
-      HOST_VAR: /hostfs/var
-      HOST_RUN: /hostfs/run
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /run/udev:/run/udev:ro
-      - /:/hostfs:ro
-    networks:
-      - metrics
+      - otel_lgtm:/data
+      - ./grafana/dashboards:/otel-lgtm/grafana/conf/provisioning/dashboards/pinheiro:ro
+      - ./grafana/provisioning/dashboards/pinheiro.yaml:/otel-lgtm/grafana/conf/provisioning/dashboards/pinheiro.yaml:ro
   
   samba:
     image: dperson/samba
@@ -146,9 +98,7 @@ networks:
   metrics:
 
 volumes:
-  influxdb_data:
-  influxdb_config:
-  grafana:
+  otel_lgtm:
   traefik_letsencrypt:
 
 secrets:

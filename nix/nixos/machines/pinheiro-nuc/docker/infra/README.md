@@ -1,14 +1,15 @@
 ## First time setup
-### Grafana
-* Add influxdb datasource here: http://pinheiro-nuc/grafana/connections/datasources/new
-    * Use flux as query language
-    * Query Language: Flux
-    * URL: `http://influxdb:8086`
-    * Disable all Auth
-    * Organization: `pinheiro`
-    * Token: `MyInitialAdminToken0==`
-    * Default bucket: `everything`
-* [Import dashboards](http://pinheiro-nuc/grafana/dashboard/import)
-    * [Telegraf for influxdb2](https://grafana.com/grafana/dashboards/15650-telegraf-influxdb-2-0-flux/)
-    * [Telegraf Docker for influxdb2](https://grafana.com/grafana/dashboards/17020-docker-dashboard/)
-    * TODO: Home assistant (perhaps https://grafana.com/grafana/dashboards/15001-home-assistant-state-changes/)
+### Observability
+* Grafana LGTM is exposed at http://pinheiro-nuc/grafana
+* The host OpenTelemetry Collector listens on:
+    * OTLP/gRPC: `pinheiro-nuc:4317`
+    * OTLP/HTTP: `http://pinheiro-nuc:4318`
+* The collector sends host, Docker, application metrics, traces, and logs to the `docker-otel-lgtm` service.
+* Systemd and Docker logs are collected from journald and sent to LGTM/Loki. Docker uses the `journald` logging driver, so existing containers need to be recreated before their stdout/stderr logs move into the journal.
+* LGTM data is stored in the `infra_otel_lgtm` Docker volume. Dashboards in this repo are provisioned automatically, but Grafana UI changes are runtime state unless exported back into `./grafana/dashboards`.
+* Grafana provisions dashboards from `./grafana/dashboards` into the `Pinheiro` folder:
+    * Host Metrics (opentelemetry), imported from Grafana dashboard `24638`
+    * Docker Containers (OpenTelemetry), maintained locally for the OTel `docker_stats` receiver
+    * Home Assistant (Prometheus), maintained locally for Home Assistant's `prometheus:` integration
+* Home Assistant's `prometheus:` integration is enabled by the repo-owned automation stack configuration; see `../automation/README.md`.
+* Traefik ACME certificates are stored in the `infra_traefik_letsencrypt` Docker volume.

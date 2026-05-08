@@ -21,11 +21,12 @@ services:
       - infra_metrics
     volumes:
       - hass_config:/config
+      - ./home-assistant/configuration.yaml:/config/configuration.yaml:ro
+      - ./home-assistant/packages:/config/packages:ro
 
   nodered:
-    image: nodered/node-red:latest
+    build: nodered
     restart: unless-stopped
-    pull_policy: always
     depends_on:
       home-assistant:
         condition: service_healthy

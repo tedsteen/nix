@@ -1,0 +1,3 @@
+prometheus:
+  namespace: hass
+  requires_auth: false
