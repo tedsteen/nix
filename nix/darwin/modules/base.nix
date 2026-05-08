@@ -129,6 +129,19 @@ in {
           boot.binfmt.emulatedSystems = [ "x86_64-linux" ];
           virtualisation.cores = lib.mkForce 8;
           virtualisation.memorySize = lib.mkForce 16384;
+
+          nix.gc = {
+            automatic = true;
+            dates = "daily";
+            options = "--delete-older-than 7d";
+          };
+
+          nix.optimise = {
+            automatic = true;
+            dates = [ "03:45" ];
+          };
+
+          nix.settings.auto-optimise-store = true;
         };
       };
     };
@@ -149,9 +162,9 @@ in {
       global.autoUpdate = true;
 
       masApps = {
-        "Calca" = 635758264;
+        # "Calca" = 635758264;
         "DigiDoc4 Client" = 1370791134;
-        "Messenger" = 1480068668;
+        # "Messenger" = 1480068668;
         "The Unarchiver" = 425424353;
         "Ticktick" = 966085870;
         "WhatsApp" = 310633997;
