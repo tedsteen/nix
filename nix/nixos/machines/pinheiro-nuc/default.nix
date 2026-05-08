@@ -211,6 +211,19 @@ in
             action = "upsert";
           }
         ];
+        "transform/journald" = {
+          error_mode = "ignore";
+          log_statements = [
+            ''set(log.attributes["container.id"], log.body["CONTAINER_ID_FULL"]) where IsMap(log.body) and log.body["CONTAINER_ID_FULL"] != nil''
+            ''set(log.attributes["container.image.name"], log.body["IMAGE_NAME"]) where IsMap(log.body) and log.body["IMAGE_NAME"] != nil''
+            ''set(log.attributes["container.name"], log.body["CONTAINER_NAME"]) where IsMap(log.body) and log.body["CONTAINER_NAME"] != nil''
+            ''set(log.attributes["journal.priority"], log.body["PRIORITY"]) where IsMap(log.body) and log.body["PRIORITY"] != nil''
+            ''set(log.attributes["systemd.unit"], log.body["_SYSTEMD_UNIT"]) where IsMap(log.body) and log.body["_SYSTEMD_UNIT"] != nil''
+            ''set(log.attributes["syslog.identifier"], log.body["SYSLOG_IDENTIFIER"]) where IsMap(log.body) and log.body["SYSLOG_IDENTIFIER"] != nil''
+            ''set(log.body, log.body["MESSAGE"]) where IsMap(log.body) and log.body["MESSAGE"] != nil''
+            ''set(log.body, Concat([log.attributes["container.name"], log.body], " | ")) where log.attributes["container.name"] != nil''
+          ];
+        };
       };
 
       exporters."otlphttp/lgtm".endpoint = "http://127.0.0.1:14318";
@@ -257,6 +270,7 @@ in
             ];
             processors = [
               "resource/pinheiro-nuc"
+              "transform/journald"
               "batch"
             ];
             exporters = [ "otlphttp/lgtm" ];
