@@ -29,8 +29,7 @@ Keep the categories configured in Sonarr and Radarr so they only track their own
   * Sonar address is `sonarr`, Radarr address is `radarr`.
   * Best subtitles providers can be found [here](https://wiki.bazarr.media/bazarr-stats/)
   * I use Anti-Captcha (login to find key)
-### Ombi
-* Add plex config using host `plex`, port `32400` and token from [here](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)
-  * If plex is forcing secure connections make sure Ombi is using SSL and if there is no valid certificate in Ombi, make sure to ignore certificate errors (needs restart)
+### Seerr
+* Add plex server
 * Add sonarr config using host `sonarr`, port `8989` and api key from [here](http://pinheiro-nuc/sonarr/settings/general)
 * Add radarr config using host `radarr`, port `7878` and api key from [here](http://pinheiro-nuc/radarr/settings/general)

@@ -1,14 +1,4 @@
 services:
-  mariadb:
-    build: mariadb
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MARIADB_AUTO_UPGRADE: 1
-      MYSQL_INITDB_SKIP_TZINFO: 1
-    volumes:
-      - mariadb_data:/var/lib/mysql
-
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     restart: unless-stopped
@@ -33,34 +23,40 @@ services:
       CAPTCHA_SOLVER: none
       TZ: Europe/Lisbon
 
-  ombi:
-    image: linuxserver/ombi:latest
+  seerr:
+    image: ghcr.io/seerr-team/seerr:latest
+    init: true
     restart: unless-stopped
-    pull_policy: always
     depends_on:
       - sonarr
       - radarr
       - plex
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/settings/public || exit 1
+      start_period: 20s
+      timeout: 3s
+      interval: 15s
+      retries: 3
     labels:
       - 'traefik.enable=true'
 
-      - 'traefik.http.routers.tedflix_ombi_public.rule=Host(`ombi.hal.pub`)'
-      - 'traefik.http.routers.tedflix_ombi_public.entrypoints=web_public_secure'
-      - 'traefik.http.routers.tedflix_ombi_public.service=tedflix_ombi_public'
-      - 'traefik.http.services.tedflix_ombi_public.loadbalancer.server.port=3579'
+      - 'traefik.http.routers.tedflix_seerr_public.rule=Host(`ombi.hal.pub`)'
+      - 'traefik.http.routers.tedflix_seerr_public.entrypoints=web_public_secure'
+      - 'traefik.http.routers.tedflix_seerr_public.service=tedflix_seerr_public'
+      - 'traefik.http.services.tedflix_seerr_public.loadbalancer.server.port=5055'
 
       - 'traefik.docker.network=infra_traefik'
-    ports:
-      - '13579:3579'
+
     environment:
-      PUID: 1000
-      PGID: 100
-      TZ: Europe/Lisbon
+      - LOG_LEVEL=info
+      - TZ=Europe/Lisbon
+    ports:
+      - 15055:5055
     networks:
       - infra_traefik
-      - default # for mariadb
+      - default # For sonarr, radarr and plex access
     volumes:
-      - ombi_config:/config
+      - seerr_config:/app/config    
 
   radarr:
     image: linuxserver/radarr:latest
@@ -195,9 +191,8 @@ networks:
     external: true
 
 volumes:
-  mariadb_data:
   prowlarr_config:
-  ombi_config:
+  seerr_config:
   radarr_config:
   bazarr_config:
   sonarr_config:
