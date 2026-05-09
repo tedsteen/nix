@@ -70,7 +70,15 @@ in
 
   virtualisation.docker = {
     enable = true;
-    daemon.settings."log-driver" = "journald";
+    daemon.settings = {
+      "log-driver" = "fluentd";
+      "log-opts" = {
+        "fluentd-address" = "127.0.0.1:24224";
+        "fluentd-async" = "true";
+        labels = "com.docker.compose.project,com.docker.compose.service,com.docker.compose.container-number";
+        tag = "docker.{{.Name}}";
+      };
+    };
   };
 
   systemd.services.docker = {
@@ -163,6 +171,8 @@ in
           storage = "file_storage/journald";
         };
 
+        "fluentforward/docker".endpoint = "127.0.0.1:24224";
+
         "prometheus/home_assistant".config.scrape_configs = [
           {
             job_name = "home-assistant";
@@ -214,14 +224,29 @@ in
         "transform/journald" = {
           error_mode = "ignore";
           log_statements = [
-            ''set(log.attributes["container.id"], log.body["CONTAINER_ID_FULL"]) where IsMap(log.body) and log.body["CONTAINER_ID_FULL"] != nil''
-            ''set(log.attributes["container.image.name"], log.body["IMAGE_NAME"]) where IsMap(log.body) and log.body["IMAGE_NAME"] != nil''
-            ''set(log.attributes["container.name"], log.body["CONTAINER_NAME"]) where IsMap(log.body) and log.body["CONTAINER_NAME"] != nil''
+            ''set(log.attributes["log.source"], "systemd")''
             ''set(log.attributes["journal.priority"], log.body["PRIORITY"]) where IsMap(log.body) and log.body["PRIORITY"] != nil''
             ''set(log.attributes["systemd.unit"], log.body["_SYSTEMD_UNIT"]) where IsMap(log.body) and log.body["_SYSTEMD_UNIT"] != nil''
             ''set(log.attributes["syslog.identifier"], log.body["SYSLOG_IDENTIFIER"]) where IsMap(log.body) and log.body["SYSLOG_IDENTIFIER"] != nil''
             ''set(log.body, log.body["MESSAGE"]) where IsMap(log.body) and log.body["MESSAGE"] != nil''
-            ''set(log.body, Concat([log.attributes["container.name"], log.body], " | ")) where log.attributes["container.name"] != nil''
+            ''set(resource.attributes["service.namespace"], "systemd") where log.attributes["systemd.unit"] != nil''
+            ''set(resource.attributes["service.name"], log.attributes["systemd.unit"]) where log.attributes["systemd.unit"] != nil''
+          ];
+        };
+        "transform/docker-logs" = {
+          error_mode = "ignore";
+          log_statements = [
+            ''set(log.attributes["log.source"], "docker")''
+            ''set(log.attributes["docker.stream"], log.attributes["source"]) where log.attributes["source"] != nil''
+            ''set(log.attributes["compose.project"], log.attributes["com.docker.compose.project"]) where log.attributes["com.docker.compose.project"] != nil''
+            ''set(log.attributes["compose.service"], log.attributes["com.docker.compose.service"]) where log.attributes["com.docker.compose.service"] != nil''
+            ''set(log.attributes["compose.container_number"], log.attributes["com.docker.compose.container-number"]) where log.attributes["com.docker.compose.container-number"] != nil''
+            ''set(resource.attributes["service.namespace"], "docker")''
+            ''set(resource.attributes["service.namespace"], log.attributes["compose.project"]) where log.attributes["compose.project"] != nil''
+            ''set(resource.attributes["service.name"], log.attributes["container_name"]) where log.attributes["container_name"] != nil''
+            ''set(resource.attributes["service.name"], log.attributes["compose.service"]) where log.attributes["compose.service"] != nil''
+            ''set(resource.attributes["container.id"], log.attributes["container_id"]) where log.attributes["container_id"] != nil''
+            ''set(resource.attributes["container.name"], log.attributes["container_name"]) where log.attributes["container_name"] != nil''
           ];
         };
       };
@@ -263,14 +288,25 @@ in
             ];
             exporters = [ "otlphttp/lgtm" ];
           };
-          logs = {
-            receivers = [
-              "otlp"
-              "journald"
-            ];
+          "logs/otlp" = {
+            receivers = [ "otlp" ];
+            processors = [ "batch" ];
+            exporters = [ "otlphttp/lgtm" ];
+          };
+          "logs/systemd" = {
+            receivers = [ "journald" ];
             processors = [
               "resource/pinheiro-nuc"
               "transform/journald"
+              "batch"
+            ];
+            exporters = [ "otlphttp/lgtm" ];
+          };
+          "logs/docker" = {
+            receivers = [ "fluentforward/docker" ];
+            processors = [
+              "resource/pinheiro-nuc"
+              "transform/docker-logs"
               "batch"
             ];
             exporters = [ "otlphttp/lgtm" ];
@@ -284,7 +320,10 @@ in
     after = [ "docker.service" ];
     path = [ pkgs.systemd ];
     wants = [ "docker.service" ];
-    serviceConfig.SupplementaryGroups = [ "docker" ];
+    serviceConfig.SupplementaryGroups = [
+      "docker"
+      "systemd-journal"
+    ];
   };
 
   services.dockerStack = {
