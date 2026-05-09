@@ -13,6 +13,9 @@ services:
     image: lscr.io/linuxserver/prowlarr:latest
     restart: unless-stopped
     pull_policy: always
+    depends_on:
+      - transmission
+      - flaresolverr
     ports:
       - '19696:9696'
     environment:
@@ -34,6 +37,10 @@ services:
     image: linuxserver/ombi:latest
     restart: unless-stopped
     pull_policy: always
+    depends_on:
+      - sonarr
+      - radarr
+      - plex
     labels:
       - 'traefik.enable=true'
 
@@ -59,6 +66,8 @@ services:
     image: linuxserver/radarr:latest
     restart: unless-stopped
     pull_policy: always
+    depends_on:
+      - transmission
     ports:
       - '17878:7878'
     environment:
@@ -73,6 +82,9 @@ services:
     image: lscr.io/linuxserver/bazarr:latest
     restart: unless-stopped
     pull_policy: always
+    depends_on:
+      - radarr
+      - sonarr
     ports:
       - '16767:6767'
     environment:
@@ -88,6 +100,8 @@ services:
     image: linuxserver/sonarr:latest
     restart: unless-stopped
     pull_policy: always
+    depends_on:
+      - transmission
     ports:
       - '18989:8989'
     environment:
