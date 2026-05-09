@@ -76,6 +76,10 @@ cat <<EOF > "$TMP_FILE"
 }
 EOF
 
+if [ "$(id -u)" = 0 ]; then
+    chown "${PUID:-1000}:${PGID:-100}" "$TMP_FILE"
+fi
+chmod 644 "$TMP_FILE"
 mv "$TMP_FILE" "$FILE"
 
 echo "soft-reload Transmission"
