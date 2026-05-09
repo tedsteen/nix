@@ -18,3 +18,14 @@ Docker named volumes are application-owned runtime state. Deploying the NixOS co
 * `automation_nodered_data`: Node-RED flows, credentials, and settings. Required palettes are installed from the repo-owned Node-RED `package.json`.
 * `lab_minecraft_data`: Minecraft world state.
 * `tedflix_*`: Tedflix application config and media-app databases. The Tedflix stack is currently documented as a proof of concept.
+
+## Host UPS
+The Eaton 3S 550 attached over USB is managed by NUT from the NixOS host config.
+
+Query it on `pinheiro-nuc` with:
+
+```bash
+upsc eaton-3s@localhost
+```
+
+NUT shuts the host down through systemd when the UPS reports low battery. The configured low-battery threshold is 25%, with a short final delay so shutdown starts promptly.

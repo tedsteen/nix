@@ -1,6 +1,7 @@
 { inputs, config, pkgs, ... }:
 let
   ntfyAlertCommand = "/run/current-system/sw/bin/ntfy-alert";
+  upsMonitorPasswordFile = "${pkgs.writeText "upsmon-password" "pinheiro-upsmon\n"}";
 in
 {
   imports = [
@@ -84,6 +85,39 @@ in
   systemd.services.docker = {
     after = [ "mnt-mediapool.mount" ];
     wants = [ "mnt-mediapool.mount" ];
+  };
+
+  power.ups = {
+    enable = true;
+    mode = "standalone";
+    ups."eaton-3s" = {
+      description = "Eaton 3S 550";
+      driver = "usbhid-ups";
+      port = "auto";
+      directives = [
+        "vendorid = 0463"
+        "productid = ffff"
+        "lowbatt = 25"
+        "ignorelb"
+        "offdelay = 120"
+        "ondelay = 180"
+      ];
+    };
+    upsd.listen = [
+      { address = "127.0.0.1"; }
+    ];
+    users.upsmon = {
+      passwordFile = upsMonitorPasswordFile;
+      upsmon = "primary";
+    };
+    upsmon = {
+      monitor."eaton-3s" = {
+        system = "eaton-3s@localhost";
+        user = "upsmon";
+        type = "primary";
+      };
+      settings.FINALDELAY = 5;
+    };
   };
 
   services.opentelemetry-collector = {
