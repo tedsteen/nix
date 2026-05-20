@@ -121,29 +121,29 @@ in {
         builders-use-substitutes = true;
       };
 
-      linux-builder = {
-        enable = true;
-        systems = [ "aarch64-linux" "x86_64-linux" ];
-        supportedFeatures = [ "kvm" "benchmark" "big-parallel" ];
-        config = { lib, ... }: {
-          boot.binfmt.emulatedSystems = [ "x86_64-linux" ];
-          virtualisation.cores = lib.mkForce 8;
-          virtualisation.memorySize = lib.mkForce 16384;
+      # linux-builder = {
+      #   enable = true;
+      #   systems = [ "aarch64-linux" "x86_64-linux" ];
+      #   # supportedFeatures = [ "kvm" "benchmark" "big-parallel" ];
+      #   # config = { lib, ... }: {
+      #   #   boot.binfmt.emulatedSystems = [ "x86_64-linux" ];
+      #   #   virtualisation.cores = lib.mkForce 8;
+      #   #   virtualisation.memorySize = lib.mkForce 16384;
 
-          nix.gc = {
-            automatic = true;
-            dates = "daily";
-            options = "--delete-older-than 7d";
-          };
+      #   #   nix.gc = {
+      #   #     automatic = true;
+      #   #     dates = "daily";
+      #   #     options = "--delete-older-than 7d";
+      #   #   };
 
-          nix.optimise = {
-            automatic = true;
-            dates = [ "03:45" ];
-          };
+      #   #   nix.optimise = {
+      #   #     automatic = true;
+      #   #     dates = [ "03:45" ];
+      #   #   };
 
-          nix.settings.auto-optimise-store = true;
-        };
-      };
+      #   #   nix.settings.auto-optimise-store = true;
+      #   # };
+      # };
     };
 
     nix-homebrew = {
@@ -161,15 +161,15 @@ in {
       };
       global.autoUpdate = true;
 
-      masApps = {
-        # "Calca" = 635758264;
-        "DigiDoc4 Client" = 1370791134;
-        # "Messenger" = 1480068668;
-        "The Unarchiver" = 425424353;
-        "Ticktick" = 966085870;
-        "WhatsApp" = 310633997;
-        "Wireguard" = 1451685025;
-      };
+      # masApps = {
+      #   # "Calca" = 635758264;
+      #   "DigiDoc4 Client" = 1370791134;
+      #   # "Messenger" = 1480068668;
+      #   "The Unarchiver" = 425424353;
+      #   "Ticktick" = 966085870;
+      #   "WhatsApp" = 310633997;
+      #   "Wireguard" = 1451685025;
+      # };
       taps = [ ];
       brews = [
         "sdl2"
