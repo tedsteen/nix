@@ -5,6 +5,10 @@ let
   user = cfg.user;
   username = user.username;
 in {
+  imports = [
+    ./dev.nix
+  ];
+
   options.macBaseConfig.user = lib.mkOption {
     type = lib.types.submodule {
       options = {
@@ -208,10 +212,6 @@ in {
     };
 
     home-manager.users.${username} = {
-      home.packages = with pkgs; [
-        go
-      ];
-
       home.file.".config/ghostty/config".text = ''
         background-opacity = 0.95
         background-blur = true

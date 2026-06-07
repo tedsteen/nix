@@ -96,9 +96,6 @@
                   fi
                 }
 
-                dev() {
-                  PROFILES="$*" nix develop --impure path:${./dev} --no-write-lock-file --command zsh
-                }
               '';
 
               shellAliases = lib.mkMerge [
