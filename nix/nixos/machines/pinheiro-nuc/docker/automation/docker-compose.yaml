@@ -16,9 +16,6 @@ services:
       - "5683:5683/tcp"
     environment:
       TZ: Europe/Lisbon
-    networks:
-      - default
-      - infra_metrics
     volumes:
       - hass_config:/config
       - ./home-assistant/configuration.yaml:/config/configuration.yaml:ro
@@ -36,10 +33,6 @@ services:
       TZ: Europe/Lisbon
     volumes:
       - nodered_data:/data
-
-networks:
-  infra_metrics:
-    external: true
 
 volumes:
   hass_config:

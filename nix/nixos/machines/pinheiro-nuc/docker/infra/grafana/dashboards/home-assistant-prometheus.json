@@ -53,10 +53,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 6,
         "x": 0,
-        "y": 0
+        "y": 0,
+        "w": 4,
+        "h": 4
       },
       "id": 1,
       "options": {
@@ -85,85 +85,13 @@
           },
           "editorMode": "code",
           "expr": "sum(hass_entity_available) / count(hass_entity_available)",
-          "instant": false,
           "legendFormat": "available",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Entity Availability",
+      "title": "Availability",
       "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            }
-          },
-          "mappings": [],
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 10,
-        "x": 6,
-        "y": 0
-      },
-      "id": 2,
-      "options": {
-        "displayLabels": [],
-        "legend": {
-          "displayMode": "list",
-          "placement": "right",
-          "showLegend": true,
-          "values": [
-            "value"
-          ]
-        },
-        "pieType": "donut",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "count by (domain) (hass_entity_info)",
-          "instant": false,
-          "legendFormat": "{{domain}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Entities By Domain",
-      "type": "piechart"
     },
     {
       "datasource": {
@@ -198,12 +126,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
+        "x": 4,
+        "y": 0,
         "w": 4,
-        "x": 16,
-        "y": 0
+        "h": 4
       },
-      "id": 3,
+      "id": 2,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
@@ -229,14 +157,13 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum(hass_update_state)",
-          "instant": false,
-          "legendFormat": "updates",
+          "expr": "count(hass_entity_available == 0)",
+          "legendFormat": "unavailable",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Updates Available",
+      "title": "Unavailable",
       "type": "stat"
     },
     {
@@ -264,12 +191,150 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
+        "x": 8,
+        "y": 0,
         "w": 4,
-        "x": 20,
-        "y": 0
+        "h": 4
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "count(hass_entity_info)",
+          "legendFormat": "entities",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Entities",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 4,
+        "h": 4
       },
       "id": 4,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(hass_update_state)",
+          "legendFormat": "updates",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Updates",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "id": 5,
       "options": {
         "colorMode": "value",
         "graphMode": "none",
@@ -296,7 +361,6 @@
           },
           "editorMode": "code",
           "expr": "sum(rate(hass_state_change_total[5m]))",
-          "instant": false,
           "legendFormat": "changes/sec",
           "range": true,
           "refId": "A"
@@ -304,6 +368,258 @@
       ],
       "title": "State Changes",
       "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "x": 20,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "count((hass_sensor_battery_percent or hass_sensor_battery_level_percent or hass_sensor_battery_level) < 30)",
+          "legendFormat": "low",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Low Batteries",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 8,
+        "h": 8
+      },
+      "id": 10,
+      "options": {
+        "displayLabels": [
+          "name",
+          "value"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "count by (domain) (hass_entity_info)",
+          "legendFormat": "{{domain}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Entities By Domain",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 4,
+        "w": 8,
+        "h": 8
+      },
+      "id": 11,
+      "options": {
+        "displayLabels": [
+          "name",
+          "value"
+        ],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(hass_switch_state)",
+          "legendFormat": "switches on",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "count(hass_light_brightness_percent > 0)",
+          "legendFormat": "lights on",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(hass_input_boolean_state)",
+          "legendFormat": "input booleans on",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(hass_lock_state)",
+          "legendFormat": "locks locked",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "Active Devices",
+      "type": "piechart"
     },
     {
       "datasource": {
@@ -340,12 +656,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 8,
         "x": 16,
-        "y": 5
+        "y": 4,
+        "w": 8,
+        "h": 8
       },
-      "id": 5,
+      "id": 12,
       "options": {
         "cellHeight": "sm",
         "footer": {
@@ -367,10 +683,11 @@
           },
           "editorMode": "code",
           "expr": "hass_entity_available == 0",
-          "format": "table",
-          "instant": true,
           "legendFormat": "{{friendly_name}}",
-          "refId": "A"
+          "range": false,
+          "refId": "A",
+          "format": "table",
+          "instant": true
         }
       ],
       "title": "Unavailable Entities",
@@ -381,7 +698,104 @@
             "excludeByName": {
               "Time": true,
               "__name__": true,
-              "Value": true,
+              "host_name": true,
+              "instance": true,
+              "job": true,
+              "service_instance_id": true,
+              "service_name": true,
+              "service_namespace": true,
+              "Value": false
+            },
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Available",
+              "domain": "Domain",
+              "entity": "Entity",
+              "friendly_name": "Name"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 12,
+        "w": 8,
+        "h": 8
+      },
+      "id": 20,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "(hass_sensor_battery_percent or hass_sensor_battery_level_percent or hass_sensor_battery_level) < 30",
+          "legendFormat": "{{friendly_name}}",
+          "range": false,
+          "refId": "A",
+          "format": "table",
+          "instant": true
+        }
+      ],
+      "title": "Low Batteries",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
               "host_name": true,
               "instance": true,
               "job": true,
@@ -391,6 +805,7 @@
             },
             "indexByName": {},
             "renameByName": {
+              "Value": "Battery",
               "domain": "Domain",
               "entity": "Entity",
               "friendly_name": "Name"
@@ -452,17 +867,17 @@
               }
             ]
           },
-          "unit": "celsius"
+          "unit": "percent"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 8
+        "x": 8,
+        "y": 12,
+        "w": 8,
+        "h": 8
       },
-      "id": 6,
+      "id": 21,
       "options": {
         "legend": {
           "calcs": [
@@ -486,24 +901,203 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "hass_climate_current_temperature_celsius",
-          "legendFormat": "{{friendly_name}} current",
+          "expr": "bottomk(20, hass_sensor_battery_percent or hass_sensor_battery_level_percent or hass_sensor_battery_level)",
+          "legendFormat": "{{friendly_name}}",
           "range": true,
           "refId": "A"
+        }
+      ],
+      "title": "Lowest Battery Levels",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "celsius"
         },
+        "overrides": []
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 12,
+        "w": 8,
+        "h": 8
+      },
+      "id": 22,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "hass_climate_target_temperature_celsius",
-          "legendFormat": "{{friendly_name}} target",
+          "expr": "topk(20, hass_sensor_temperature_celsius or hass_climate_current_temperature_celsius)",
+          "legendFormat": "{{friendly_name}}",
           "range": true,
-          "refId": "B"
+          "refId": "A"
         }
       ],
-      "title": "Climate Temperatures",
+      "title": "Temperatures",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 20,
+        "w": 8,
+        "h": 8
+      },
+      "id": 30,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "topk(20, hass_sensor_humidity_percent or hass_humidifier_target_humidity_percent)",
+          "legendFormat": "{{friendly_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Humidity",
       "type": "timeseries"
     },
     {
@@ -563,12 +1157,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 13
+        "x": 8,
+        "y": 20,
+        "w": 8,
+        "h": 8
       },
-      "id": 7,
+      "id": 31,
       "options": {
         "legend": {
           "calcs": [
@@ -609,30 +1203,47 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
           "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
             },
-            "inspect": false
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 20
-              },
-              {
                 "color": "green",
-                "value": 50
+                "value": null
               }
             ]
           },
@@ -641,23 +1252,26 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 16
+        "x": 16,
+        "y": 20,
+        "w": 8,
+        "h": 8
       },
-      "id": 8,
+      "id": 32,
       "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
+        "legend": {
+          "calcs": [
+            "lastNotNull"
           ],
-          "show": false
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
         },
-        "showHeader": true
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
       },
       "pluginVersion": "12.0.2",
       "targets": [
@@ -667,38 +1281,14 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "hass_sensor_battery_percent < 30",
-          "format": "table",
-          "instant": true,
+          "expr": "topk(20, hass_light_brightness_percent > 0)",
           "legendFormat": "{{friendly_name}}",
+          "range": true,
           "refId": "A"
         }
       ],
-      "title": "Low Batteries",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Time": true,
-              "__name__": true,
-              "host_name": true,
-              "instance": true,
-              "job": true,
-              "service_instance_id": true,
-              "service_name": true,
-              "service_namespace": true
-            },
-            "indexByName": {},
-            "renameByName": {
-              "Value": "Battery",
-              "entity": "Entity",
-              "friendly_name": "Name"
-            }
-          }
-        }
-      ],
-      "type": "table"
+      "title": "Light Brightness",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -711,49 +1301,71 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
           "mappings": [],
-          "unit": "short"
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "celsius"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
+        "x": 0,
+        "y": 28,
         "w": 12,
-        "x": 12,
-        "y": 21
+        "h": 8
       },
-      "id": 9,
+      "id": 40,
       "options": {
-        "displayLabels": [
-          "name",
-          "value"
-        ],
         "legend": {
-          "displayMode": "list",
-          "placement": "right",
-          "showLegend": true,
-          "values": [
-            "value"
-          ]
-        },
-        "pieType": "donut",
-        "reduceOptions": {
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "",
-          "values": false
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
           "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
+          "mode": "multi",
+          "sort": "desc"
         }
       },
       "pluginVersion": "12.0.2",
@@ -764,8 +1376,8 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum(hass_switch_state)",
-          "legendFormat": "switches on",
+          "expr": "hass_climate_current_temperature_celsius",
+          "legendFormat": "{{friendly_name}} current",
           "range": true,
           "refId": "A"
         },
@@ -775,14 +1387,109 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "count(hass_light_brightness_percent > 0)",
-          "legendFormat": "lights on",
+          "expr": "hass_climate_target_temperature_celsius",
+          "legendFormat": "{{friendly_name}} target",
           "range": true,
           "refId": "B"
         }
       ],
-      "title": "Active Switches And Lights",
-      "type": "piechart"
+      "title": "Climate Current vs Target",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 28,
+        "w": 12,
+        "h": 8
+      },
+      "id": 41,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "topk(20, sum by (domain, entity, friendly_name) (rate(hass_state_change_total[5m])))",
+          "legendFormat": "{{domain}} {{friendly_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "State Change Rate",
+      "type": "timeseries"
     }
   ],
   "preload": false,
@@ -790,7 +1497,6 @@
   "schemaVersion": 41,
   "tags": [
     "home-assistant",
-    "opentelemetry",
     "prometheus"
   ],
   "templating": {
@@ -804,5 +1510,5 @@
   "timezone": "browser",
   "title": "Home Assistant (Prometheus)",
   "uid": "pinheiro-home-assistant",
-  "version": 1
+  "version": 2
 }

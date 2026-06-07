@@ -1,5 +1,5 @@
 ## The docker compose stack
-infra provides the shared stuff like the landing page, public Traefik routes, and metrics.
+infra provides the shared stuff like the landing page and public Traefik routes. The host NixOS config owns the local observability stack.
 Each stack is exposed on the host as zsh aliases for `docker compose`, using a `dcs-` prefix to avoid collisions, including `dcs-<stack>-deploy`.
 ```bash
 dcs-infra-deploy      # Pulls, builds, and deploys the infra stack
@@ -12,7 +12,7 @@ Nix owns the stack definitions copied into `/etc/docker-stacks`, the per-stack e
 
 Docker named volumes are application-owned runtime state. Deploying the NixOS config or rerunning `dcs-<stack>-deploy` will not recreate their contents. The main non-declarative volumes are:
 
-* `infra_otel_lgtm`: LGTM storage and any Grafana UI changes. Dashboards in `infra/grafana/dashboards` are provisioned from the repo.
+* `otel-lgtm-data`: LGTM storage and any Grafana UI changes. Nix provisions the common host and Docker dashboards from pinned upstream revisions, and the Home Assistant dashboard from `infra/grafana/dashboards`.
 * `infra_traefik_letsencrypt`: Traefik ACME certificate state.
 * `automation_hass_config`: Home Assistant auth, integrations, registries, and UI-managed automations. The top-level `configuration.yaml` and observability package are mounted from the repo.
 * `automation_nodered_data`: Node-RED flows, credentials, and settings. Required palettes are installed from the repo-owned Node-RED `package.json`.

@@ -8,6 +8,7 @@ in
     inputs.sops-nix.nixosModules.sops
     ../../modules/base.nix
     ../../modules/docker-stacks.nix
+    ../../modules/observability-stack.nix
     ./hardware-configuration.nix
   ];
 
@@ -69,18 +70,7 @@ in
 
   system.stateVersion = "24.11";
 
-  virtualisation.docker = {
-    enable = true;
-    daemon.settings = {
-      "log-driver" = "fluentd";
-      "log-opts" = {
-        "fluentd-address" = "127.0.0.1:24224";
-        "fluentd-async" = "true";
-        labels = "com.docker.compose.project,com.docker.compose.service,com.docker.compose.container-number";
-        tag = "docker.{{.Name}}";
-      };
-    };
-  };
+  virtualisation.docker.enable = true;
 
   systemd.services.docker = {
     after = [ "mnt-mediapool.mount" ];
@@ -120,243 +110,11 @@ in
     };
   };
 
-  services.opentelemetry-collector = {
+  services.observabilityStack = {
     enable = true;
-    package = pkgs.opentelemetry-collector-contrib;
-    validateConfigFile = true;
-    settings = {
-      extensions = {
-        health_check.endpoint = "127.0.0.1:13133";
-        "file_storage/journald".directory = ".";
-      };
-
-      receivers = {
-        otlp.protocols = {
-          grpc.endpoint = "0.0.0.0:4317";
-          http.endpoint = "0.0.0.0:4318";
-        };
-
-        hostmetrics = {
-          collection_interval = "30s";
-          scrapers = {
-            cpu.metrics."system.cpu.utilization".enabled = true;
-            disk = { };
-            filesystem = {
-              exclude_mount_points = {
-                match_type = "regexp";
-                mount_points = [
-                  "^/dev($|/.*)"
-                  "^/proc($|/.*)"
-                  "^/run($|/.*)"
-                  "^/sys($|/.*)"
-                  "^/var/lib/docker($|/.*)"
-                ];
-              };
-              exclude_fs_types = {
-                match_type = "strict";
-                fs_types = [
-                  "autofs"
-                  "binfmt_misc"
-                  "bpf"
-                  "cgroup2"
-                  "configfs"
-                  "debugfs"
-                  "devpts"
-                  "devtmpfs"
-                  "fusectl"
-                  "hugetlbfs"
-                  "iso9660"
-                  "mqueue"
-                  "nsfs"
-                  "overlay"
-                  "proc"
-                  "procfs"
-                  "pstore"
-                  "rpc_pipefs"
-                  "securityfs"
-                  "selinuxfs"
-                  "squashfs"
-                  "sysfs"
-                  "tracefs"
-                ];
-              };
-              metrics."system.filesystem.utilization".enabled = true;
-            };
-            load = { };
-            memory.metrics."system.memory.utilization".enabled = true;
-            network = { };
-            paging = { };
-            processes = { };
-          };
-        };
-
-        docker_stats = {
-          collection_interval = "30s";
-          endpoint = "unix:///var/run/docker.sock";
-          container_labels_to_metric_labels = {
-            "com.docker.compose.project" = "docker.compose.project";
-            "com.docker.compose.service" = "docker.compose.service";
-          };
-        };
-
-        journald = {
-          all = true;
-          directory = "/var/log/journal";
-          storage = "file_storage/journald";
-        };
-
-        "fluentforward/docker".endpoint = "127.0.0.1:24224";
-
-        "prometheus/home_assistant".config.scrape_configs = [
-          {
-            job_name = "home-assistant";
-            scrape_interval = "60s";
-            metrics_path = "/api/prometheus";
-            static_configs = [
-              { targets = [ "127.0.0.1:18123" ]; }
-            ];
-          }
-        ];
-      };
-
-      processors = {
-        batch = { };
-        "resource/home-assistant".attributes = [
-          {
-            key = "service.namespace";
-            value = "pinheiro";
-            action = "upsert";
-          }
-          {
-            key = "service.name";
-            value = "home-assistant";
-            action = "upsert";
-          }
-          {
-            key = "host.name";
-            value = "pinheiro-nuc";
-            action = "upsert";
-          }
-        ];
-        "resource/pinheiro-nuc".attributes = [
-          {
-            key = "service.namespace";
-            value = "pinheiro";
-            action = "upsert";
-          }
-          {
-            key = "service.name";
-            value = "pinheiro-nuc";
-            action = "upsert";
-          }
-          {
-            key = "host.name";
-            value = "pinheiro-nuc";
-            action = "upsert";
-          }
-        ];
-        "transform/journald" = {
-          error_mode = "ignore";
-          log_statements = [
-            ''set(log.attributes["log.source"], "systemd")''
-            ''set(log.attributes["journal.priority"], log.body["PRIORITY"]) where IsMap(log.body) and log.body["PRIORITY"] != nil''
-            ''set(log.attributes["systemd.unit"], log.body["_SYSTEMD_UNIT"]) where IsMap(log.body) and log.body["_SYSTEMD_UNIT"] != nil''
-            ''set(log.attributes["syslog.identifier"], log.body["SYSLOG_IDENTIFIER"]) where IsMap(log.body) and log.body["SYSLOG_IDENTIFIER"] != nil''
-            ''set(log.body, log.body["MESSAGE"]) where IsMap(log.body) and log.body["MESSAGE"] != nil''
-            ''set(resource.attributes["service.namespace"], "systemd") where log.attributes["systemd.unit"] != nil''
-            ''set(resource.attributes["service.name"], log.attributes["systemd.unit"]) where log.attributes["systemd.unit"] != nil''
-          ];
-        };
-        "transform/docker-logs" = {
-          error_mode = "ignore";
-          log_statements = [
-            ''set(log.attributes["log.source"], "docker")''
-            ''set(log.attributes["docker.stream"], log.attributes["source"]) where log.attributes["source"] != nil''
-            ''set(log.attributes["compose.project"], log.attributes["com.docker.compose.project"]) where log.attributes["com.docker.compose.project"] != nil''
-            ''set(log.attributes["compose.service"], log.attributes["com.docker.compose.service"]) where log.attributes["com.docker.compose.service"] != nil''
-            ''set(log.attributes["compose.container_number"], log.attributes["com.docker.compose.container-number"]) where log.attributes["com.docker.compose.container-number"] != nil''
-            ''set(resource.attributes["service.namespace"], "docker")''
-            ''set(resource.attributes["service.namespace"], log.attributes["compose.project"]) where log.attributes["compose.project"] != nil''
-            ''set(resource.attributes["service.name"], log.attributes["container_name"]) where log.attributes["container_name"] != nil''
-            ''set(resource.attributes["service.name"], log.attributes["compose.service"]) where log.attributes["compose.service"] != nil''
-            ''set(resource.attributes["container.id"], log.attributes["container_id"]) where log.attributes["container_id"] != nil''
-            ''set(resource.attributes["container.name"], log.attributes["container_name"]) where log.attributes["container_name"] != nil''
-          ];
-        };
-      };
-
-      exporters."otlphttp/lgtm".endpoint = "http://127.0.0.1:14318";
-
-      service = {
-        extensions = [
-          "health_check"
-          "file_storage/journald"
-        ];
-        pipelines = {
-          traces = {
-            receivers = [ "otlp" ];
-            processors = [ "batch" ];
-            exporters = [ "otlphttp/lgtm" ];
-          };
-          metrics = {
-            receivers = [ "otlp" ];
-            processors = [ "batch" ];
-            exporters = [ "otlphttp/lgtm" ];
-          };
-          "metrics/host" = {
-            receivers = [
-              "hostmetrics"
-              "docker_stats"
-            ];
-            processors = [
-              "resource/pinheiro-nuc"
-              "batch"
-            ];
-            exporters = [ "otlphttp/lgtm" ];
-          };
-          "metrics/home-assistant" = {
-            receivers = [ "prometheus/home_assistant" ];
-            processors = [
-              "resource/home-assistant"
-              "batch"
-            ];
-            exporters = [ "otlphttp/lgtm" ];
-          };
-          "logs/otlp" = {
-            receivers = [ "otlp" ];
-            processors = [ "batch" ];
-            exporters = [ "otlphttp/lgtm" ];
-          };
-          "logs/systemd" = {
-            receivers = [ "journald" ];
-            processors = [
-              "resource/pinheiro-nuc"
-              "transform/journald"
-              "batch"
-            ];
-            exporters = [ "otlphttp/lgtm" ];
-          };
-          "logs/docker" = {
-            receivers = [ "fluentforward/docker" ];
-            processors = [
-              "resource/pinheiro-nuc"
-              "transform/docker-logs"
-              "batch"
-            ];
-            exporters = [ "otlphttp/lgtm" ];
-          };
-        };
-      };
-    };
-  };
-
-  systemd.services.opentelemetry-collector = {
-    after = [ "docker.service" ];
-    path = [ pkgs.systemd ];
-    wants = [ "docker.service" ];
-    serviceConfig.SupplementaryGroups = [
-      "docker"
-      "systemd-journal"
+    homeAssistant.enable = true;
+    extraDashboardPaths = [
+      ./docker/infra/grafana/dashboards/home-assistant-prometheus.json
     ];
   };
 

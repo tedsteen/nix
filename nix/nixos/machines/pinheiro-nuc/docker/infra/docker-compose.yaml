@@ -56,26 +56,6 @@ services:
     networks:
       - traefik
 
-  docker-otel-lgtm:
-    image: grafana/otel-lgtm:latest
-    restart: unless-stopped
-    pull_policy: always
-    environment:
-      TZ: Europe/Lisbon
-      GF_AUTH_DISABLE_LOGIN_FORM: true
-      GF_AUTH_ANONYMOUS_ENABLED: true
-      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
-      GF_SECURITY_ALLOW_EMBEDDING: true
-    ports:
-      - '3000:3000'
-      - '127.0.0.1:14318:4318'
-    networks:
-      - metrics
-    volumes:
-      - otel_lgtm:/data
-      - ./grafana/dashboards:/otel-lgtm/grafana/conf/provisioning/dashboards/pinheiro:ro
-      - ./grafana/provisioning/dashboards/pinheiro.yaml:/otel-lgtm/grafana/conf/provisioning/dashboards/pinheiro.yaml:ro
-  
   samba:
     image: dperson/samba
     pull_policy: always
@@ -95,10 +75,8 @@ services:
 
 networks:
   traefik:
-  metrics:
 
 volumes:
-  otel_lgtm:
   traefik_letsencrypt:
 
 secrets:
