@@ -40,6 +40,7 @@
             # General stuff
             pkg-config
             cmake
+            ccache
           ]
           # TODO: A special config for extensia on rust (havent figured out how to use espup with the oxalica overlay)
           ++ lib.optionals (has "rust-extensia") [
@@ -78,8 +79,8 @@
         buildInputs = lib.optionals pkgs.stdenv.isDarwin [ pkgs.apple-sdk_14 ];
 
         shellHook = ''
-          export CC=clang
-          export CXX=clang++
+          export CC="ccache clang"
+          export CXX="ccache clang++"
 
           if [[ "$(uname)" = "Darwin" ]]; then
             export MACOSX_DEPLOYMENT_TARGET=14
