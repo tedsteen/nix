@@ -11,9 +11,9 @@ Linux host definitions and helper scripts.
 ## Common Commands
 
 ```bash
-./nix/nixos/scripts/install-nixos.sh root@<SERVER_IP> "$PWD#pinheiro-nuc"
-./nix/nixos/scripts/apply-nixos-config.sh ted@<SERVER_IP> "./#pinheiro-nuc"
-./nix/nixos/scripts/apply-nixos-config.sh ted@<SERVER_IP> "./#marati-nuc"
+./nix/nixos/scripts/install-nixos.sh root@<SERVER_IP> pinheiro-nuc
+./nix/nixos/scripts/apply-nixos-config.sh ted@<SERVER_IP> pinheiro-nuc
+./nix/nixos/scripts/apply-nixos-config.sh ted@<SERVER_IP> marati-nuc
 ```
 
 `install-nixos.sh` writes hardware configuration to `nix/nixos/machines/<machine>/hardware-configuration.nix` and uses your normal SSH setup.

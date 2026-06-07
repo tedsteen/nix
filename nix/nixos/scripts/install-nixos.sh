@@ -3,31 +3,26 @@
 # hardware config in nix/nixos/machines/<machine>/hardware-configuration.nix.
 #
 # Usage:
-#   ./nix/nixos/scripts/install-nixos.sh <target_host> <flake>
+#   ./nix/nixos/scripts/install-nixos.sh <target_host> <machine_name>
 # Example:
-#   ./nix/nixos/scripts/install-nixos.sh root@1.2.3.4 "$PWD#pinheiro-nuc"
+#   ./nix/nixos/scripts/install-nixos.sh root@1.2.3.4 pinheiro-nuc
 set -euo pipefail
 
 if [ "$#" -ne 2 ]; then
-  echo "Usage: $0 <target_host> <flake>"
+  echo "Usage: $0 <target_host> <machine_name>"
   exit 1
 fi
 
 TARGET_HOST="$1"
-FLAKE="$2"
+MACHINE_NAME="$2"
 
-if [[ "${FLAKE}" != *"#"* ]]; then
-  echo "FLAKE must include a machine target, for example: /path/to/flake#pinheiro-nuc"
+if [[ "${MACHINE_NAME}" == *"#"* ]]; then
+  echo "Pass the machine name only, for example: pinheiro-nuc"
   exit 1
 fi
 
-FLAKE_PATH="${FLAKE%%#*}"
-MACHINE_NAME="${FLAKE#*#}"
-if [ -z "${FLAKE_PATH}" ]; then
-  FLAKE_PATH="."
-fi
 if [ -z "${MACHINE_NAME}" ]; then
-  echo "FLAKE target is empty. Expected: /path/to/flake#pinheiro-nuc"
+  echo "Machine name is empty. Expected: pinheiro-nuc"
   exit 1
 fi
 
@@ -36,8 +31,11 @@ if ! command -v nix >/dev/null 2>&1; then
   exit 1
 fi
 
-FLAKE_ROOT="$(cd "${FLAKE_PATH:-.}" && pwd)"
-MACHINE_DIR="${FLAKE_ROOT}/nix/nixos/machines/${MACHINE_NAME}"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+NIXOS_FLAKE_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../../.." && pwd)"
+FLAKE="git+file:${REPO_ROOT}?dir=nix/nixos#${MACHINE_NAME}"
+MACHINE_DIR="${NIXOS_FLAKE_DIR}/machines/${MACHINE_NAME}"
 MACHINE_CONFIG_PATH="${MACHINE_DIR}/default.nix"
 HARDWARE_CONFIG_PATH="${MACHINE_DIR}/hardware-configuration.nix"
 

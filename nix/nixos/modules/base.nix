@@ -1,4 +1,4 @@
-{ inputs, lib, config, ... }:
+{ inputs, lib, pkgs, config, ... }:
 
 let
   cfg = config.nixosBaseConfig;
@@ -106,6 +106,8 @@ in
         dates = [ "weekly" ];
       };
     };
+
+    virtualisation.docker.package = lib.mkDefault pkgs.docker_29;
 
     services.journald.extraConfig = ''
       SystemMaxUse=500M

@@ -30,8 +30,8 @@ in
     espup
     probe-rs-tools
 
-    nodejs
-    corepack
+    nodejs_24
+    (corepack.override { nodejs = nodejs_24; })
     python3
     cc65
     zig

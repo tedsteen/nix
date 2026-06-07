@@ -386,7 +386,7 @@ in
 
   systemd.services.docker-health-monitor = {
     description = "Alert when a Docker container becomes unhealthy";
-    path = [ pkgs.docker ];
+    path = [ config.virtualisation.docker.package ];
     after = [ "docker.service" ];
     wants = [ "docker.service" ];
     wantedBy = [ "multi-user.target" ];

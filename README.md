@@ -1,6 +1,6 @@
 # My NIX stuff
 
-Root-flake Nix setup for my Linux and macOS machines.
+Nix setup for my Linux and macOS machines, with separate flakes for each OS.
 
 Depends on the nix package manager: https://nixos.org/download/
 
@@ -17,13 +17,13 @@ Make sure your target machine is reachable over SSH using `root` or a user with 
 ### Bootstrapping a new machine
 
 ```bash
-./nix/nixos/scripts/install-nixos.sh root@<ip> "$PWD#pinheiro-nuc"
+./nix/nixos/scripts/install-nixos.sh root@<ip> pinheiro-nuc
 ```
 
 ### Updating an existing machine
 
 ```bash
-./nix/nixos/scripts/apply-nixos-config.sh ted@<ip> "./#pinheiro-nuc"
+./nix/nixos/scripts/apply-nixos-config.sh ted@<ip> pinheiro-nuc
 ```
 
 ## Applying macOS config locally
