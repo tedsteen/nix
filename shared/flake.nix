@@ -96,7 +96,7 @@
                   fi
                 }
 
-              '';
+              '' + builtins.readFile ./worktree.sh;
 
               shellAliases = lib.mkMerge [
                 {
