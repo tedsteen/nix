@@ -3,6 +3,11 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-25.11";
+    # The default system list (nix-systems/default). nixvim and its docs-search
+    # dependency (flake-utils) each declare their own `systems` input; pointing
+    # both at this one collapses what would otherwise be duplicate, identical
+    # `systems`/`systems_2` nodes in the lock file.
+    systems.url = "github:nix-systems/default";
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -10,6 +15,8 @@
     nixvim = {
       url = "github:nix-community/nixvim/nixos-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.systems.follows = "systems";
+      inputs.nuschtosSearch.inputs.flake-utils.inputs.systems.follows = "systems";
     };
   };
 
