@@ -23,6 +23,8 @@ in
     extraGroups = [ "docker" ];
     sudoNoPassword = true;
   };
+  # Match the official WordPress image's www-data group so Apache can read its mounted secret.
+  users.groups.container-www-data.gid = 33;
 
   disko.devices.disk.main.device = "/dev/sda";
 
@@ -175,6 +177,11 @@ in
         mode = "0440";
         owner = "ted";
         group = "docker";
+      };
+      moobeldaja_db_password = {
+        mode = "0440";
+        owner = "ted";
+        group = "container-www-data";
       };
       infra_wireguard_config = {
         mode = "0440";

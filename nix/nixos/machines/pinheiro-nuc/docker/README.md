@@ -17,6 +17,7 @@ Docker named volumes are application-owned runtime state. Deploying the NixOS co
 * `automation_hass_config`: Home Assistant auth, integrations, registries, and UI-managed automations. The top-level `configuration.yaml` and observability package are mounted from the repo.
 * `automation_nodered_data`: Node-RED flows, credentials, and settings. Required palettes are installed from the repo-owned Node-RED `package.json`.
 * `lab_minecraft_data`: Minecraft world state.
+* `lab_moobeldaja_db` and `lab_moobeldaja_wordpress`: the restored Moobeldaja database and WordPress files served at `https://moobeldaja.ee` through Traefik.
 * `tedflix_*`: Tedflix application config and media-app databases. The Tedflix stack is currently documented as a proof of concept.
 
 ## Host UPS

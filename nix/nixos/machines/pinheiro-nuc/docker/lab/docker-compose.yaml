@@ -1,4 +1,49 @@
 services:
+  moobeldaja-db:
+    image: mariadb:11.8.8
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD_FILE: /run/secrets/moobeldaja_db_password
+      MARIADB_RANDOM_ROOT_PASSWORD: "1"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    secrets:
+      - moobeldaja_db_password
+    volumes:
+      - moobeldaja_db:/var/lib/mysql
+
+  moobeldaja:
+    image: wordpress:7.0.0-php8.3-apache
+    restart: unless-stopped
+    depends_on:
+      moobeldaja-db:
+        condition: service_healthy
+    environment:
+      WORDPRESS_DB_HOST: moobeldaja-db
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/moobeldaja_db_password
+      WORDPRESS_TABLE_PREFIX: SERVMASK_PREFIX_
+    secrets:
+      - moobeldaja_db_password
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.lab_moobeldaja.rule=Host(`moobeldaja.ee`) || Host(`www.moobeldaja.ee`)'
+      - 'traefik.http.routers.lab_moobeldaja.entrypoints=web_public_secure'
+      - 'traefik.http.services.lab_moobeldaja.loadbalancer.server.port=80'
+      - 'traefik.docker.network=infra_traefik'
+    networks:
+      - default
+      - infra_traefik
+    volumes:
+      - moobeldaja_wordpress:/var/www/html
+
   minecraft:
     image: itzg/minecraft-server
     restart: unless-stopped
@@ -46,3 +91,9 @@ networks:
 
 volumes:
   minecraft_data:
+  moobeldaja_db:
+  moobeldaja_wordpress:
+
+secrets:
+  moobeldaja_db_password:
+    file: /run/secrets/moobeldaja_db_password
