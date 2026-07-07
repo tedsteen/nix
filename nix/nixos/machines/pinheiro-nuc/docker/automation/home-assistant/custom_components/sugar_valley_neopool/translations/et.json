@@ -1,0 +1,531 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Sugar Valley NeoPool seadistamine",
+        "description": "Tere tulemast NeoPool integratsiooni seadistamisse.\n\n**Oluline:** Kui kasutasite varem YAML-paketi konfiguratsiooni, **peate** selle `configuration.yaml`-ist eemaldama ja Home Assistanti **enne** jätkamist taaskäivitama.\n\nKui see on uus installimine, kinnitage lihtsalt allpool ja jätkake.",
+        "data": {
+          "confirm_no_yaml": "Kinnitan, et aktiivne YAML-pakett ei tööta"
+        }
+      },
+      "mqtt_confirm": {
+        "title": "NeoPool seade avastatud",
+        "description": "NeoPool seade avastati MQTT teemal: **{device}**",
+        "data": {
+          "device_name": "Seadme nimi"
+        }
+      },
+      "yaml_migration": {
+        "title": "YAML-paketi migratsioon",
+        "description": "Kas kasutasite varem YAML-paketi konfiguratsiooni ja soovite oma olemasolevad olemid migreerida?\n\nMigratsioon säilitab kõik ajaloolised andmed (graafikud, statistika) ja olemi kohandused.\n\nKui see on **uus installimine** ilma eelneva YAML-paketita, jätke märkimata.",
+        "data": {
+          "migrate_yaml": "Jah, migreerige minu olemid vanast YAML-paketist"
+        }
+      },
+      "yaml_topic": {
+        "title": "MQTT teema",
+        "description": "NeoPool seadet ei õnnestunud automaatselt tuvastada.\n\nPalun sisestage MQTT teema, mis on seadistatud teie Tasmota seadmes.",
+        "data": {
+          "yaml_topic": "MQTT teema (nt SmartPool)"
+        }
+      },
+      "yaml_no_entities": {
+        "title": "YAML olemeid ei leitud",
+        "description": "Teie Home Assistanti instantsis ei leitud olemasolevaid YAML-paketi olemeid.\n\nKui kasutasite oma YAML-paketis kohandatud `unique_id` eesliidet, märkige allolev ruut, et see käsitsi sisestada.\n\nVastasel juhul jätke see märkimata, et jätta migratsioon vahele ja seadistada seade uue installimisena.",
+        "data": {
+          "try_custom_prefix": "Mul on kohandatud unique_id eesliide, mida proovida"
+        }
+      },
+      "yaml_prefix": {
+        "title": "Kohandatud olemi prefiks",
+        "description": "Vaikimisi prefiksiga `neopool_mqtt_` olemeid ei leitud.\n\nKui kohandasite `unique_id` prefiksit oma YAML paketis, sisestage see allpool.",
+        "data": {
+          "unique_id_prefix": "Unikaalse ID prefiks"
+        }
+      },
+      "yaml_active_warning": {
+        "title": "YAML pakett on veel aktiivne",
+        "description": "## ⚠️ Ei saa jätkata - Olemid on veel aktiivsed\n\nJärgmised **{active_count}** olemit **saavad värskendusi**, mis tähendab, et YAML pakett töötab veel:\n\n{entity_list}\n\n---\n\n## Nõutavad toimingud:\n\n1. **Eemaldage või kommenteerige välja** YAML pakett failist `configuration.yaml`\n2. **Taaskäivitage Home Assistant** täielikult\n3. Tulge tagasi sellele ekraanile ja klõpsake **Proovi uuesti**\n\n---\n\n⚠️ **Miks on see vajalik?**\n\nKui jätkate YAML paketti eemaldamata:\n- Saate **duplikaat olemid** (nii YAML kui ka integratsiooni olemid)\n- Mõlemad komplektid on aktiivsed ja saavad samaaegselt värskendusi\n- See põhjustab segadust ja nõuab käsitsi puhastamist\n\nMigratsioon saab jätkuda ainult siis, kui YAML olemid muutuvad **kättesaamatuks** (pärast paketi eemaldamist ja taaskäivitamist).",
+        "data": {}
+      },
+      "yaml_confirm": {
+        "title": "Kinnita migratsioon",
+        "description": "## Migratsiooni kokkuvõte\n\nJärgmised elemendid on valideeritud:\n\n✓ **MQTT teema**: `{topic}`\n✓ **NodeID**: `{nodeid}`\n✓ **Migreeritavaid olemeid leitud**: {entity_count}\n\n### Migreeritavad olemid:\n{entity_list}\n\n---\n\n## Mis juhtub:\n\n1. Iga olemi `unique_id` uuendatakse, et sisaldada NodeID-d\n2. Olemid seotakse selle integratsiooniga\n3. **Kõik ajaloolised andmed säilitatakse** (graafikud, statistika)\n4. Olemi ID-d jäävad muutumatuks\n\n---\n\n⚠️ **Eeltingimused** (kinnitage enne jätkamist):\n- Olen eemaldanud/kommenteerinud YAML paketi `configuration.yaml`-ist\n- Olen taaskäivitanud Home Assistanti pärast YAML paketi eemaldamist\n- Mõistan, et see protsess muudab minu olemi registrit\n\n**Seda toimingut ei saa automaatselt tagasi võtta.** Alloleva ruudu märkimisega kinnitate, et olete eeltingimused täitnud ja võtate vastutuse selle migratsiooni eest.",
+        "data": {
+          "confirm_migration": "Kinnitan, et olen eeltingimused täitnud ja soovin jätkata"
+        }
+      },
+      "yaml_migration_result": {
+        "title": "Migratsioon lõpetatud",
+        "description": "## Migratsiooni tulemused\n\n**Olemeid töödeldud**: {entities_found}\n**Edukalt migreeritud**: {entities_migrated}\n**Ebaõnnestunud**: {errors_count}\n\n### Migreeritud olemid:\n{migrated_list}\n\n---\n\n{failed_list}\n\nKlõpsake **Esita**, et seadistamine lõpetada.",
+        "data": {}
+      },
+      "discover_device": {
+        "title": "Käsitsi seadistamine",
+        "description": "Sisestage oma NeoPool seadme andmed.\n\nLisateabe saamiseks vaadake [Tasmota NeoPool dokumentatsiooni]({docs_url}).",
+        "data": {
+          "device_name": "Seadme nimi",
+          "discovery_prefix": "MQTT teema (Tasmota seadme nimi)"
+        }
+      },
+      "reconfigure": {
+        "title": "Seadista NeoPool uuesti",
+        "description": "Uuendage oma NeoPool seadme ühenduse seadeid.\n\n**Märkus:** Seadme nime muutmine uuendab integratsiooni pealkirja. Märkige **Taasgenereeri olemi ID-d**, kui soovite, et olemi ID-d kajastaksid uut nime.",
+        "data": {
+          "device_name": "Seadme nimi",
+          "regenerate_entity_ids": "Taasgenereeri olemi ID-d",
+          "discovery_prefix": "MQTT teema"
+        },
+        "data_description": {
+          "device_name": "Sõbralik nimi teie basseini kontrollerile",
+          "regenerate_entity_ids": "Uuenda olemi ID-d vastama uuele seadme nimele (nt sensor.neopool_ph → sensor.minubassein_ph)",
+          "discovery_prefix": "MQTT teema, mida kasutab teie Tasmota seade"
+        }
+      },
+      "yaml_detect_confirm": {
+        "title": "Tuvastatud NeoPool olemid",
+        "description": "Tuvastasime NeoPool YAML olemid:\n\n• **Kordumatu ID eesliide**: `{prefix}`\n• **Leitud olemeid**: {entity_count}\n• **Kindlus**: {confidence}%\n\n**Sobivad mustrid**:\n{matched_signatures}\n\n---\n\nKui see on õige, märgi allolev ruut, et jätkata.\nKui mitte, eemalda märge, et sisestada kohandatud eesliide käsitsi.",
+        "data": {
+          "confirm_detection": "Jah, see on õige - jätka migreerimisega"
+        }
+      }
+    },
+    "error": {
+      "invalid_topic": "Vigane MQTT teema formaat",
+      "invalid_yaml_topic": "Sellelt MQTT teemalt ei saa lugeda. Palun veenduge, et teema on õige ja seade on võrgus.",
+      "cannot_connect": "Sellelt MQTT teemalt ei õnnestunud sõnumeid vastu võtta. Kontrollige teema nime ja kas teie seade on võrgus. Kui teema on õige, võib seade telemeetriat harva avaldada – määrake Tasmota konsoolis 'TelePeriod 10' ja proovige uuesti.",
+      "no_entities_found": "Selle prefiksiga migreeritavaid olemeid ei leitud. Kontrollige, et:\n1. Prefiks vastab teie YAML konfiguratsioonile\n2. Olemid eksisteerivad Home Assistantis\n3. Olemid ei kuulu juba sellele integratsioonile",
+      "confirmation_required": "Migratsiooni jätkamiseks peate märkima kinnituse ruudu.",
+      "yaml_still_active": "Olemid on veel aktiivsed. Palun eemaldage esmalt YAML pakett ja taaskäivitage Home Assistant.",
+      "nodeid_configuration_failed": "NodeID seadistamine seadmel ebaõnnestus."
+    },
+    "abort": {
+      "already_configured": "See seade on juba seadistatud",
+      "invalid_discovery_info": "Saadi vigane avastamisteave",
+      "not_neopool_device": "Avastatud seade ei ole NeoPool kontroller",
+      "nodeid_configuration_failed": "NodeID seadistamine ebaõnnestus. Palun määrake käsitsi et seade on võrgus ja MQTT kaudu kättesaadav.",
+      "unique_id_mismatch": "Seadme NodeID ei vasta algsele konfiguratsioonile."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "NeoPool valikud",
+        "description": "Seadistage oma NeoPool seadme käitusaja valikud.\n\n**Taastamise skripti muutujad:**\nKui on seadistatud, saab taastamise skript need muutujad:\n\n- `device_name` : Seadme nimi\n- `mqtt_topic` : MQTT teema\n- `nodeid` : Seadme NodeID\n- `failures_count` : Järjestikuste tõrgete arv",
+        "data": {
+          "recovery_script": "Taastamise skript (valikuline)",
+          "enable_repair_notification": "Luba paranduse teavitused",
+          "failures_threshold": "Tõrked enne teavitust (1-10)",
+          "offline_timeout": "Võrguühenduseta aegumine (sekundites)",
+          "connection_error_rate_threshold": "Ühenduse veamäära lävi (%)",
+          "pump_type": "Filtreerimispumba tüüp"
+        },
+        "data_description": {
+          "recovery_script": "Skript, mida käivitada kui seade on liiga kaua võrguühenduseta",
+          "enable_repair_notification": "Loo paranduse probleem kui seade läheb võrguühenduseta",
+          "failures_threshold": "Järjestikuste LWT võrguühenduseta sõnumite arv enne teavituste käivitamist",
+          "offline_timeout": "Kui kaua peab seade olema võrguühenduseta enne teavituste käivitamist",
+          "connection_error_rate_threshold": "Modbus vigade protsent (libiseva 10-minutilise akna jooksul), millest kõrgemal `binary_sensor.connection_problem` lülitub sisse",
+          "pump_type": "Muudetava kiirusega pumbad saavad taimeripõhised kiiruse juhtnupud. Automaattuvastus usaldab kontrollerit (muudetava kiirusega pumbad teatavad kiiruse); alista ainult vajadusel."
+        }
+      }
+    }
+  },
+  "issues": {
+    "device_offline": {
+      "title": "NeoPool seade võrguühenduseta: {device_name}",
+      "description": "NeoPool seade **{device_name}** on olnud pikema perioodi võrguühenduseta.\n\n**MQTT teema:** `{mqtt_topic}`\n\nPalun kontrollige:\n- Tasmota seade on sisse lülitatud\n- Seade on ühendatud teie võrguga\n- MQTT maakler töötab\n- MQTT teema on õige"
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "device_offline": "Seade läks võrguühenduseta",
+      "device_online": "Seade tuli võrku",
+      "device_recovered": "Seade taastus pärast võrguühenduseta olekut"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "system_model": {
+        "name": "Süsteemi mudel"
+      },
+      "water_temperature": {
+        "name": "Vee temperatuur"
+      },
+      "ph_data": {
+        "name": "pH"
+      },
+      "ph_state": {
+        "name": "pH olek"
+      },
+      "ph_pump": {
+        "name": "pH pump"
+      },
+      "redox_data": {
+        "name": "Redoks (ORP)"
+      },
+      "hydrolysis_percent": {
+        "name": "Hüdrolüüs"
+      },
+      "hydrolysis_data": {
+        "name": "Hüdrolüüs (g/h)"
+      },
+      "hydrolysis_state": {
+        "name": "Hüdrolüüsi olek"
+      },
+      "hydrolysis_runtime_total": {
+        "name": "Hüdrolüüsi kogukäitusaeg"
+      },
+      "hydrolysis_runtime_part": {
+        "name": "Hüdrolüüsi osaline käitusaeg"
+      },
+      "hydrolysis_runtime_pol1": {
+        "name": "Hüdrolüüsi käitusaeg Pol1"
+      },
+      "hydrolysis_runtime_pol2": {
+        "name": "Hüdrolüüsi käitusaeg Pol2"
+      },
+      "hydrolysis_polarity_changes": {
+        "name": "Hüdrolüüsi polaarsuse muutused"
+      },
+      "filtration_mode": {
+        "name": "Filtreerimise režiim"
+      },
+      "filtration_speed": {
+        "name": "Filtreerimise kiirus"
+      },
+      "boost_mode": {
+        "name": "Võimenduse režiim"
+      },
+      "powerunit_version": {
+        "name": "Toiteüksuse versioon"
+      },
+      "powerunit_5v": {
+        "name": "Toiteüksus 5V"
+      },
+      "powerunit_12v": {
+        "name": "Toiteüksus 12V"
+      },
+      "powerunit_24v": {
+        "name": "Toiteüksus 24-30V"
+      },
+      "powerunit_4ma": {
+        "name": "Toiteüksus 4-20mA"
+      },
+      "connection_requests": {
+        "name": "Ühenduse päringud"
+      },
+      "connection_responses": {
+        "name": "Ühenduse vastused"
+      },
+      "connection_no_response": {
+        "name": "Ühendus vastuseta"
+      },
+      "connection_out_of_range": {
+        "name": "Ühendus vahemikust väljas"
+      },
+      "system_id": {
+        "name": "Toiteüksuse NodeID"
+      },
+      "conductivity_data": {
+        "name": "Juhtivus"
+      },
+      "ionization_data": {
+        "name": "Ionisatsioon"
+      },
+      "chlorine_data": {
+        "name": "Kloor"
+      },
+      "hydrolysis_setpoint_gh": {
+        "name": "Hüdrolüüsi sihtväärtus (g/h)"
+      },
+      "hydrolysis_max": {
+        "name": "Hüdrolüüsi maks"
+      },
+      "hydrolysis_unit": {
+        "name": "Hüdrolüüsi ühik"
+      },
+      "controller_time": {
+        "name": "Kontrolleri aeg"
+      },
+      "connection_error_rate": {
+        "name": "Ühenduse veamäär"
+      }
+    },
+    "binary_sensor": {
+      "modules_ph": {
+        "name": "pH moodul"
+      },
+      "modules_redox": {
+        "name": "Redoks moodul"
+      },
+      "modules_hydrolysis": {
+        "name": "Hüdrolüüsi moodul"
+      },
+      "modules_chlorine": {
+        "name": "Kloori moodul"
+      },
+      "modules_conductivity": {
+        "name": "Juhtivuse moodul"
+      },
+      "modules_ionization": {
+        "name": "Ionisatsiooni moodul"
+      },
+      "relay_acid_state": {
+        "name": "Relee happe olek"
+      },
+      "relay_base_state": {
+        "name": "Relee aluse olek"
+      },
+      "relay_redox_state": {
+        "name": "Relee redoksi olek"
+      },
+      "relay_chlorine_state": {
+        "name": "Relee kloori olek"
+      },
+      "relay_conductivity_state": {
+        "name": "Relee juhtivuse olek"
+      },
+      "relay_heating_state": {
+        "name": "Relee kütte olek"
+      },
+      "relay_uv_state": {
+        "name": "Relee UV olek"
+      },
+      "relay_valve_state": {
+        "name": "Relee klapi olek"
+      },
+      "ph_fl1": {
+        "name": "pH FL1"
+      },
+      "hydrolysis_fl1": {
+        "name": "Hüdrolüüs FL1"
+      },
+      "hydrolysis_water_flow": {
+        "name": "Vee vool"
+      },
+      "ph_tank_level": {
+        "name": "pH paagi tase madal"
+      },
+      "redox_tank_level": {
+        "name": "Redoks paagi tase madal"
+      },
+      "hydrolysis_cover": {
+        "name": "Hüdrolüüsi kate"
+      },
+      "hydrolysis_low_production": {
+        "name": "Hüdrolüüsi madal tootlikkus"
+      },
+      "hydrolysis_redox_controlled": {
+        "name": "Hüdrolüüsi Redox-juhitud"
+      },
+      "aux1": {
+        "name": "AUX1"
+      },
+      "aux2": {
+        "name": "AUX2"
+      },
+      "aux3": {
+        "name": "AUX3"
+      },
+      "aux4": {
+        "name": "AUX4"
+      },
+      "connection_problem": {
+        "name": "Ühenduse probleem"
+      }
+    },
+    "switch": {
+      "filtration": {
+        "name": "Filtreerimine"
+      },
+      "auto_time_sync": {
+        "name": "Automaatne aja sünkroonimine"
+      },
+      "uv_mode": {
+        "name": "UV režiim"
+      },
+      "climate_mode": {
+        "name": "Kliimarežiim"
+      },
+      "smart_antifreeze": {
+        "name": "Nutikas külmumiskaitse"
+      },
+      "hydro_cover_reduction": {
+        "name": "Elektrolüüsi vähendamine katte korral"
+      },
+      "hydro_temp_shutdown": {
+        "name": "Elektrolüüsi väljalülitus temperatuuri järgi"
+      }
+    },
+    "select": {
+      "filtration_mode": {
+        "name": "Filtreerimise režiim"
+      },
+      "filtration_speed": {
+        "name": "Filtreerimise kiirus"
+      },
+      "boost_mode": {
+        "name": "Võimenduse režiim"
+      },
+      "aux1_mode": {
+        "name": "AUX1 režiim",
+        "state": {
+          "auto": "Automaatne",
+          "on": "Sees",
+          "off": "Väljas"
+        }
+      },
+      "aux2_mode": {
+        "name": "AUX2 režiim",
+        "state": {
+          "auto": "Automaatne",
+          "on": "Sees",
+          "off": "Väljas"
+        }
+      },
+      "aux3_mode": {
+        "name": "AUX3 režiim",
+        "state": {
+          "auto": "Automaatne",
+          "on": "Sees",
+          "off": "Väljas"
+        }
+      },
+      "aux4_mode": {
+        "name": "AUX4 režiim",
+        "state": {
+          "auto": "Automaatne",
+          "on": "Sees",
+          "off": "Väljas"
+        }
+      },
+      "filtration_timer1_speed": {
+        "name": "Filtreerimistaimeri 1 kiirus"
+      },
+      "filtration_timer2_speed": {
+        "name": "Filtreerimistaimeri 2 kiirus"
+      },
+      "filtration_timer3_speed": {
+        "name": "Filtreerimistaimeri 3 kiirus"
+      }
+    },
+    "number": {
+      "ph_min": {
+        "name": "pH min"
+      },
+      "ph_max": {
+        "name": "pH max"
+      },
+      "redox_setpoint": {
+        "name": "Redoks seadepunkt"
+      },
+      "hydrolysis_setpoint": {
+        "name": "Hüdrolüüsi seadepunkt"
+      },
+      "ionization_setpoint": {
+        "name": "Ionisatsiooni seadepunkt"
+      },
+      "chlorine_setpoint": {
+        "name": "Kloori sihtväärtus"
+      },
+      "heating_temp": {
+        "name": "Kütte temperatuur"
+      },
+      "intelligent_min_time": {
+        "name": "Intelligentne minimaalne filtreerimisaeg"
+      },
+      "ph_activation_delay": {
+        "name": "pH pumba aktiveerimise viivitus"
+      },
+      "hydro_cover_reduction_pct": {
+        "name": "Elektrolüüsi vähendamine katte korral"
+      },
+      "hydro_shutdown_temp": {
+        "name": "Elektrolüüsi väljalülitustemperatuur"
+      }
+    },
+    "button": {
+      "clear_error": {
+        "name": "Tühjenda vea olek"
+      },
+      "sync_controller_time": {
+        "name": "Sünkroniseeri kontrolleri aeg"
+      },
+      "reset_cell_runtime": {
+        "name": "Lähtesta elemendi tööaeg"
+      }
+    },
+    "light": {
+      "light": {
+        "name": "Valgus"
+      }
+    }
+  },
+  "services": {
+    "set_timer": {
+      "name": "Määra taimer",
+      "description": "Seadistab ühe kontrolleri sisseehitatud taimeritest (filtreerimine, valgustus või AUX). Ajakava töötab kontrolleris endas, sõltumatult Home Assistant'ist.",
+      "fields": {
+        "device_id": {
+          "name": "Seade",
+          "description": "Seadistatav NeoPool kontroller."
+        },
+        "timer": {
+          "name": "Taimer",
+          "description": "Milline kontrolleri taimer kirjutada."
+        },
+        "start": {
+          "name": "Algus",
+          "description": "Kellaaeg, mil relee lülitub sisse."
+        },
+        "stop": {
+          "name": "Lõpp",
+          "description": "Kellaaeg, mil relee lülitub välja (tööaeg arvutatakse algus- ja lõpuaja põhjal)."
+        },
+        "period": {
+          "name": "Kordusperiood",
+          "description": "Kui sageli taimer kordub, sekundites (86400 = iga päev)."
+        },
+        "mode": {
+          "name": "Režiim",
+          "description": "Taimeri töörežiim: Automaatne käivitab ajakava, Sees sunnib relee sisse, Väljas sunnib selle välja, Keelatud lülitab taimeri välja."
+        }
+      }
+    }
+  },
+  "selector": {
+    "timer": {
+      "options": {
+        "filtration1": "Filtreerimistaimer 1",
+        "filtration2": "Filtreerimistaimer 2",
+        "filtration3": "Filtreerimistaimer 3",
+        "light": "Valgustus",
+        "aux1": "AUX1",
+        "aux2": "AUX2",
+        "aux3": "AUX3",
+        "aux4": "AUX4"
+      }
+    },
+    "timer_mode": {
+      "options": {
+        "disabled": "Keelatud",
+        "auto": "Automaatne",
+        "on": "Sees",
+        "off": "Väljas"
+      }
+    },
+    "pump_type": {
+      "options": {
+        "auto": "Automaattuvastus",
+        "variable": "Muudetav kiirus",
+        "standard": "Standardne (üks kiirus)"
+      }
+    }
+  },
+  "exceptions": {
+    "set_timer_unknown_device": {
+      "message": "Seadme {device_id} jaoks NeoPool kontrollerit ei leitud."
+    }
+  }
+}

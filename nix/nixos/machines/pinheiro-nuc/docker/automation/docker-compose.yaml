@@ -1,8 +1,22 @@
 services:
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    restart: unless-stopped
+    pull_policy: always
+    ports:
+      - "1883:1883"
+    environment:
+      TZ: Europe/Lisbon
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mosquitto_data:/mosquitto/data
+
   home-assistant:
     image: homeassistant/home-assistant:latest
     restart: unless-stopped
     pull_policy: always
+    depends_on:
+      - mosquitto
     healthcheck:
       test: "curl -sS http://localhost:8123"
       interval: 4s
@@ -20,6 +34,7 @@ services:
       - hass_config:/config
       - ./home-assistant/configuration.yaml:/config/configuration.yaml:ro
       - ./home-assistant/packages:/config/packages:ro
+      - ./home-assistant/custom_components:/config/custom_components:ro
 
   nodered:
     build: nodered
@@ -37,3 +52,4 @@ services:
 volumes:
   hass_config:
   nodered_data:
+  mosquitto_data:

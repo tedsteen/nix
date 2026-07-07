@@ -1,0 +1,531 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configuración de Sugar Valley NeoPool",
+        "description": "Bienvenido a la configuración de la integración NeoPool.\n\n**Importante:** Si anteriormente utilizó la configuración del paquete YAML, **debe** eliminarla de `configuration.yaml` y reiniciar Home Assistant **antes** de continuar.\n\nSi es una instalación nueva, simplemente confirme a continuación y continúe.",
+        "data": {
+          "confirm_no_yaml": "Confirmo que no hay un paquete YAML activo en ejecución"
+        }
+      },
+      "mqtt_confirm": {
+        "title": "Dispositivo NeoPool descubierto",
+        "description": "Se descubrió un dispositivo NeoPool en el topic MQTT: **{device}**",
+        "data": {
+          "device_name": "Nombre del dispositivo"
+        }
+      },
+      "yaml_migration": {
+        "title": "Migración del paquete YAML",
+        "description": "¿Utilizó anteriormente la configuración del paquete YAML y desea migrar sus entidades existentes?\n\nLa migración preservará todos los datos históricos (gráficos, estadísticas) y personalizaciones de entidades.\n\nSi es una **instalación nueva** sin paquete YAML previo, deje la casilla sin marcar.",
+        "data": {
+          "migrate_yaml": "Sí, migrar mis entidades del paquete YAML anterior"
+        }
+      },
+      "yaml_topic": {
+        "title": "Topic MQTT",
+        "description": "No se pudo detectar automáticamente su dispositivo NeoPool.\n\nPor favor ingrese el topic MQTT configurado en su dispositivo Tasmota.",
+        "data": {
+          "yaml_topic": "Topic MQTT (ej. SmartPool)"
+        }
+      },
+      "yaml_no_entities": {
+        "title": "No se encontraron entidades YAML",
+        "description": "No se encontraron entidades del paquete YAML existentes en su instancia de Home Assistant.\n\nSi utilizó un prefijo `unique_id` personalizado en su paquete YAML, marque la casilla a continuación para ingresarlo manualmente.\n\nDe lo contrario, déjelo sin marcar para omitir la migración y configurar su dispositivo como una instalación nueva.",
+        "data": {
+          "try_custom_prefix": "Tengo un prefijo unique_id personalizado para probar"
+        }
+      },
+      "yaml_prefix": {
+        "title": "Prefijo de entidad personalizado",
+        "description": "No se encontraron entidades con el prefijo predeterminado `neopool_mqtt_`.\n\nSi personalizó el prefijo `unique_id` en su paquete YAML, ingréselo a continuación.",
+        "data": {
+          "unique_id_prefix": "Prefijo de Unique ID"
+        }
+      },
+      "yaml_active_warning": {
+        "title": "Paquete YAML todavía activo",
+        "description": "## ⚠️ No se puede continuar - Entidades todavía activas\n\nLas siguientes **{active_count}** entidades están **recibiendo actualizaciones**, lo que significa que el paquete YAML todavía está ejecutándose:\n\n{entity_list}\n\n---\n\n## Acciones requeridas:\n\n1. **Elimine o comente** el paquete YAML de `configuration.yaml`\n2. **Reinicie Home Assistant** completamente\n3. Vuelva a esta pantalla y haga clic en **Reintentar**\n\n---\n\n⚠️ **¿Por qué es necesario?**\n\nSi continúa sin eliminar el paquete YAML:\n- Obtendrá **entidades duplicadas** (tanto YAML como de integración)\n- Ambos conjuntos estarán activos y recibiendo actualizaciones simultáneamente\n- Esto causará confusión y requerirá limpieza manual\n\nLa migración solo puede continuar cuando las entidades YAML se vuelvan **no disponibles** (después de eliminar el paquete y reiniciar).",
+        "data": {}
+      },
+      "yaml_confirm": {
+        "title": "Confirmar migración",
+        "description": "## Resumen de migración\n\nSe ha validado lo siguiente:\n\n✓ **Topic MQTT**: `{topic}`\n✓ **NodeID**: `{nodeid}`\n✓ **Entidades migrables encontradas**: {entity_count}\n\n### Entidades a migrar:\n{entity_list}\n\n---\n\n## Qué sucederá:\n\n1. El `unique_id` de cada entidad se actualizará para incluir el NodeID\n2. Las entidades se asociarán con esta integración\n3. **Todos los datos históricos se preservarán** (gráficos, estadísticas)\n4. Los IDs de entidad permanecerán sin cambios\n\n---\n\n⚠️ **Requisitos previos** (confirme antes de continuar):\n- He eliminado/comentado el paquete YAML de `configuration.yaml`\n- He reiniciado Home Assistant después de eliminar el paquete YAML\n- Entiendo que este proceso modificará mi registro de entidades\n\n**Esta acción no se puede deshacer automáticamente.** Al marcar la casilla a continuación, confirma que ha completado los requisitos previos y acepta la responsabilidad de esta migración.",
+        "data": {
+          "confirm_migration": "Confirmo que he completado los requisitos previos y quiero continuar"
+        }
+      },
+      "yaml_migration_result": {
+        "title": "Migración completada",
+        "description": "## Resultados de la migración\n\n**Entidades procesadas**: {entities_found}\n**Migradas exitosamente**: {entities_migrated}\n**Fallidas**: {errors_count}\n\n### Entidades migradas:\n{migrated_list}\n\n---\n\n{failed_list}\n\nHaga clic en **Enviar** para completar la configuración.",
+        "data": {}
+      },
+      "discover_device": {
+        "title": "Configuración manual",
+        "description": "Ingrese los detalles de su dispositivo NeoPool.\n\nPara más información, consulte la [documentación de Tasmota NeoPool]({docs_url}).",
+        "data": {
+          "device_name": "Nombre del dispositivo",
+          "discovery_prefix": "Topic MQTT (nombre del dispositivo Tasmota)"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigurar NeoPool",
+        "description": "Actualice la configuración de conexión de su dispositivo NeoPool.\n\n**Nota:** Cambiar el nombre del dispositivo actualizará el título de la integración. Marque **Regenerar IDs de entidades** si también desea que los IDs de entidades reflejen el nuevo nombre.",
+        "data": {
+          "device_name": "Nombre del dispositivo",
+          "regenerate_entity_ids": "Regenerar IDs de entidades",
+          "discovery_prefix": "Topic MQTT"
+        },
+        "data_description": {
+          "device_name": "Un nombre descriptivo para su controlador de piscina",
+          "regenerate_entity_ids": "Actualizar IDs de entidades para coincidir con el nuevo nombre del dispositivo (ej. sensor.neopool_ph → sensor.mipiscina_ph)",
+          "discovery_prefix": "El topic MQTT usado por su dispositivo Tasmota"
+        }
+      },
+      "yaml_detect_confirm": {
+        "title": "Entidades NeoPool detectadas",
+        "description": "Hemos detectado entidades YAML de NeoPool:\n\n• **Prefijo de ID único**: `{prefix}`\n• **Entidades encontradas**: {entity_count}\n• **Confianza**: {confidence}%\n\n**Patrones coincidentes**:\n{matched_signatures}\n\n---\n\nSi es correcto, marca la casilla de abajo para continuar.\nSi no, desmárcala para introducir un prefijo personalizado manualmente.",
+        "data": {
+          "confirm_detection": "Sí, es correcto: continuar con la migración"
+        }
+      }
+    },
+    "error": {
+      "invalid_topic": "Formato de topic MQTT inválido",
+      "invalid_yaml_topic": "No se puede leer desde este topic MQTT. Por favor verifique que el topic sea correcto y que el dispositivo esté en línea.",
+      "cannot_connect": "No se pudieron recibir mensajes de este topic MQTT. Verifique el nombre del topic y que su dispositivo esté en línea. Si el topic es correcto, su dispositivo puede publicar telemetría con poca frecuencia: establezca 'TelePeriod 10' en la consola de Tasmota y vuelva a intentarlo.",
+      "no_entities_found": "No se encontraron entidades migrables con este prefijo. Verifique que:\n1. El prefijo coincide con su configuración YAML\n2. Las entidades existen en Home Assistant\n3. Las entidades no pertenecen ya a esta integración",
+      "confirmation_required": "Debe marcar la casilla de confirmación para proceder con la migración.",
+      "yaml_still_active": "Las entidades todavía están activas. Primero elimine el paquete YAML y reinicie Home Assistant.",
+      "nodeid_configuration_failed": "No se pudo configurar el NodeID en el dispositivo."
+    },
+    "abort": {
+      "already_configured": "Este dispositivo ya está configurado",
+      "invalid_discovery_info": "Se recibió información de descubrimiento inválida",
+      "not_neopool_device": "El dispositivo descubierto no es un controlador NeoPool",
+      "nodeid_configuration_failed": "No se pudo configurar el NodeID. Por favor configure manualmente el dispositivo esté en línea y accesible vía MQTT.",
+      "unique_id_mismatch": "El NodeID del dispositivo no coincide con la configuración original."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opciones de NeoPool",
+        "description": "Configure las opciones de tiempo de ejecución para su dispositivo NeoPool.\n\n**Variables del script de recuperación:**\nCuando está configurado, el script de recuperación recibe estas variables:\n\n- `device_name` : Nombre del dispositivo\n- `mqtt_topic` : Topic MQTT\n- `nodeid` : NodeID del dispositivo\n- `failures_count` : Número de fallos consecutivos",
+        "data": {
+          "recovery_script": "Script de recuperación (opcional)",
+          "enable_repair_notification": "Habilitar notificaciones de reparación",
+          "failures_threshold": "Fallos antes de notificación (1-10)",
+          "offline_timeout": "Tiempo de espera sin conexión (segundos)",
+          "connection_error_rate_threshold": "Umbral de tasa de errores de conexión (%)",
+          "pump_type": "Tipo de bomba de filtración"
+        },
+        "data_description": {
+          "recovery_script": "Script a ejecutar cuando el dispositivo está fuera de línea demasiado tiempo",
+          "enable_repair_notification": "Crear un problema de reparación cuando el dispositivo se desconecta",
+          "failures_threshold": "Número de mensajes LWT fuera de línea consecutivos antes de activar las notificaciones",
+          "offline_timeout": "Cuánto tiempo debe estar el dispositivo fuera de línea antes de activar las notificaciones",
+          "connection_error_rate_threshold": "Porcentaje de errores de Modbus (durante una ventana móvil de 10 minutos) por encima del cual se activa `binary_sensor.connection_problem`",
+          "pump_type": "Las bombas de velocidad variable obtienen controles de velocidad por temporizador. La detección automática confía en el controlador (las bombas de velocidad variable informan una velocidad); anule solo si es necesario."
+        }
+      }
+    }
+  },
+  "issues": {
+    "device_offline": {
+      "title": "Dispositivo NeoPool fuera de línea: {device_name}",
+      "description": "El dispositivo NeoPool **{device_name}** ha estado fuera de línea durante un período prolongado.\n\n**Topic MQTT:** `{mqtt_topic}`\n\nPor favor verifique:\n- El dispositivo Tasmota está encendido\n- El dispositivo está conectado a su red\n- El broker MQTT está funcionando\n- El topic MQTT es correcto"
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "device_offline": "El dispositivo se desconectó",
+      "device_online": "El dispositivo se conectó",
+      "device_recovered": "El dispositivo se recuperó después de estar fuera de línea"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "system_model": {
+        "name": "Modelo del sistema"
+      },
+      "water_temperature": {
+        "name": "Temperatura del agua"
+      },
+      "ph_data": {
+        "name": "pH"
+      },
+      "ph_state": {
+        "name": "Estado del pH"
+      },
+      "ph_pump": {
+        "name": "Bomba de pH"
+      },
+      "redox_data": {
+        "name": "Redox (ORP)"
+      },
+      "hydrolysis_percent": {
+        "name": "Hidrólisis"
+      },
+      "hydrolysis_data": {
+        "name": "Hidrólisis (g/h)"
+      },
+      "hydrolysis_state": {
+        "name": "Estado de hidrólisis"
+      },
+      "hydrolysis_runtime_total": {
+        "name": "Tiempo de ejecución total de hidrólisis"
+      },
+      "hydrolysis_runtime_part": {
+        "name": "Tiempo de ejecución parcial de hidrólisis"
+      },
+      "hydrolysis_runtime_pol1": {
+        "name": "Tiempo de ejecución de hidrólisis Pol1"
+      },
+      "hydrolysis_runtime_pol2": {
+        "name": "Tiempo de ejecución de hidrólisis Pol2"
+      },
+      "hydrolysis_polarity_changes": {
+        "name": "Cambios de polaridad de hidrólisis"
+      },
+      "filtration_mode": {
+        "name": "Modo de filtración"
+      },
+      "filtration_speed": {
+        "name": "Velocidad de filtración"
+      },
+      "boost_mode": {
+        "name": "Modo Boost"
+      },
+      "powerunit_version": {
+        "name": "Versión del Powerunit"
+      },
+      "powerunit_5v": {
+        "name": "Powerunit 5V"
+      },
+      "powerunit_12v": {
+        "name": "Powerunit 12V"
+      },
+      "powerunit_24v": {
+        "name": "Powerunit 24-30V"
+      },
+      "powerunit_4ma": {
+        "name": "Powerunit 4-20mA"
+      },
+      "connection_requests": {
+        "name": "Solicitudes de conexión"
+      },
+      "connection_responses": {
+        "name": "Respuestas de conexión"
+      },
+      "connection_no_response": {
+        "name": "Sin respuesta de conexión"
+      },
+      "connection_out_of_range": {
+        "name": "Conexión fuera de rango"
+      },
+      "system_id": {
+        "name": "NodeID del Powerunit"
+      },
+      "conductivity_data": {
+        "name": "Conductividad"
+      },
+      "ionization_data": {
+        "name": "Ionización"
+      },
+      "chlorine_data": {
+        "name": "Cloro"
+      },
+      "hydrolysis_setpoint_gh": {
+        "name": "Consigna de hidrólisis (g/h)"
+      },
+      "hydrolysis_max": {
+        "name": "Hidrólisis Máx"
+      },
+      "hydrolysis_unit": {
+        "name": "Unidad de hidrólisis"
+      },
+      "controller_time": {
+        "name": "Hora del controlador"
+      },
+      "connection_error_rate": {
+        "name": "Tasa de errores de conexión"
+      }
+    },
+    "binary_sensor": {
+      "modules_ph": {
+        "name": "Módulo de pH"
+      },
+      "modules_redox": {
+        "name": "Módulo Redox"
+      },
+      "modules_hydrolysis": {
+        "name": "Módulo de hidrólisis"
+      },
+      "modules_chlorine": {
+        "name": "Módulo de cloro"
+      },
+      "modules_conductivity": {
+        "name": "Módulo de conductividad"
+      },
+      "modules_ionization": {
+        "name": "Módulo de ionización"
+      },
+      "relay_acid_state": {
+        "name": "Estado del relé de ácido"
+      },
+      "relay_base_state": {
+        "name": "Estado del relé de base"
+      },
+      "relay_redox_state": {
+        "name": "Estado del relé de redox"
+      },
+      "relay_chlorine_state": {
+        "name": "Estado del relé de cloro"
+      },
+      "relay_conductivity_state": {
+        "name": "Estado del relé de conductividad"
+      },
+      "relay_heating_state": {
+        "name": "Estado del relé de calefacción"
+      },
+      "relay_uv_state": {
+        "name": "Estado del relé UV"
+      },
+      "relay_valve_state": {
+        "name": "Estado del relé de válvula"
+      },
+      "ph_fl1": {
+        "name": "pH FL1"
+      },
+      "hydrolysis_fl1": {
+        "name": "Hidrólisis FL1"
+      },
+      "hydrolysis_water_flow": {
+        "name": "Flujo de agua"
+      },
+      "ph_tank_level": {
+        "name": "Nivel bajo del tanque de pH"
+      },
+      "redox_tank_level": {
+        "name": "Nivel bajo del tanque Redox"
+      },
+      "hydrolysis_cover": {
+        "name": "Cubierta de hidrólisis"
+      },
+      "hydrolysis_low_production": {
+        "name": "Baja producción de hidrólisis"
+      },
+      "hydrolysis_redox_controlled": {
+        "name": "Hidrólisis controlada por Redox"
+      },
+      "aux1": {
+        "name": "AUX1"
+      },
+      "aux2": {
+        "name": "AUX2"
+      },
+      "aux3": {
+        "name": "AUX3"
+      },
+      "aux4": {
+        "name": "AUX4"
+      },
+      "connection_problem": {
+        "name": "Problema de conexión"
+      }
+    },
+    "switch": {
+      "filtration": {
+        "name": "Filtración"
+      },
+      "auto_time_sync": {
+        "name": "Sincronización automática de hora"
+      },
+      "uv_mode": {
+        "name": "Modo UV"
+      },
+      "climate_mode": {
+        "name": "Modo climatización"
+      },
+      "smart_antifreeze": {
+        "name": "Anticongelación inteligente"
+      },
+      "hydro_cover_reduction": {
+        "name": "Reducción de hidrólisis con cubierta"
+      },
+      "hydro_temp_shutdown": {
+        "name": "Apagado de hidrólisis por temperatura"
+      }
+    },
+    "select": {
+      "filtration_mode": {
+        "name": "Modo de filtración"
+      },
+      "filtration_speed": {
+        "name": "Velocidad de filtración"
+      },
+      "boost_mode": {
+        "name": "Modo boost"
+      },
+      "aux1_mode": {
+        "name": "Modo AUX1",
+        "state": {
+          "auto": "Automático",
+          "on": "Encendido",
+          "off": "Apagado"
+        }
+      },
+      "aux2_mode": {
+        "name": "Modo AUX2",
+        "state": {
+          "auto": "Automático",
+          "on": "Encendido",
+          "off": "Apagado"
+        }
+      },
+      "aux3_mode": {
+        "name": "Modo AUX3",
+        "state": {
+          "auto": "Automático",
+          "on": "Encendido",
+          "off": "Apagado"
+        }
+      },
+      "aux4_mode": {
+        "name": "Modo AUX4",
+        "state": {
+          "auto": "Automático",
+          "on": "Encendido",
+          "off": "Apagado"
+        }
+      },
+      "filtration_timer1_speed": {
+        "name": "Velocidad del temporizador de filtración 1"
+      },
+      "filtration_timer2_speed": {
+        "name": "Velocidad del temporizador de filtración 2"
+      },
+      "filtration_timer3_speed": {
+        "name": "Velocidad del temporizador de filtración 3"
+      }
+    },
+    "number": {
+      "ph_min": {
+        "name": "pH mínimo"
+      },
+      "ph_max": {
+        "name": "pH máximo"
+      },
+      "redox_setpoint": {
+        "name": "Punto de ajuste Redox"
+      },
+      "hydrolysis_setpoint": {
+        "name": "Punto de ajuste de hidrólisis"
+      },
+      "ionization_setpoint": {
+        "name": "Punto de ajuste de ionización"
+      },
+      "chlorine_setpoint": {
+        "name": "Consigna de cloro"
+      },
+      "heating_temp": {
+        "name": "Temperatura de calefacción"
+      },
+      "intelligent_min_time": {
+        "name": "Tiempo mínimo de filtración inteligente"
+      },
+      "ph_activation_delay": {
+        "name": "Retardo de activación de la bomba de pH"
+      },
+      "hydro_cover_reduction_pct": {
+        "name": "Reducción de hidrólisis con cubierta"
+      },
+      "hydro_shutdown_temp": {
+        "name": "Temperatura de apagado de hidrólisis"
+      }
+    },
+    "button": {
+      "clear_error": {
+        "name": "Borrar estado de error"
+      },
+      "sync_controller_time": {
+        "name": "Sincronizar hora del controlador"
+      },
+      "reset_cell_runtime": {
+        "name": "Restablecer tiempo de uso de la célula"
+      }
+    },
+    "light": {
+      "light": {
+        "name": "Luz"
+      }
+    }
+  },
+  "services": {
+    "set_timer": {
+      "name": "Configurar temporizador",
+      "description": "Configura uno de los temporizadores integrados del controlador (filtración, luz o AUX). La programación se ejecuta en el propio controlador, de forma independiente de Home Assistant.",
+      "fields": {
+        "device_id": {
+          "name": "Dispositivo",
+          "description": "El controlador NeoPool que se va a configurar."
+        },
+        "timer": {
+          "name": "Temporizador",
+          "description": "Qué temporizador del controlador escribir."
+        },
+        "start": {
+          "name": "Inicio",
+          "description": "Hora del día en que se enciende el relé."
+        },
+        "stop": {
+          "name": "Parada",
+          "description": "Hora del día en que se apaga el relé (la duración de funcionamiento se calcula a partir del inicio y la parada)."
+        },
+        "period": {
+          "name": "Período de repetición",
+          "description": "Con qué frecuencia se repite el temporizador, en segundos (86400 = cada día)."
+        },
+        "mode": {
+          "name": "Modo",
+          "description": "Modo de funcionamiento del temporizador: Automático ejecuta la programación, Encendido fuerza el relé encendido, Apagado lo fuerza apagado, Desactivado apaga el temporizador."
+        }
+      }
+    }
+  },
+  "selector": {
+    "timer": {
+      "options": {
+        "filtration1": "Temporizador de filtración 1",
+        "filtration2": "Temporizador de filtración 2",
+        "filtration3": "Temporizador de filtración 3",
+        "light": "Luz",
+        "aux1": "AUX1",
+        "aux2": "AUX2",
+        "aux3": "AUX3",
+        "aux4": "AUX4"
+      }
+    },
+    "timer_mode": {
+      "options": {
+        "disabled": "Desactivado",
+        "auto": "Automático",
+        "on": "Encendido",
+        "off": "Apagado"
+      }
+    },
+    "pump_type": {
+      "options": {
+        "auto": "Detección automática",
+        "variable": "Velocidad variable",
+        "standard": "Estándar (velocidad única)"
+      }
+    }
+  },
+  "exceptions": {
+    "set_timer_unknown_device": {
+      "message": "No se encontró ningún controlador NeoPool para el dispositivo {device_id}."
+    }
+  }
+}

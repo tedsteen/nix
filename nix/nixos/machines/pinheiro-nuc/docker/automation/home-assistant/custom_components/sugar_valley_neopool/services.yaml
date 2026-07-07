@@ -1,0 +1,47 @@
+set_timer:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          integration: sugar_valley_neopool
+    timer:
+      required: true
+      selector:
+        select:
+          translation_key: timer
+          options:
+            - filtration1
+            - filtration2
+            - filtration3
+            - light
+            - aux1
+            - aux2
+            - aux3
+            - aux4
+    # All schedule fields are optional: set only the ones you want to change;
+    # leave a field empty to keep its current value on the controller. "start"
+    # and "stop" must be set together.
+    start:
+      selector:
+        time:
+    stop:
+      selector:
+        time:
+    period:
+      selector:
+        number:
+          min: 0
+          max: 604800
+          step: 1
+          unit_of_measurement: s
+          mode: box
+    mode:
+      selector:
+        select:
+          translation_key: timer_mode
+          options:
+            - disabled
+            - auto
+            - "on"
+            - "off"

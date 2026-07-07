@@ -1,0 +1,531 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Sugar Valley NeoPool-installation",
+        "description": "Välkommen till NeoPool-integrationsinstallationen.\n\n**Viktigt:** Om du tidigare använde YAML-paketkonfigurationen **måste** du ta bort den från `configuration.yaml` och starta om Home Assistant **innan** du fortsätter.\n\nOm detta är en ny installation, bekräfta nedan och fortsätt.",
+        "data": {
+          "confirm_no_yaml": "Jag bekräftar att inget aktivt YAML-paket körs"
+        }
+      },
+      "mqtt_confirm": {
+        "title": "NeoPool-enhet upptäckt",
+        "description": "En NeoPool-enhet upptäcktes på MQTT-ämnet: **{device}**",
+        "data": {
+          "device_name": "Enhetsnamn"
+        }
+      },
+      "yaml_migration": {
+        "title": "YAML-paketmigrering",
+        "description": "Använde du tidigare YAML-paketkonfigurationen och vill migrera dina befintliga entiteter?\n\nMigrering bevarar all historisk data (grafer, statistik) och entitetsanpassningar.\n\nOm detta är en **ny installation** utan tidigare YAML-paket, lämna omarkerat.",
+        "data": {
+          "migrate_yaml": "Ja, migrera mina entiteter från det gamla YAML-paketet"
+        }
+      },
+      "yaml_topic": {
+        "title": "MQTT-ämne",
+        "description": "Kunde inte automatiskt upptäcka din NeoPool-enhet.\n\nAnge MQTT-ämnet som är konfigurerat i din Tasmota-enhet.",
+        "data": {
+          "yaml_topic": "MQTT-ämne (t.ex. SmartPool)"
+        }
+      },
+      "yaml_no_entities": {
+        "title": "Inga YAML-entiteter hittades",
+        "description": "Inga befintliga YAML-paketentiteter hittades i din Home Assistant-instans.\n\nOm du använde ett anpassat `unique_id`-prefix i ditt YAML-paket, markera rutan nedan för att ange det manuellt.\n\nAnnars, lämna omarkerat för att hoppa över migrering och konfigurera din enhet som en ny installation.",
+        "data": {
+          "try_custom_prefix": "Jag har ett anpassat unique_id-prefix att prova"
+        }
+      },
+      "yaml_prefix": {
+        "title": "Anpassat entitetsprefix",
+        "description": "Inga entiteter hittades med standardprefixet `neopool_mqtt_`.\n\nOm du anpassade `unique_id`-prefixet i ditt YAML-paket, ange det nedan.",
+        "data": {
+          "unique_id_prefix": "Unikt ID-prefix"
+        }
+      },
+      "yaml_active_warning": {
+        "title": "YAML-paket är fortfarande aktivt",
+        "description": "## ⚠️ Kan inte fortsätta - Entiteter är fortfarande aktiva\n\nFöljande **{active_count}** entiteter **tar emot uppdateringar**, vilket betyder att YAML-paketet fortfarande körs:\n\n{entity_list}\n\n---\n\n## Nödvändiga åtgärder:\n\n1. **Ta bort eller kommentera ut** YAML-paketet från `configuration.yaml`\n2. **Starta om Home Assistant** helt\n3. Kom tillbaka till denna skärm och klicka **Försök igen**\n\n---\n\n⚠️ **Varför krävs detta?**\n\nOm du fortsätter utan att ta bort YAML-paketet:\n- Du kommer att få **dubbletter av entiteter** (både YAML och integrationsentiteter)\n- Båda uppsättningarna kommer att vara aktiva och ta emot uppdateringar samtidigt\n- Detta kommer att orsaka förvirring och kräva manuell rensning\n\nMigreringen kan endast fortsätta när YAML-entiteterna blir **otillgängliga** (efter borttagning av paketet och omstart).",
+        "data": {}
+      },
+      "yaml_confirm": {
+        "title": "Bekräfta migrering",
+        "description": "## Migreringssammanfattning\n\nFöljande har validerats:\n\n✓ **MQTT-ämne**: `{topic}`\n✓ **NodeID**: `{nodeid}`\n✓ **Migrerbara entiteter hittades**: {entity_count}\n\n### Entiteter att migrera:\n{entity_list}\n\n---\n\n## Vad som kommer att hända:\n\n1. Varje entitets `unique_id` kommer att uppdateras för att inkludera NodeID\n2. Entiteter kommer att associeras med denna integration\n3. **All historisk data kommer att bevaras** (grafer, statistik)\n4. Entitets-ID:n förblir oförändrade\n\n---\n\n⚠️ **Förutsättningar** (bekräfta innan du fortsätter):\n- Jag har tagit bort/kommenterat ut YAML-paketet från `configuration.yaml`\n- Jag har startat om Home Assistant efter att ha tagit bort YAML-paketet\n- Jag förstår att denna process kommer att ändra mitt entitetsregister\n\n**Denna åtgärd kan inte ångras automatiskt.** Genom att kryssa i rutan nedan bekräftar du att du har slutfört förutsättningarna och accepterar ansvaret för denna migrering.",
+        "data": {
+          "confirm_migration": "Jag bekräftar att jag har slutfört förutsättningarna och vill fortsätta"
+        }
+      },
+      "yaml_migration_result": {
+        "title": "Migrering slutförd",
+        "description": "## Migreringsresultat\n\n**Entiteter behandlade**: {entities_found}\n**Framgångsrikt migrerade**: {entities_migrated}\n**Misslyckade**: {errors_count}\n\n### Migrerade entiteter:\n{migrated_list}\n\n---\n\n{failed_list}\n\nKlicka **Skicka** för att slutföra installationen.",
+        "data": {}
+      },
+      "discover_device": {
+        "title": "Manuell installation",
+        "description": "Ange dina NeoPool-enhetsuppgifter.\n\nFör mer information, se [Tasmota NeoPool-dokumentationen]({docs_url}).",
+        "data": {
+          "device_name": "Enhetsnamn",
+          "discovery_prefix": "MQTT-ämne (Tasmota-enhetsnamn)"
+        }
+      },
+      "reconfigure": {
+        "title": "Omkonfigurera NeoPool",
+        "description": "Uppdatera dina NeoPool-enhets anslutningsinställningar.\n\n**Notera:** Att ändra enhetsnamnet uppdaterar integrationens titel. Kryssa i **Regenerera entitets-ID:n** om du också vill att entitets-ID:n ska återspegla det nya namnet.",
+        "data": {
+          "device_name": "Enhetsnamn",
+          "regenerate_entity_ids": "Regenerera entitets-ID:n",
+          "discovery_prefix": "MQTT-ämne"
+        },
+        "data_description": {
+          "device_name": "Ett vänligt namn för din poolkontroller",
+          "regenerate_entity_ids": "Uppdatera entitets-ID:n för att matcha det nya enhetsnamnet (t.ex. sensor.neopool_ph → sensor.minpool_ph)",
+          "discovery_prefix": "MQTT-ämnet som används av din Tasmota-enhet"
+        }
+      },
+      "yaml_detect_confirm": {
+        "title": "Identifierade NeoPool-enheter",
+        "description": "Vi identifierade NeoPool YAML-entiteter:\n\n• **Prefix för unikt ID**: `{prefix}`\n• **Entiteter hittade**: {entity_count}\n• **Tillförlitlighet**: {confidence}%\n\n**Matchade mönster**:\n{matched_signatures}\n\n---\n\nOm detta stämmer, markera rutan nedan för att fortsätta.\nOm inte, avmarkera den för att ange ett eget prefix manuellt.",
+        "data": {
+          "confirm_detection": "Ja, detta stämmer – fortsätt med migreringen"
+        }
+      }
+    },
+    "error": {
+      "invalid_topic": "Ogiltigt MQTT-ämnesformat",
+      "invalid_yaml_topic": "Kan inte läsa från detta MQTT-ämne. Verifiera att ämnet är korrekt och att enheten är online.",
+      "cannot_connect": "Kunde inte ta emot meddelanden från detta MQTT-ämne. Kontrollera ämnesnamnet och att din enhet är online. Om ämnet är korrekt kan enheten publicera telemetri sällan – ange 'TelePeriod 10' i Tasmota-konsolen och försök igen.",
+      "no_entities_found": "Inga migrerbara entiteter hittades med detta prefix. Kontrollera att:\n1. Prefixet matchar din YAML-konfiguration\n2. Entiteterna finns i Home Assistant\n3. Entiteterna inte redan ägs av denna integration",
+      "confirmation_required": "Du måste kryssa i bekräftelserutan för att fortsätta med migreringen.",
+      "yaml_still_active": "Entiteter är fortfarande aktiva. Vänligen ta bort YAML-paketet och starta om Home Assistant först.",
+      "nodeid_configuration_failed": "Misslyckades med att konfigurera NodeID på enheten."
+    },
+    "abort": {
+      "already_configured": "Denna enhet är redan konfigurerad",
+      "invalid_discovery_info": "Ogiltig upptäcktsinformation mottagen",
+      "not_neopool_device": "Den upptäckta enheten är inte en NeoPool-kontroller",
+      "nodeid_configuration_failed": "Misslyckades med att konfigurera NodeID. Ställ in att enheten är online och nåbar via MQTT.",
+      "unique_id_mismatch": "Enhetens NodeID matchar inte den ursprungliga konfigurationen."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "NeoPool-alternativ",
+        "description": "Konfigurera körtidsalternativ för din NeoPool-enhet.\n\n**Återställningsskriptvariabler:**\nNär det är konfigurerat får återställningsskriptet dessa variabler:\n\n- `device_name` : Enhetsnamn\n- `mqtt_topic` : MQTT-ämne\n- `nodeid` : Enhetens NodeID\n- `failures_count` : Antal på varandra följande fel",
+        "data": {
+          "recovery_script": "Återställningsskript (valfritt)",
+          "enable_repair_notification": "Aktivera reparationsaviseringar",
+          "failures_threshold": "Fel innan avisering (1-10)",
+          "offline_timeout": "Offline-timeout (sekunder)",
+          "connection_error_rate_threshold": "Tröskel för anslutningsfelfrekvens (%)",
+          "pump_type": "Filtreringspumpstyp"
+        },
+        "data_description": {
+          "recovery_script": "Skript att köra när enheten är offline för länge",
+          "enable_repair_notification": "Skapa ett reparationsproblem när enheten går offline",
+          "failures_threshold": "Antal på varandra följande LWT offline-meddelanden innan aviseringar utlöses",
+          "offline_timeout": "Hur länge enheten måste vara offline innan aviseringar utlöses",
+          "connection_error_rate_threshold": "Modbus-felprocent (över ett rullande 10-minutersfönster) över vilken `binary_sensor.connection_problem` aktiveras",
+          "pump_type": "Pumpar med variabel hastighet får hastighetskontroller per timer. Automatisk identifiering litar på styrenheten (pumpar med variabel hastighet rapporterar en hastighet); åsidosätt endast vid behov."
+        }
+      }
+    }
+  },
+  "issues": {
+    "device_offline": {
+      "title": "NeoPool-enhet offline: {device_name}",
+      "description": "NeoPool-enheten **{device_name}** har varit offline under en längre period.\n\n**MQTT-ämne:** `{mqtt_topic}`\n\nKontrollera:\n- Tasmota-enheten är påslagen\n- Enheten är ansluten till ditt nätverk\n- MQTT-mäklaren körs\n- MQTT-ämnet är korrekt"
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "device_offline": "Enheten gick offline",
+      "device_online": "Enheten kom online",
+      "device_recovered": "Enheten återhämtade sig efter att ha varit offline"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "system_model": {
+        "name": "Systemmodell"
+      },
+      "water_temperature": {
+        "name": "Vattentemperatur"
+      },
+      "ph_data": {
+        "name": "pH"
+      },
+      "ph_state": {
+        "name": "pH-status"
+      },
+      "ph_pump": {
+        "name": "pH-pump"
+      },
+      "redox_data": {
+        "name": "Redox (ORP)"
+      },
+      "hydrolysis_percent": {
+        "name": "Hydrolys"
+      },
+      "hydrolysis_data": {
+        "name": "Hydrolys (g/h)"
+      },
+      "hydrolysis_state": {
+        "name": "Hydrolysstatus"
+      },
+      "hydrolysis_runtime_total": {
+        "name": "Hydrolys total körtid"
+      },
+      "hydrolysis_runtime_part": {
+        "name": "Hydrolys delvis körtid"
+      },
+      "hydrolysis_runtime_pol1": {
+        "name": "Hydrolys körtid Pol1"
+      },
+      "hydrolysis_runtime_pol2": {
+        "name": "Hydrolys körtid Pol2"
+      },
+      "hydrolysis_polarity_changes": {
+        "name": "Hydrolys polaritetsändringar"
+      },
+      "filtration_mode": {
+        "name": "Filtreringsläge"
+      },
+      "filtration_speed": {
+        "name": "Filtreringshastighet"
+      },
+      "boost_mode": {
+        "name": "Boostläge"
+      },
+      "powerunit_version": {
+        "name": "Kraftenhetsversion"
+      },
+      "powerunit_5v": {
+        "name": "Kraftenhet 5V"
+      },
+      "powerunit_12v": {
+        "name": "Kraftenhet 12V"
+      },
+      "powerunit_24v": {
+        "name": "Kraftenhet 24-30V"
+      },
+      "powerunit_4ma": {
+        "name": "Kraftenhet 4-20mA"
+      },
+      "connection_requests": {
+        "name": "Anslutningsförfrågningar"
+      },
+      "connection_responses": {
+        "name": "Anslutningssvar"
+      },
+      "connection_no_response": {
+        "name": "Anslutning inget svar"
+      },
+      "connection_out_of_range": {
+        "name": "Anslutning utanför räckvidd"
+      },
+      "system_id": {
+        "name": "Kraftenhet NodeID"
+      },
+      "conductivity_data": {
+        "name": "Konduktivitet"
+      },
+      "ionization_data": {
+        "name": "Jonisering"
+      },
+      "chlorine_data": {
+        "name": "Klor"
+      },
+      "hydrolysis_setpoint_gh": {
+        "name": "Hydrolys börvärde (g/h)"
+      },
+      "hydrolysis_max": {
+        "name": "Hydrolys max"
+      },
+      "hydrolysis_unit": {
+        "name": "Hydrolysenhet"
+      },
+      "controller_time": {
+        "name": "Styrenhetens tid"
+      },
+      "connection_error_rate": {
+        "name": "Anslutningsfelfrekvens"
+      }
+    },
+    "binary_sensor": {
+      "modules_ph": {
+        "name": "pH-modul"
+      },
+      "modules_redox": {
+        "name": "Redox-modul"
+      },
+      "modules_hydrolysis": {
+        "name": "Hydrolysmodul"
+      },
+      "modules_chlorine": {
+        "name": "Klormodul"
+      },
+      "modules_conductivity": {
+        "name": "Konduktivitetsmodul"
+      },
+      "modules_ionization": {
+        "name": "Joniseringsmodul"
+      },
+      "relay_acid_state": {
+        "name": "Relä syrastatus"
+      },
+      "relay_base_state": {
+        "name": "Relä basstatus"
+      },
+      "relay_redox_state": {
+        "name": "Relä redoxstatus"
+      },
+      "relay_chlorine_state": {
+        "name": "Relä klorstatus"
+      },
+      "relay_conductivity_state": {
+        "name": "Relä ledningsförmågastatus"
+      },
+      "relay_heating_state": {
+        "name": "Relä värmestatus"
+      },
+      "relay_uv_state": {
+        "name": "Relä UV-status"
+      },
+      "relay_valve_state": {
+        "name": "Relä ventilstatus"
+      },
+      "ph_fl1": {
+        "name": "pH FL1"
+      },
+      "hydrolysis_fl1": {
+        "name": "Hydrolys FL1"
+      },
+      "hydrolysis_water_flow": {
+        "name": "Vattenflöde"
+      },
+      "ph_tank_level": {
+        "name": "pH-tanknivå låg"
+      },
+      "redox_tank_level": {
+        "name": "Redox-tanknivå låg"
+      },
+      "hydrolysis_cover": {
+        "name": "Hydrolyslucka"
+      },
+      "hydrolysis_low_production": {
+        "name": "Hydrolys låg produktion"
+      },
+      "hydrolysis_redox_controlled": {
+        "name": "Hydrolys Redox-styrd"
+      },
+      "aux1": {
+        "name": "AUX1"
+      },
+      "aux2": {
+        "name": "AUX2"
+      },
+      "aux3": {
+        "name": "AUX3"
+      },
+      "aux4": {
+        "name": "AUX4"
+      },
+      "connection_problem": {
+        "name": "Anslutningsproblem"
+      }
+    },
+    "switch": {
+      "filtration": {
+        "name": "Filtrering"
+      },
+      "auto_time_sync": {
+        "name": "Automatisk tidssynkronisering"
+      },
+      "uv_mode": {
+        "name": "UV-läge"
+      },
+      "climate_mode": {
+        "name": "Klimatläge"
+      },
+      "smart_antifreeze": {
+        "name": "Smart frostskydd"
+      },
+      "hydro_cover_reduction": {
+        "name": "Hydrolys täckreducering"
+      },
+      "hydro_temp_shutdown": {
+        "name": "Hydrolys temperaturavstängning"
+      }
+    },
+    "select": {
+      "filtration_mode": {
+        "name": "Filtreringsläge"
+      },
+      "filtration_speed": {
+        "name": "Filtreringshastighet"
+      },
+      "boost_mode": {
+        "name": "Boostläge"
+      },
+      "aux1_mode": {
+        "name": "AUX1-läge",
+        "state": {
+          "auto": "Auto",
+          "on": "På",
+          "off": "Av"
+        }
+      },
+      "aux2_mode": {
+        "name": "AUX2-läge",
+        "state": {
+          "auto": "Auto",
+          "on": "På",
+          "off": "Av"
+        }
+      },
+      "aux3_mode": {
+        "name": "AUX3-läge",
+        "state": {
+          "auto": "Auto",
+          "on": "På",
+          "off": "Av"
+        }
+      },
+      "aux4_mode": {
+        "name": "AUX4-läge",
+        "state": {
+          "auto": "Auto",
+          "on": "På",
+          "off": "Av"
+        }
+      },
+      "filtration_timer1_speed": {
+        "name": "Hastighet för filtreringstimer 1"
+      },
+      "filtration_timer2_speed": {
+        "name": "Hastighet för filtreringstimer 2"
+      },
+      "filtration_timer3_speed": {
+        "name": "Hastighet för filtreringstimer 3"
+      }
+    },
+    "number": {
+      "ph_min": {
+        "name": "pH min"
+      },
+      "ph_max": {
+        "name": "pH max"
+      },
+      "redox_setpoint": {
+        "name": "Redox börvärde"
+      },
+      "hydrolysis_setpoint": {
+        "name": "Hydrolys börvärde"
+      },
+      "ionization_setpoint": {
+        "name": "Jonisering börvärde"
+      },
+      "chlorine_setpoint": {
+        "name": "Klorbörvärde"
+      },
+      "heating_temp": {
+        "name": "Uppvärmningstemperatur"
+      },
+      "intelligent_min_time": {
+        "name": "Intelligent minsta filtreringstid"
+      },
+      "ph_activation_delay": {
+        "name": "pH-pump aktiveringsfördröjning"
+      },
+      "hydro_cover_reduction_pct": {
+        "name": "Hydrolys täckreducering"
+      },
+      "hydro_shutdown_temp": {
+        "name": "Hydrolys avstängningstemperatur"
+      }
+    },
+    "button": {
+      "clear_error": {
+        "name": "Rensa felstatus"
+      },
+      "sync_controller_time": {
+        "name": "Synkronisera styrenhetens tid"
+      },
+      "reset_cell_runtime": {
+        "name": "Återställ cellens drifttid"
+      }
+    },
+    "light": {
+      "light": {
+        "name": "Ljus"
+      }
+    }
+  },
+  "services": {
+    "set_timer": {
+      "name": "Ställ in timer",
+      "description": "Konfigurerar en av styrenhetens inbyggda timrar (filtrering, ljus eller AUX). Schemat körs på själva styrenheten, oberoende av Home Assistant.",
+      "fields": {
+        "device_id": {
+          "name": "Enhet",
+          "description": "NeoPool-styrenheten som ska konfigureras."
+        },
+        "timer": {
+          "name": "Timer",
+          "description": "Vilken styrenhetstimer som ska skrivas."
+        },
+        "start": {
+          "name": "Start",
+          "description": "Tid på dygnet då reläet slås på."
+        },
+        "stop": {
+          "name": "Stopp",
+          "description": "Tid på dygnet då reläet slås av (drifttiden härleds från start och stopp)."
+        },
+        "period": {
+          "name": "Upprepningsperiod",
+          "description": "Hur ofta timern upprepas, i sekunder (86400 = varje dag)."
+        },
+        "mode": {
+          "name": "Läge",
+          "description": "Timerns arbetsläge: Auto kör schemat, På tvingar reläet på, Av tvingar det av, Inaktiverad stänger av timern."
+        }
+      }
+    }
+  },
+  "selector": {
+    "timer": {
+      "options": {
+        "filtration1": "Filtreringstimer 1",
+        "filtration2": "Filtreringstimer 2",
+        "filtration3": "Filtreringstimer 3",
+        "light": "Ljus",
+        "aux1": "AUX1",
+        "aux2": "AUX2",
+        "aux3": "AUX3",
+        "aux4": "AUX4"
+      }
+    },
+    "timer_mode": {
+      "options": {
+        "disabled": "Inaktiverad",
+        "auto": "Auto",
+        "on": "På",
+        "off": "Av"
+      }
+    },
+    "pump_type": {
+      "options": {
+        "auto": "Identifiera automatiskt",
+        "variable": "Variabel hastighet",
+        "standard": "Standard (en hastighet)"
+      }
+    }
+  },
+  "exceptions": {
+    "set_timer_unknown_device": {
+      "message": "Ingen NeoPool-styrenhet hittades för enhet {device_id}."
+    }
+  }
+}
