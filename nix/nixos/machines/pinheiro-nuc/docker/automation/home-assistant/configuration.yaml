@@ -12,41 +12,14 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
-smartir:
-
-climate:
-  - platform: smartir
-    name: Office AC
-    unique_id: office_ac
-    device_code: 5120 #1118
-    controller_data: remote.office_ir_remote
-
-  - platform: smartir
-    name: Guestroom AC
-    unique_id: guestroom_ac
-    device_code: 5120 #1118
-    controller_data: remote.guestroom_ir_remote
-
-  - platform: smartir
-    name: Livingroom AC
-    unique_id: livingroom_ac
-    device_code: 5120 #1118
-    controller_data: remote.livingroom_ir_remote
-
-  - platform: smartir
-    name: Kids room AC
-    unique_id: kids_room_ac
-    device_code: 5120 #1118
-    controller_data: remote.kids_room_ir_remote
-
-  - platform: smartir
-    name: Master bedroom AC
-    unique_id: master_bedroom_ac
-    device_code: 5120 #1118
-    controller_data: remote.master_bedroom_ir_remote
-
-  - platform: smartir
-    name: Kitchen AC
-    unique_id: kitchen_ac
-    device_code: 5120 #1118
-    controller_data: remote.kitchen_ir_remote
+# AC units are provided by the vendored `ar_smart_ir` custom component
+# (custom_components/ar_smart_ir). Unlike the old `smartir` component it is
+# config-flow / UI only and cannot be configured in YAML, so the 6 AC units
+# are set up via the HA UI. Reference for re-creating them (all use
+# device_code 5120, Broadlink/remote controller = remote.<room>_ir_remote):
+#   Office AC        -> remote.office_ir_remote
+#   Guestroom AC     -> remote.guestroom_ir_remote
+#   Livingroom AC    -> remote.livingroom_ir_remote
+#   Kids room AC     -> remote.kids_room_ir_remote
+#   Master bedroom AC-> remote.master_bedroom_ir_remote
+#   Kitchen AC       -> remote.kitchen_ir_remote
