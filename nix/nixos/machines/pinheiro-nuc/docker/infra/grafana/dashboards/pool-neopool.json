@@ -66,19 +66,19 @@
               },
               {
                 "color": "orange",
-                "value": 7.0
+                "value": 6.8
               },
               {
                 "color": "green",
-                "value": 7.2
+                "value": 7.0
               },
               {
                 "color": "orange",
-                "value": 7.6
+                "value": 7.4
               },
               {
                 "color": "red",
-                "value": 7.8
+                "value": 7.6
               }
             ]
           },
@@ -111,7 +111,8 @@
           "range": true,
           "refId": "A"
         }
-      ]
+      ],
+      "description": "Colour band from pH setpoints (min 7.0 / max 7.4). Grafana can't bind a live two-sided band from a metric, so these thresholds mirror the current setpoints; the pH trend shows the live setpoint lines."
     },
     {
       "type": "stat",
@@ -144,11 +145,11 @@
               },
               {
                 "color": "orange",
-                "value": 600
+                "value": 700
               },
               {
                 "color": "green",
-                "value": 680
+                "value": 800
               }
             ]
           },
@@ -181,7 +182,8 @@
           "range": true,
           "refId": "A"
         }
-      ]
+      ],
+      "description": "Green at/above the Redox setpoint (800 mV), red below. Static mirror of the setpoint; the Redox trend shows the live setpoint line."
     },
     {
       "type": "stat",
@@ -357,27 +359,91 @@
             "spanNulls": true,
             "axisPlacement": "auto",
             "thresholdsStyle": {
-              "mode": "line"
+              "mode": "off"
             }
           },
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": 7.2
-              },
-              {
-                "color": "orange",
-                "value": 7.6
+                "color": "text",
+                "value": null
               }
             ]
           },
           "decimals": 2,
           "min": 6.5,
-          "max": 8.5
+          "max": 9.0
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pH min (setpoint)"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    8,
+                    8
+                  ]
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "orange"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pH max (setpoint)"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    8,
+                    8
+                  ]
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "orange"
+                }
+              }
+            ]
+          }
+        ]
       },
       "options": {
         "legend": {
@@ -401,6 +467,28 @@
           "range": true,
           "refId": "A",
           "legendFormat": "pH"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_number_state{entity=\"number.neopool_ph_min\"}",
+          "range": true,
+          "refId": "B",
+          "legendFormat": "pH min (setpoint)"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_number_state{entity=\"number.neopool_ph_max\"}",
+          "range": true,
+          "refId": "C",
+          "legendFormat": "pH max (setpoint)"
         }
       ]
     },
@@ -436,6 +524,7 @@
               "mode": "off"
             }
           },
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -447,7 +536,41 @@
           },
           "decimals": 0
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Setpoint"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    8,
+                    8
+                  ]
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "orange"
+                }
+              }
+            ]
+          }
+        ]
       },
       "options": {
         "legend": {
@@ -517,6 +640,7 @@
               "mode": "off"
             }
           },
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -587,6 +711,7 @@
               "mode": "off"
             }
           },
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -598,7 +723,41 @@
           },
           "decimals": 1
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Setpoint g/h"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    8,
+                    8
+                  ]
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "orange"
+                }
+              }
+            ]
+          }
+        ]
       },
       "options": {
         "legend": {
@@ -648,21 +807,197 @@
       ]
     },
     {
-      "type": "row",
+      "type": "timeseries",
       "id": 11,
+      "title": "Filtration speed",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "stepAfter",
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisPlacement": "auto",
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "Off",
+                  "color": "text",
+                  "index": 0
+                },
+                "1": {
+                  "text": "Slow",
+                  "color": "text",
+                  "index": 1
+                },
+                "2": {
+                  "text": "Medium",
+                  "color": "text",
+                  "index": 2
+                },
+                "3": {
+                  "text": "Fast",
+                  "color": "text",
+                  "index": 3
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          },
+          "decimals": 0,
+          "min": 0,
+          "max": 3.5
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_state{entity=\"sensor.neopool_filtration_speed_num\"}",
+          "range": true,
+          "refId": "A",
+          "legendFormat": "Speed"
+        }
+      ],
+      "description": "Numeric mirror of sensor.neopool_filtration_speed via HA template sensor (1=Slow, 2=Medium, 3=Fast)."
+    },
+    {
+      "type": "timeseries",
+      "id": 12,
+      "title": "Hydrolysis cell runtime",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 24
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "h",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisPlacement": "auto",
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 7000
+              }
+            ]
+          },
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_duration_h{entity=\"sensor.neopool_hydrolysis_runtime_total\"}",
+          "range": true,
+          "refId": "A",
+          "legendFormat": "Total runtime"
+        }
+      ],
+      "description": "Total electrolysis cell runtime. Red reference line at 7000 h marks the recommended cell-replacement point."
+    },
+    {
+      "type": "row",
+      "id": 13,
       "title": "Status",
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 24
+        "y": 32
       },
       "panels": []
     },
     {
       "type": "stat",
-      "id": 12,
+      "id": 14,
       "title": "Filtration",
       "datasource": {
         "type": "prometheus",
@@ -670,9 +1005,9 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 4,
+        "w": 6,
         "x": 0,
-        "y": 25
+        "y": 33
       },
       "fieldConfig": {
         "defaults": {
@@ -739,7 +1074,110 @@
     },
     {
       "type": "stat",
-      "id": 13,
+      "id": 15,
+      "title": "Filtration mode",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 6,
+        "y": 33
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "Manual",
+                  "color": "blue",
+                  "index": 0
+                },
+                "1": {
+                  "text": "Auto",
+                  "color": "green",
+                  "index": 1
+                },
+                "2": {
+                  "text": "Heating",
+                  "color": "orange",
+                  "index": 2
+                },
+                "3": {
+                  "text": "Smart",
+                  "color": "green",
+                  "index": 3
+                },
+                "4": {
+                  "text": "Intelligent",
+                  "color": "green",
+                  "index": 4
+                },
+                "13": {
+                  "text": "Backwash",
+                  "color": "orange",
+                  "index": 5
+                },
+                "-1": {
+                  "text": "Unknown",
+                  "color": "text",
+                  "index": 6
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "value",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_state{entity=\"sensor.neopool_filtration_mode_num\"}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "description": "Numeric mirror of sensor.neopool_filtration_mode via HA template sensor."
+    },
+    {
+      "type": "stat",
+      "id": 16,
       "title": "Water flow",
       "datasource": {
         "type": "prometheus",
@@ -747,9 +1185,9 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 4,
-        "x": 4,
-        "y": 25
+        "w": 6,
+        "x": 12,
+        "y": 33
       },
       "fieldConfig": {
         "defaults": {
@@ -816,7 +1254,84 @@
     },
     {
       "type": "stat",
-      "id": 14,
+      "id": 17,
+      "title": "Connection",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 18,
+        "y": 33
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "OK",
+                  "color": "green",
+                  "index": 0
+                },
+                "1": {
+                  "text": "ALERT",
+                  "color": "red",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "value",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_binary_sensor_state{entity=\"binary_sensor.neopool_connection_problem\"}",
+          "range": true,
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 18,
       "title": "pH tank",
       "datasource": {
         "type": "prometheus",
@@ -824,9 +1339,9 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 4,
-        "x": 8,
-        "y": 25
+        "w": 6,
+        "x": 0,
+        "y": 39
       },
       "fieldConfig": {
         "defaults": {
@@ -893,7 +1408,7 @@
     },
     {
       "type": "stat",
-      "id": 15,
+      "id": 19,
       "title": "Redox tank",
       "datasource": {
         "type": "prometheus",
@@ -901,9 +1416,9 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 4,
-        "x": 12,
-        "y": 25
+        "w": 6,
+        "x": 6,
+        "y": 39
       },
       "fieldConfig": {
         "defaults": {
@@ -970,7 +1485,7 @@
     },
     {
       "type": "stat",
-      "id": 16,
+      "id": 20,
       "title": "Hydrolysis production",
       "datasource": {
         "type": "prometheus",
@@ -978,9 +1493,9 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 4,
-        "x": 16,
-        "y": 25
+        "w": 6,
+        "x": 12,
+        "y": 39
       },
       "fieldConfig": {
         "defaults": {
@@ -1046,98 +1561,21 @@
       ]
     },
     {
-      "type": "stat",
-      "id": 17,
-      "title": "Connection",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 4,
-        "x": 20,
-        "y": 25
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "none",
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "text"
-          },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "OK",
-                  "color": "green",
-                  "index": 0
-                },
-                "1": {
-                  "text": "ALERT",
-                  "color": "red",
-                  "index": 1
-                }
-              }
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "text",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "textMode": "value",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "orientation": "auto"
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "hass_binary_sensor_state{entity=\"binary_sensor.neopool_connection_problem\"}",
-          "range": true,
-          "refId": "A"
-        }
-      ]
-    },
-    {
       "type": "row",
-      "id": 18,
+      "id": 21,
       "title": "Power unit & diagnostics",
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 45
       },
       "panels": []
     },
     {
       "type": "timeseries",
-      "id": 19,
+      "id": 22,
       "title": "Power unit voltages",
       "datasource": {
         "type": "prometheus",
@@ -1147,7 +1585,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 32
+        "y": 46
       },
       "fieldConfig": {
         "defaults": {
@@ -1167,6 +1605,7 @@
               "mode": "off"
             }
           },
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1229,7 +1668,7 @@
     },
     {
       "type": "timeseries",
-      "id": 20,
+      "id": 23,
       "title": "Cell current & Modbus error rate",
       "datasource": {
         "type": "prometheus",
@@ -1239,7 +1678,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 32
+        "y": 46
       },
       "fieldConfig": {
         "defaults": {
@@ -1259,6 +1698,7 @@
               "mode": "off"
             }
           },
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [

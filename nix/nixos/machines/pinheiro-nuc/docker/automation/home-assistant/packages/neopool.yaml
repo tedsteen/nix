@@ -1,0 +1,20 @@
+# Numeric mirrors of NeoPool's string-state sensors so they are exported to
+# Prometheus (the HA Prometheus integration only exports numeric sensor states).
+# Maps mirror the integration's FILTRATION_SPEED_MAP / FILTRATION_MODE_MAP.
+template:
+  - sensor:
+      - name: "NeoPool Filtration Speed Num"
+        unique_id: neopool_filtration_speed_num
+        state: >
+          {% set m = {'Slow': 1, 'Medium': 2, 'Fast': 3} %}
+          {{ m.get(states('sensor.neopool_filtration_speed'), 0) }}
+        availability: >
+          {{ states('sensor.neopool_filtration_speed') not in ['unknown', 'unavailable', 'none'] }}
+
+      - name: "NeoPool Filtration Mode Num"
+        unique_id: neopool_filtration_mode_num
+        state: >
+          {% set m = {'Manual': 0, 'Auto': 1, 'Heating': 2, 'Smart': 3, 'Intelligent': 4, 'Backwash': 13} %}
+          {{ m.get(states('sensor.neopool_filtration_mode'), -1) }}
+        availability: >
+          {{ states('sensor.neopool_filtration_mode') not in ['unknown', 'unavailable', 'none'] }}
