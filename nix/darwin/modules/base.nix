@@ -36,6 +36,8 @@ in {
     description = "Primary user managed by the shared mac base-config.";
   };
   config = {
+    environment.systemPackages = [ pkgs.opencode ];
+
     security.pam.services.sudo_local.touchIdAuth = true;
     system = {
       primaryUser = username;

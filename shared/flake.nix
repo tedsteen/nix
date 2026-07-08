@@ -56,7 +56,7 @@
           home.sessionVariables.EDITOR = lib.mkDefault "nvim";
           home.sessionVariables.VISUAL = lib.mkDefault "nvim";
 
-          home.packages = with pkgs; [    
+          home.packages = with pkgs; [
             # git
             difftastic
             git-lfs
