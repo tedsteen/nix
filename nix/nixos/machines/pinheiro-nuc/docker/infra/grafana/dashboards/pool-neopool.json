@@ -96,7 +96,7 @@
           "refId": "A"
         }
       ],
-      "description": "Grafana can't bind a live two-sided band from the pH setpoint metrics, so the tile is left uncoloured; see the live pH min/max setpoint lines on the pH trend below."
+      "description": "Reading shown uncoloured; the pH status strip below is coloured live from the pH min/max setpoints."
     },
     {
       "type": "stat",
@@ -159,7 +159,7 @@
           "refId": "A"
         }
       ],
-      "description": "Left uncoloured; see the live Redox setpoint line on the Redox trend below."
+      "description": "Reading shown uncoloured; the Redox status strip below is coloured live from the Redox setpoint."
     },
     {
       "type": "stat",
@@ -294,21 +294,203 @@
       ]
     },
     {
-      "type": "row",
+      "type": "stat",
       "id": 6,
+      "title": "pH status",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 0,
+        "y": 7
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "thresholds",
+            "fixedColor": "text"
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "IN RANGE",
+                  "color": "green",
+                  "index": 0
+                },
+                "1": {
+                  "text": "LOW",
+                  "color": "orange",
+                  "index": 1
+                },
+                "2": {
+                  "text": "HIGH",
+                  "color": "red",
+                  "index": 2
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 2
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "value",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "2 * (hass_sensor_ph_None{entity=\"sensor.neopool_ph\"} > bool on() hass_number_state{entity=\"number.neopool_ph_max\"}) + (hass_sensor_ph_None{entity=\"sensor.neopool_ph\"} < bool on() hass_number_state{entity=\"number.neopool_ph_min\"})",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "description": "Live from setpoints: HIGH when pH > pH max, LOW when pH < pH min."
+    },
+    {
+      "type": "stat",
+      "id": 7,
+      "title": "Redox status",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 6,
+        "y": 7
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "thresholds",
+            "fixedColor": "text"
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "OK",
+                  "color": "green",
+                  "index": 0
+                },
+                "1": {
+                  "text": "LOW",
+                  "color": "orange",
+                  "index": 1
+                },
+                "2": {
+                  "text": "VERY LOW",
+                  "color": "red",
+                  "index": 2
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 2
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "value",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "(hass_sensor_voltage_mv{entity=\"sensor.neopool_redox_orp\"} < bool on() (hass_number_state_mv{entity=\"number.neopool_redox_setpoint\"} - 50)) + (hass_sensor_voltage_mv{entity=\"sensor.neopool_redox_orp\"} < bool on() (hass_number_state_mv{entity=\"number.neopool_redox_setpoint\"} - 150))",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "description": "Live from setpoint: LOW when >50 mV below setpoint, VERY LOW when >150 mV below."
+    },
+    {
+      "type": "row",
+      "id": 8,
       "title": "Trends",
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 7
+        "y": 10
       },
       "panels": []
     },
     {
       "type": "timeseries",
-      "id": 7,
+      "id": 9,
       "title": "pH",
       "datasource": {
         "type": "prometheus",
@@ -318,7 +500,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 8
+        "y": 11
       },
       "fieldConfig": {
         "defaults": {
@@ -468,7 +650,7 @@
     },
     {
       "type": "timeseries",
-      "id": 8,
+      "id": 10,
       "title": "Redox (ORP) vs setpoint",
       "datasource": {
         "type": "prometheus",
@@ -478,7 +660,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 8
+        "y": 11
       },
       "fieldConfig": {
         "defaults": {
@@ -584,7 +766,7 @@
     },
     {
       "type": "timeseries",
-      "id": 9,
+      "id": 11,
       "title": "Water temperature",
       "datasource": {
         "type": "prometheus",
@@ -594,7 +776,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 16
+        "y": 19
       },
       "fieldConfig": {
         "defaults": {
@@ -655,7 +837,7 @@
     },
     {
       "type": "timeseries",
-      "id": 10,
+      "id": 12,
       "title": "Hydrolysis production",
       "datasource": {
         "type": "prometheus",
@@ -665,7 +847,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 16
+        "y": 19
       },
       "fieldConfig": {
         "defaults": {
@@ -782,7 +964,7 @@
     },
     {
       "type": "timeseries",
-      "id": 11,
+      "id": 13,
       "title": "Filtration speed",
       "datasource": {
         "type": "prometheus",
@@ -792,7 +974,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 24
+        "y": 27
       },
       "fieldConfig": {
         "defaults": {
@@ -882,7 +1064,7 @@
     },
     {
       "type": "timeseries",
-      "id": 12,
+      "id": 14,
       "title": "Hydrolysis cell runtime",
       "datasource": {
         "type": "prometheus",
@@ -892,7 +1074,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 24
+        "y": 27
       },
       "fieldConfig": {
         "defaults": {
@@ -958,20 +1140,20 @@
     },
     {
       "type": "row",
-      "id": 13,
+      "id": 15,
       "title": "Status",
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 35
       },
       "panels": []
     },
     {
       "type": "stat",
-      "id": 14,
+      "id": 16,
       "title": "Filtration",
       "datasource": {
         "type": "prometheus",
@@ -981,7 +1163,7 @@
         "h": 6,
         "w": 6,
         "x": 0,
-        "y": 33
+        "y": 36
       },
       "fieldConfig": {
         "defaults": {
@@ -1048,7 +1230,7 @@
     },
     {
       "type": "stat",
-      "id": 15,
+      "id": 17,
       "title": "Filtration mode",
       "datasource": {
         "type": "prometheus",
@@ -1058,7 +1240,7 @@
         "h": 6,
         "w": 6,
         "x": 6,
-        "y": 33
+        "y": 36
       },
       "fieldConfig": {
         "defaults": {
@@ -1151,7 +1333,7 @@
     },
     {
       "type": "stat",
-      "id": 16,
+      "id": 18,
       "title": "Water flow",
       "datasource": {
         "type": "prometheus",
@@ -1161,7 +1343,7 @@
         "h": 6,
         "w": 6,
         "x": 12,
-        "y": 33
+        "y": 36
       },
       "fieldConfig": {
         "defaults": {
@@ -1228,7 +1410,7 @@
     },
     {
       "type": "stat",
-      "id": 17,
+      "id": 19,
       "title": "Connection",
       "datasource": {
         "type": "prometheus",
@@ -1238,7 +1420,7 @@
         "h": 6,
         "w": 6,
         "x": 18,
-        "y": 33
+        "y": 36
       },
       "fieldConfig": {
         "defaults": {
@@ -1305,7 +1487,7 @@
     },
     {
       "type": "stat",
-      "id": 18,
+      "id": 20,
       "title": "pH tank",
       "datasource": {
         "type": "prometheus",
@@ -1315,7 +1497,7 @@
         "h": 6,
         "w": 6,
         "x": 0,
-        "y": 39
+        "y": 42
       },
       "fieldConfig": {
         "defaults": {
@@ -1382,7 +1564,7 @@
     },
     {
       "type": "stat",
-      "id": 19,
+      "id": 21,
       "title": "Redox tank",
       "datasource": {
         "type": "prometheus",
@@ -1392,7 +1574,7 @@
         "h": 6,
         "w": 6,
         "x": 6,
-        "y": 39
+        "y": 42
       },
       "fieldConfig": {
         "defaults": {
@@ -1459,7 +1641,7 @@
     },
     {
       "type": "stat",
-      "id": 20,
+      "id": 22,
       "title": "Hydrolysis production",
       "datasource": {
         "type": "prometheus",
@@ -1469,7 +1651,7 @@
         "h": 6,
         "w": 6,
         "x": 12,
-        "y": 39
+        "y": 42
       },
       "fieldConfig": {
         "defaults": {
@@ -1536,20 +1718,20 @@
     },
     {
       "type": "row",
-      "id": 21,
+      "id": 23,
       "title": "Power unit & diagnostics",
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 45
+        "y": 48
       },
       "panels": []
     },
     {
       "type": "timeseries",
-      "id": 22,
+      "id": 24,
       "title": "Power unit voltages",
       "datasource": {
         "type": "prometheus",
@@ -1559,7 +1741,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 46
+        "y": 49
       },
       "fieldConfig": {
         "defaults": {
@@ -1642,7 +1824,7 @@
     },
     {
       "type": "timeseries",
-      "id": 23,
+      "id": 25,
       "title": "Cell current & Modbus error rate",
       "datasource": {
         "type": "prometheus",
@@ -1652,7 +1834,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 46
+        "y": 49
       },
       "fieldConfig": {
         "defaults": {
