@@ -117,6 +117,7 @@ in
     homeAssistant.enable = true;
     extraDashboardPaths = [
       ./docker/infra/grafana/dashboards/home-assistant-prometheus.json
+      ./docker/infra/grafana/dashboards/pool-neopool.json
     ];
   };
 
