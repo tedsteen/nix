@@ -53,7 +53,7 @@
         "defaults": {
           "unit": "none",
           "color": {
-            "mode": "thresholds",
+            "mode": "fixed",
             "fixedColor": "text"
           },
           "mappings": [],
@@ -61,24 +61,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
+                "color": "text",
                 "value": null
-              },
-              {
-                "color": "orange",
-                "value": 6.8
-              },
-              {
-                "color": "green",
-                "value": 7.0
-              },
-              {
-                "color": "orange",
-                "value": 7.4
-              },
-              {
-                "color": "red",
-                "value": 7.6
               }
             ]
           },
@@ -87,7 +71,7 @@
         "overrides": []
       },
       "options": {
-        "colorMode": "background",
+        "colorMode": "none",
         "graphMode": "area",
         "justifyMode": "auto",
         "textMode": "auto",
@@ -112,7 +96,7 @@
           "refId": "A"
         }
       ],
-      "description": "Colour band from pH setpoints (min 7.0 / max 7.4). Grafana can't bind a live two-sided band from a metric, so these thresholds mirror the current setpoints; the pH trend shows the live setpoint lines."
+      "description": "Grafana can't bind a live two-sided band from the pH setpoint metrics, so the tile is left uncoloured; see the live pH min/max setpoint lines on the pH trend below."
     },
     {
       "type": "stat",
@@ -132,7 +116,7 @@
         "defaults": {
           "unit": "mvolt",
           "color": {
-            "mode": "thresholds",
+            "mode": "fixed",
             "fixedColor": "text"
           },
           "mappings": [],
@@ -140,16 +124,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
+                "color": "text",
                 "value": null
-              },
-              {
-                "color": "orange",
-                "value": 700
-              },
-              {
-                "color": "green",
-                "value": 800
               }
             ]
           },
@@ -158,7 +134,7 @@
         "overrides": []
       },
       "options": {
-        "colorMode": "background",
+        "colorMode": "none",
         "graphMode": "area",
         "justifyMode": "auto",
         "textMode": "auto",
@@ -183,7 +159,7 @@
           "refId": "A"
         }
       ],
-      "description": "Green at/above the Redox setpoint (800 mV), red below. Static mirror of the setpoint; the Redox trend shows the live setpoint line."
+      "description": "Left uncoloured; see the live Redox setpoint line on the Redox trend below."
     },
     {
       "type": "stat",
@@ -372,9 +348,7 @@
               }
             ]
           },
-          "decimals": 2,
-          "min": 6.5,
-          "max": 9.0
+          "decimals": 2
         },
         "overrides": [
           {
