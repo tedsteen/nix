@@ -16,8 +16,8 @@ in
   ];
 
   environment.variables = {
-    CC = lib.mkDefault "ccache clang";
-    CXX = lib.mkDefault "ccache clang++";
+    CC = lib.mkDefault "clang";
+    CXX = lib.mkDefault "clang++";
     MACOSX_DEPLOYMENT_TARGET = lib.mkDefault "14";
   };
 
