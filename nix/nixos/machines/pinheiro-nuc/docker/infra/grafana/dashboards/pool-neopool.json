@@ -60,12 +60,32 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "red",
                 "value": null
               },
               {
+                "color": "orange",
+                "value": 6.8
+              },
+              {
+                "color": "yellow",
+                "value": 7.0
+              },
+              {
+                "color": "green",
+                "value": 7.2
+              },
+              {
+                "color": "yellow",
+                "value": 7.6
+              },
+              {
+                "color": "orange",
+                "value": 8.0
+              },
+              {
                 "color": "red",
-                "value": 14
+                "value": 8.2
               }
             ]
           },
@@ -98,34 +118,9 @@
           "range": true,
           "refId": "A",
           "legendFormat": "pH"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "hass_number_state{entity=\"number.neopool_ph_max\"}",
-          "instant": true,
-          "refId": "B",
-          "legendFormat": "phmax"
         }
       ],
-      "transformations": [
-        {
-          "id": "configFromData",
-          "options": {
-            "configRefId": "B",
-            "mappings": [
-              {
-                "fieldName": "phmax",
-                "handlerKey": "threshold1"
-              }
-            ]
-          }
-        }
-      ],
-      "description": "Background reddens when pH is at/above the live pH-max setpoint. Low-pH and full status is in the Status section."
+      "description": "Background color reflects pH severity: green 7.2-7.6, yellow 7.0-7.2/7.6-8.0, orange 6.8-7.0/8.0-8.2, red outside that."
     },
     {
       "type": "stat",
@@ -156,8 +151,24 @@
                 "value": null
               },
               {
+                "color": "orange",
+                "value": 400
+              },
+              {
+                "color": "yellow",
+                "value": 550
+              },
+              {
                 "color": "green",
-                "value": 100000
+                "value": 650
+              },
+              {
+                "color": "yellow",
+                "value": 800
+              },
+              {
+                "color": "red",
+                "value": 900
               }
             ]
           },
@@ -190,34 +201,9 @@
           "range": true,
           "refId": "A",
           "legendFormat": "Redox (ORP)"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "hass_number_state_mv{entity=\"number.neopool_redox_setpoint\"}",
-          "instant": true,
-          "refId": "B",
-          "legendFormat": "sp"
         }
       ],
-      "transformations": [
-        {
-          "id": "configFromData",
-          "options": {
-            "configRefId": "B",
-            "mappings": [
-              {
-                "fieldName": "sp",
-                "handlerKey": "threshold1"
-              }
-            ]
-          }
-        }
-      ],
-      "description": "Background greens at/above the live Redox setpoint, red below."
+      "description": "Background color reflects ORP severity: green 650-800mV, yellow 550-650/800-900mV, orange 400-550mV, red below 400 or above 900mV."
     },
     {
       "type": "stat",
@@ -393,7 +379,7 @@
             "spanNulls": true,
             "axisPlacement": "auto",
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "area"
             }
           },
           "mappings": [],
@@ -401,8 +387,32 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text",
+                "color": "red",
                 "value": null
+              },
+              {
+                "color": "orange",
+                "value": 6.8
+              },
+              {
+                "color": "yellow",
+                "value": 7.0
+              },
+              {
+                "color": "green",
+                "value": 7.2
+              },
+              {
+                "color": "yellow",
+                "value": 7.6
+              },
+              {
+                "color": "orange",
+                "value": 8.0
+              },
+              {
+                "color": "red",
+                "value": 8.2
               }
             ]
           },
@@ -553,7 +563,7 @@
             "spanNulls": true,
             "axisPlacement": "auto",
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "area"
             }
           },
           "mappings": [],
@@ -561,8 +571,28 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text",
+                "color": "red",
                 "value": null
+              },
+              {
+                "color": "orange",
+                "value": 400
+              },
+              {
+                "color": "yellow",
+                "value": 550
+              },
+              {
+                "color": "green",
+                "value": 650
+              },
+              {
+                "color": "yellow",
+                "value": 800
+              },
+              {
+                "color": "red",
+                "value": 900
               }
             ]
           },
@@ -1026,188 +1056,6 @@
         "y": 32
       },
       "panels": []
-    },
-    {
-      "type": "stat",
-      "id": 14,
-      "title": "pH status",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 0,
-        "y": 33
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "none",
-          "color": {
-            "mode": "thresholds",
-            "fixedColor": "text"
-          },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "IN RANGE",
-                  "color": "green",
-                  "index": 0
-                },
-                "1": {
-                  "text": "LOW",
-                  "color": "orange",
-                  "index": 1
-                },
-                "2": {
-                  "text": "HIGH",
-                  "color": "red",
-                  "index": 2
-                }
-              }
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 1
-              },
-              {
-                "color": "red",
-                "value": 2
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "textMode": "value",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "orientation": "auto"
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "2 * (hass_sensor_ph_None{entity=\"sensor.neopool_ph\"} > bool on() hass_number_state{entity=\"number.neopool_ph_max\"}) + (hass_sensor_ph_None{entity=\"sensor.neopool_ph\"} < bool on() hass_number_state{entity=\"number.neopool_ph_min\"})",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "description": "Live from setpoints: HIGH when pH > pH max, LOW when pH < pH min."
-    },
-    {
-      "type": "stat",
-      "id": 15,
-      "title": "Redox status",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 6,
-        "y": 33
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "none",
-          "color": {
-            "mode": "thresholds",
-            "fixedColor": "text"
-          },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "OK",
-                  "color": "green",
-                  "index": 0
-                },
-                "1": {
-                  "text": "LOW",
-                  "color": "orange",
-                  "index": 1
-                },
-                "2": {
-                  "text": "VERY LOW",
-                  "color": "red",
-                  "index": 2
-                }
-              }
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 1
-              },
-              {
-                "color": "red",
-                "value": 2
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "textMode": "value",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "orientation": "auto"
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "(hass_sensor_voltage_mv{entity=\"sensor.neopool_redox_orp\"} < bool on() (hass_number_state_mv{entity=\"number.neopool_redox_setpoint\"} - 50)) + (hass_sensor_voltage_mv{entity=\"sensor.neopool_redox_orp\"} < bool on() (hass_number_state_mv{entity=\"number.neopool_redox_setpoint\"} - 150))",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "description": "Live from setpoint: LOW when >50 mV below setpoint, VERY LOW when >150 mV below."
     },
     {
       "type": "stat",
@@ -1692,83 +1540,6 @@
           },
           "editorMode": "code",
           "expr": "hass_binary_sensor_state{entity=\"binary_sensor.neopool_redox_tank_level_low\"}",
-          "range": true,
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "type": "stat",
-      "id": 22,
-      "title": "Hydrolysis production",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 0,
-        "y": 45
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "none",
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "text"
-          },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "NORMAL",
-                  "color": "green",
-                  "index": 0
-                },
-                "1": {
-                  "text": "LOW",
-                  "color": "orange",
-                  "index": 1
-                }
-              }
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "text",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "textMode": "value",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "orientation": "auto"
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "hass_binary_sensor_state{entity=\"binary_sensor.neopool_hydrolysis_low_production\"}",
           "range": true,
           "refId": "A"
         }
