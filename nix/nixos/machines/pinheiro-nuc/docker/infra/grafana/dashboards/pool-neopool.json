@@ -1006,13 +1006,13 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "hass_sensor_duration_h{entity=\"sensor.neopool_hydrolysis_runtime_total\"}",
+          "expr": "hass_sensor_duration_h{entity=\"sensor.neopool_hydrolysis_runtime_part\"}",
           "range": true,
           "refId": "A",
-          "legendFormat": "Total runtime"
+          "legendFormat": "Partial runtime"
         }
       ],
-      "description": "Total electrolysis cell runtime. Red reference line at 7000 h marks the recommended cell-replacement point."
+      "description": "Partial electrolysis cell runtime (resettable). Red reference line at 7000 h marks the recommended cell-replacement point."
     },
     {
       "type": "row",
