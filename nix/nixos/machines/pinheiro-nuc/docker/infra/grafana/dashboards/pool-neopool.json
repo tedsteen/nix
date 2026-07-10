@@ -69,11 +69,11 @@
               },
               {
                 "color": "yellow",
-                "value": 7.0
+                "value": 7.2
               },
               {
                 "color": "green",
-                "value": 7.2
+                "value": 7.4
               },
               {
                 "color": "yellow",
@@ -81,11 +81,11 @@
               },
               {
                 "color": "orange",
-                "value": 8.0
+                "value": 7.8
               },
               {
                 "color": "red",
-                "value": 8.2
+                "value": 8.1
               }
             ]
           },
@@ -120,7 +120,7 @@
           "legendFormat": "pH"
         }
       ],
-      "description": "Background color reflects pH severity: green 7.2-7.6, yellow 7.0-7.2/7.6-8.0, orange 6.8-7.0/8.0-8.2, red outside that."
+      "description": "Background color reflects pH severity: green 7.4-7.6, yellow 7.2-7.4/7.6-7.8, orange 6.8-7.2/7.8-8.1, red below 6.8 or above 8.1."
     },
     {
       "type": "stat",
@@ -152,23 +152,23 @@
               },
               {
                 "color": "orange",
-                "value": 400
+                "value": 600
               },
               {
                 "color": "yellow",
-                "value": 550
-              },
-              {
-                "color": "green",
                 "value": 650
               },
               {
+                "color": "green",
+                "value": 700
+              },
+              {
                 "color": "yellow",
-                "value": 800
+                "value": 780
               },
               {
                 "color": "red",
-                "value": 900
+                "value": 820
               }
             ]
           },
@@ -203,7 +203,7 @@
           "legendFormat": "Redox (ORP)"
         }
       ],
-      "description": "Background color reflects ORP severity: green 650-800mV, yellow 550-650/800-900mV, orange 400-550mV, red below 400 or above 900mV."
+      "description": "Background color reflects ORP severity: green 700-780mV, yellow 650-700/780-820mV, orange 600-650mV, red below 600 or above 820mV."
     },
     {
       "type": "stat",
@@ -396,11 +396,11 @@
               },
               {
                 "color": "yellow",
-                "value": 7.0
+                "value": 7.2
               },
               {
                 "color": "green",
-                "value": 7.2
+                "value": 7.4
               },
               {
                 "color": "yellow",
@@ -408,11 +408,11 @@
               },
               {
                 "color": "orange",
-                "value": 8.0
+                "value": 7.8
               },
               {
                 "color": "red",
-                "value": 8.2
+                "value": 8.1
               }
             ]
           },
@@ -576,23 +576,23 @@
               },
               {
                 "color": "orange",
-                "value": 400
+                "value": 600
               },
               {
                 "color": "yellow",
-                "value": 550
-              },
-              {
-                "color": "green",
                 "value": 650
               },
               {
+                "color": "green",
+                "value": 700
+              },
+              {
                 "color": "yellow",
-                "value": 800
+                "value": 780
               },
               {
                 "color": "red",
-                "value": 900
+                "value": 820
               }
             ]
           },
