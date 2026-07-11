@@ -69,11 +69,11 @@
               },
               {
                 "color": "yellow",
-                "value": 7.2
+                "value": 7.0
               },
               {
                 "color": "green",
-                "value": 7.4
+                "value": 7.2
               },
               {
                 "color": "yellow",
@@ -120,7 +120,7 @@
           "legendFormat": "pH"
         }
       ],
-      "description": "Background color reflects pH severity: green 7.4-7.6, yellow 7.2-7.4/7.6-7.8, orange 6.8-7.2/7.8-8.1, red below 6.8 or above 8.1."
+      "description": "Background color reflects pH severity: green 7.2-7.6, yellow 7.0-7.2/7.6-7.8, orange 6.8-7.0/7.8-8.1, red below 6.8 or above 8.1."
     },
     {
       "type": "stat",
@@ -155,20 +155,20 @@
                 "value": 600
               },
               {
-                "color": "yellow",
+                "color": "green",
                 "value": 650
               },
               {
-                "color": "green",
-                "value": 700
+                "color": "yellow",
+                "value": 750
               },
               {
-                "color": "yellow",
-                "value": 780
+                "color": "orange",
+                "value": 800
               },
               {
                 "color": "red",
-                "value": 820
+                "value": 900
               }
             ]
           },
@@ -203,7 +203,7 @@
           "legendFormat": "Redox (ORP)"
         }
       ],
-      "description": "Background color reflects ORP severity: green 700-780mV, yellow 650-700/780-820mV, orange 600-650mV, red below 600 or above 820mV."
+      "description": "Background color reflects ORP: red <600mV (below range), orange 600-650mV (low), green 650-750mV (normal), yellow 750-800mV (high), orange 800-900mV (unusually high), red >900mV (outside range)."
     },
     {
       "type": "stat",
@@ -396,11 +396,11 @@
               },
               {
                 "color": "yellow",
-                "value": 7.2
+                "value": 7.0
               },
               {
                 "color": "green",
-                "value": 7.4
+                "value": 7.2
               },
               {
                 "color": "yellow",
@@ -579,20 +579,20 @@
                 "value": 600
               },
               {
-                "color": "yellow",
+                "color": "green",
                 "value": 650
               },
               {
-                "color": "green",
-                "value": 700
+                "color": "yellow",
+                "value": 750
               },
               {
-                "color": "yellow",
-                "value": 780
+                "color": "orange",
+                "value": 800
               },
               {
                 "color": "red",
-                "value": 820
+                "value": 900
               }
             ]
           },
