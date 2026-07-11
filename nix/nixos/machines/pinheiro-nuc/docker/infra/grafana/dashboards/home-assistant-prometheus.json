@@ -21,12 +21,29 @@
   "links": [],
   "panels": [
     {
+      "type": "row",
+      "title": "System Health",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Availability",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "percentunit",
           "color": {
             "mode": "thresholds"
           },
@@ -40,31 +57,23 @@
               },
               {
                 "color": "yellow",
-                "value": 0.98
+                "value": 0.95
               },
               {
                 "color": "green",
-                "value": 1
+                "value": 0.99
               }
             ]
           },
-          "unit": "percentunit"
+          "decimals": 3
         },
         "overrides": []
       },
-      "gridPos": {
-        "x": 0,
-        "y": 0,
-        "w": 4,
-        "h": 4
-      },
-      "id": 1,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
+        "textMode": "auto",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -72,11 +81,9 @@
           "fields": "",
           "values": false
         },
-        "showPercentChange": false,
-        "textMode": "auto",
+        "orientation": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -85,21 +92,28 @@
           },
           "editorMode": "code",
           "expr": "sum(hass_entity_available) / count(hass_entity_available)",
-          "legendFormat": "available",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Availability",
-      "type": "stat"
+      "description": "Percentage of entities reporting as available",
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 0,
+        "y": 1
+      }
     },
     {
+      "type": "stat",
+      "title": "Unavailable",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
           "color": {
             "mode": "thresholds"
           },
@@ -121,23 +135,15 @@
               }
             ]
           },
-          "unit": "short"
+          "decimals": null
         },
         "overrides": []
       },
-      "gridPos": {
-        "x": 4,
-        "y": 0,
-        "w": 4,
-        "h": 4
-      },
-      "id": 2,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
+        "textMode": "auto",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -145,11 +151,9 @@
           "fields": "",
           "values": false
         },
-        "showPercentChange": false,
-        "textMode": "auto",
+        "orientation": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -158,23 +162,30 @@
           },
           "editorMode": "code",
           "expr": "count(hass_entity_available == 0)",
-          "legendFormat": "unavailable",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Unavailable",
-      "type": "stat"
+      "description": "Entities that are currently unavailable",
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 6,
+        "y": 1
+      }
     },
     {
+      "type": "stat",
+      "title": "Entities",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
           "color": {
-            "mode": "thresholds"
+            "mode": "none"
           },
           "mappings": [],
           "thresholds": {
@@ -186,23 +197,15 @@
               }
             ]
           },
-          "unit": "short"
+          "decimals": null
         },
         "overrides": []
       },
-      "gridPos": {
-        "x": 8,
-        "y": 0,
-        "w": 4,
-        "h": 4
-      },
-      "id": 3,
       "options": {
         "colorMode": "value",
         "graphMode": "none",
         "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
+        "textMode": "auto",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -210,11 +213,9 @@
           "fields": "",
           "values": false
         },
-        "showPercentChange": false,
-        "textMode": "auto",
+        "orientation": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -222,22 +223,29 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "count(hass_entity_info)",
-          "legendFormat": "entities",
+          "expr": "count(hass_entity_available)",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Entities",
-      "type": "stat"
+      "description": "Total tracked entities",
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 12,
+        "y": 1
+      }
     },
     {
+      "type": "stat",
+      "title": "State Changes/s",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "ops",
           "color": {
             "mode": "thresholds"
           },
@@ -251,31 +259,23 @@
               },
               {
                 "color": "yellow",
-                "value": 1
+                "value": 10
               },
               {
                 "color": "red",
-                "value": 5
+                "value": 50
               }
             ]
           },
-          "unit": "short"
+          "decimals": 1
         },
         "overrides": []
       },
-      "gridPos": {
-        "x": 12,
-        "y": 0,
-        "w": 4,
-        "h": 4
-      },
-      "id": 4,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
+        "textMode": "auto",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -283,76 +283,9 @@
           "fields": "",
           "values": false
         },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "sum(hass_update_state)",
-          "legendFormat": "updates",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Updates",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "x": 16,
-        "y": 0,
-        "w": 4,
-        "h": 4
-      },
-      "id": 5,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
         "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -361,21 +294,98 @@
           },
           "editorMode": "code",
           "expr": "sum(rate(hass_state_change_total[5m]))",
-          "legendFormat": "changes/sec",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "State Changes",
-      "type": "stat"
+      "description": "Rate of entity state changes per second (5m avg)",
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      }
     },
     {
+      "type": "stat",
+      "title": "Stale Entities",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 300
+              },
+              {
+                "color": "red",
+                "value": 900
+              }
+            ]
+          },
+          "decimals": null
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "count((time() - hass_last_updated_time_seconds) > 300 and hass_entity_available == 1)",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "description": "Available entities not updated in >5 minutes",
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 0,
+        "y": 4
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Updates Available",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
           "color": {
             "mode": "thresholds"
           },
@@ -397,23 +407,15 @@
               }
             ]
           },
-          "unit": "short"
+          "decimals": null
         },
         "overrides": []
       },
-      "gridPos": {
-        "x": 20,
-        "y": 0,
-        "w": 4,
-        "h": 4
-      },
-      "id": 6,
       "options": {
         "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
+        "textMode": "auto",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -421,11 +423,79 @@
           "fields": "",
           "values": false
         },
-        "showPercentChange": false,
-        "textMode": "auto",
+        "orientation": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(hass_update_state)",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "description": "Updates available for integrations/add-ons",
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 6,
+        "y": 4
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Low Batteries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 3
+              }
+            ]
+          },
+          "decimals": null
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "wideLayout": true
+      },
       "targets": [
         {
           "datasource": {
@@ -434,15 +504,21 @@
           },
           "editorMode": "code",
           "expr": "count((hass_sensor_battery_percent or hass_sensor_battery_level_percent or hass_sensor_battery_level) < 30)",
-          "legendFormat": "low",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Low Batteries",
-      "type": "stat"
+      "description": "Entities with battery < 30%",
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 12,
+        "y": 4
+      }
     },
     {
+      "type": "piechart",
+      "title": "Entities by Domain",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -464,13 +540,6 @@
         },
         "overrides": []
       },
-      "gridPos": {
-        "x": 0,
-        "y": 4,
-        "w": 8,
-        "h": 8
-      },
-      "id": 10,
       "options": {
         "displayLabels": [
           "name",
@@ -493,12 +562,10 @@
           "values": false
         },
         "tooltip": {
-          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -506,58 +573,89 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "count by (domain) (hass_entity_info)",
+          "expr": "count by (domain) (hass_entity_available)",
           "legendFormat": "{{domain}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Entities By Domain",
-      "type": "piechart"
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 18,
+        "y": 4
+      }
     },
     {
+      "type": "row",
+      "title": "Milo's Glucose (Dexcom)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 10
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Glucose",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
+          "unit": "short",
           "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            }
+            "mode": "thresholds"
           },
           "mappings": [],
-          "unit": "short"
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#0A1931",
+                "value": null
+              },
+              {
+                "color": "#1A237E",
+                "value": 54
+              },
+              {
+                "color": "#42A5F5",
+                "value": 70
+              },
+              {
+                "color": "#2ECC40",
+                "value": 80
+              },
+              {
+                "color": "#FFC300",
+                "value": 180
+              },
+              {
+                "color": "#FF5733",
+                "value": 250
+              },
+              {
+                "color": "#C62828",
+                "value": 350
+              }
+            ]
+          },
+          "decimals": 0
         },
         "overrides": []
       },
-      "gridPos": {
-        "x": 8,
-        "y": 4,
-        "w": 8,
-        "h": 8
-      },
-      "id": 11,
       "options": {
-        "displayLabels": [
-          "name",
-          "value"
-        ],
-        "legend": {
-          "displayMode": "list",
-          "placement": "right",
-          "showLegend": true,
-          "values": [
-            "value"
-          ]
-        },
-        "pieType": "donut",
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "textMode": "auto",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -565,13 +663,9 @@
           "fields": "",
           "values": false
         },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
+        "orientation": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -579,11 +673,1363 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum(hass_switch_state)",
-          "legendFormat": "switches on",
+          "expr": "hass_sensor_blood_glucose_concentration_mg_per_dl{entity=\"sensor.milo_dexcom_glucose_value\"}",
           "range": true,
           "refId": "A"
+        }
+      ],
+      "description": "Current blood glucose in mg/dL. Green = 80-180 (in range), Yellow = caution, Orange = concerning, Dark = critical",
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 11
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Time in Range",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "green",
+                "value": 70
+              }
+            ]
+          },
+          "decimals": 1
         },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "avg((hass_sensor_blood_glucose_concentration_mg_per_dl{entity=\"sensor.milo_dexcom_glucose_value\"} >= bool 80) * (hass_sensor_blood_glucose_concentration_mg_per_dl{entity=\"sensor.milo_dexcom_glucose_value\"} <= bool 180)) * 100",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "description": "% of readings in range (80-180)",
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 6,
+        "y": 11
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Below Range",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 5
+              },
+              {
+                "color": "red",
+                "value": 10
+              }
+            ]
+          },
+          "decimals": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "avg(hass_sensor_blood_glucose_concentration_mg_per_dl{entity=\"sensor.milo_dexcom_glucose_value\"} < bool 80) * 100",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "description": "% of readings below 80",
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 12,
+        "y": 11
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Above Range",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 25
+              }
+            ]
+          },
+          "decimals": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "avg(hass_sensor_blood_glucose_concentration_mg_per_dl{entity=\"sensor.milo_dexcom_glucose_value\"} > bool 180) * 100",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "description": "% of readings above 180",
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 18,
+        "y": 11
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Min",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#0A1931",
+                "value": null
+              },
+              {
+                "color": "#1A237E",
+                "value": 54
+              },
+              {
+                "color": "#42A5F5",
+                "value": 70
+              },
+              {
+                "color": "#2ECC40",
+                "value": 80
+              },
+              {
+                "color": "#FFC300",
+                "value": 180
+              },
+              {
+                "color": "#FF5733",
+                "value": 250
+              },
+              {
+                "color": "#C62828",
+                "value": 350
+              }
+            ]
+          },
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "min(hass_sensor_blood_glucose_concentration_mg_per_dl{entity=\"sensor.milo_dexcom_glucose_value\"})",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "description": "Lowest reading in window",
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 6,
+        "y": 14
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Max",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#2ECC40",
+                "value": null
+              },
+              {
+                "color": "#FFC300",
+                "value": 180
+              },
+              {
+                "color": "#FF5733",
+                "value": 250
+              },
+              {
+                "color": "#581845",
+                "value": 350
+              }
+            ]
+          },
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "max(hass_sensor_blood_glucose_concentration_mg_per_dl{entity=\"sensor.milo_dexcom_glucose_value\"})",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "description": "Highest reading in window",
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 12,
+        "y": 14
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Avg",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#0A1931",
+                "value": null
+              },
+              {
+                "color": "#1A237E",
+                "value": 54
+              },
+              {
+                "color": "#42A5F5",
+                "value": 70
+              },
+              {
+                "color": "#2ECC40",
+                "value": 80
+              },
+              {
+                "color": "#FFC300",
+                "value": 180
+              },
+              {
+                "color": "#FF5733",
+                "value": 250
+              },
+              {
+                "color": "#C62828",
+                "value": 350
+              }
+            ]
+          },
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "avg(hass_sensor_blood_glucose_concentration_mg_per_dl{entity=\"sensor.milo_dexcom_glucose_value\"})",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "description": "Average reading in window",
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 18,
+        "y": 14
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Glucose History",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 3,
+            "fillOpacity": 20,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisPlacement": "auto",
+            "thresholdsStyle": {
+              "mode": "area"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#0A1931",
+                "value": null
+              },
+              {
+                "color": "#1A237E",
+                "value": 54
+              },
+              {
+                "color": "#42A5F5",
+                "value": 70
+              },
+              {
+                "color": "#2ECC40",
+                "value": 80
+              },
+              {
+                "color": "#FFC300",
+                "value": 180
+              },
+              {
+                "color": "#FF5733",
+                "value": 250
+              },
+              {
+                "color": "#C62828",
+                "value": 350
+              }
+            ]
+          },
+          "decimals": 0
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Glucose"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "dark-blue"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_blood_glucose_concentration_mg_per_dl{entity=\"sensor.milo_dexcom_glucose_value\"}",
+          "range": true,
+          "refId": "A",
+          "legendFormat": "Glucose"
+        }
+      ],
+      "description": "Blood glucose with severity background: green = in range (80-180), yellow = caution, orange = concerning, dark = critical",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      }
+    },
+    {
+      "type": "row",
+      "title": "Heating \u2014 Heat Pump",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 40
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Heat Pump Temperatures",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisPlacement": "auto",
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "decimals": 1
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Flow"
+            },
+            "properties": [
+              {
+                "id": "custom.lineWidth",
+                "value": 3
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "red"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Tank (DHW)"
+            },
+            "properties": [
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "purple"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "House Room"
+            },
+            "properties": [
+              {
+                "id": "custom.lineWidth",
+                "value": 2
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Outside"
+            },
+            "properties": [
+              {
+                "id": "custom.lineWidth",
+                "value": 1
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "blue"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_temperature_celsius{entity=\"sensor.pinheiro_flow_temperature\"}",
+          "range": true,
+          "refId": "A",
+          "legendFormat": "Flow"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_temperature_celsius{entity=\"sensor.pinheiro_return_temperature\"}",
+          "range": true,
+          "refId": "B",
+          "legendFormat": "Return"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_temperature_celsius{entity=\"sensor.pinheiro_tank_temperature\"}",
+          "range": true,
+          "refId": "C",
+          "legendFormat": "Tank (DHW)"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_temperature_celsius{entity=\"sensor.pinheiro_outside_temperature\"}",
+          "range": true,
+          "refId": "D",
+          "legendFormat": "Outside"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_temperature_celsius{entity=\"sensor.pinheiro_house_room_temperature\"}",
+          "range": true,
+          "refId": "E",
+          "legendFormat": "House Room"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_temperature_celsius{entity=\"sensor.pinheiro_condensing_temperature\"}",
+          "range": true,
+          "refId": "F",
+          "legendFormat": "Condensing"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 41
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Daily Heating & DHW Energy",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "kwh",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisPlacement": "auto",
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "decimals": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_energy_kwh{entity=\"sensor.pinheiro_daily_heating_energy_consumed\"}",
+          "range": true,
+          "refId": "A",
+          "legendFormat": "Heating"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_energy_kwh{entity=\"sensor.pinheiro_daily_hot_water_energy_consumed\"}",
+          "range": true,
+          "refId": "B",
+          "legendFormat": "Hot Water"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 41
+      }
+    },
+    {
+      "type": "row",
+      "title": "Heating \u2014 Room Temperatures",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 49
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Room Temperatures",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisPlacement": "auto",
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "decimals": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_climate_current_temperature_celsius{entity=\"climate.shellyblutrv_f844773a3beb\"}",
+          "range": true,
+          "refId": "A",
+          "legendFormat": "Master Bedroom"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_climate_current_temperature_celsius{entity=\"climate.shellyblutrv_286847fc9eb7\"}",
+          "range": true,
+          "refId": "B",
+          "legendFormat": "Office"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_climate_current_temperature_celsius{entity=\"climate.shellyblutrv_f8447725c5a4\"}",
+          "range": true,
+          "refId": "C",
+          "legendFormat": "Bedroom Corridor"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_climate_current_temperature_celsius{entity=\"climate.shellyblutrv_f844771db67a\"}",
+          "range": true,
+          "refId": "D",
+          "legendFormat": "Kids Room"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_climate_current_temperature_celsius{entity=\"climate.shellyblutrv_f844773718c5\"}",
+          "range": true,
+          "refId": "E",
+          "legendFormat": "Guest Bedroom"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_climate_current_temperature_celsius{entity=\"climate.pinheiro_house\"}",
+          "range": true,
+          "refId": "F",
+          "legendFormat": "Pinheiro House"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 50
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Climate Current vs Target",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 6,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisPlacement": "auto",
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "decimals": 1
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "/.* target/"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    8,
+                    8
+                  ]
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_climate_current_temperature_celsius",
+          "range": true,
+          "refId": "A",
+          "legendFormat": "{{friendly_name}} current"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_climate_target_temperature_celsius",
+          "range": true,
+          "refId": "B",
+          "legendFormat": "{{friendly_name}} target"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 50
+      }
+    },
+    {
+      "type": "row",
+      "title": "Power & Energy",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 58
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Lighting Power Consumption",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisPlacement": "auto",
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "decimals": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_power_w{entity=~\"sensor.*lights.*power\"}",
+          "range": true,
+          "refId": "A",
+          "legendFormat": "{{friendly_name}}"
+        }
+      ],
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 59
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Smart Plug Power Consumption",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisPlacement": "auto",
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "decimals": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_power_w{entity=~\"sensor.plug.*\"}",
+          "range": true,
+          "refId": "A",
+          "legendFormat": "{{friendly_name}}"
+        }
+      ],
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 59
+      }
+    },
+    {
+      "type": "row",
+      "title": "Lighting",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 66
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Lights On",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          },
+          "decimals": null
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "targets": [
         {
           "datasource": {
             "type": "prometheus",
@@ -591,37 +2037,265 @@
           },
           "editorMode": "code",
           "expr": "count(hass_light_brightness_percent > 0)",
-          "legendFormat": "lights on",
           "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "sum(hass_input_boolean_state)",
-          "legendFormat": "input booleans on",
-          "range": true,
-          "refId": "C"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "sum(hass_lock_state)",
-          "legendFormat": "locks locked",
-          "range": true,
-          "refId": "D"
+          "refId": "A"
         }
       ],
-      "title": "Active Devices",
-      "type": "piechart"
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 0,
+        "y": 67
+      }
     },
     {
+      "type": "stat",
+      "title": "Total Lights",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "none"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "decimals": null
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "count(hass_light_brightness_percent)",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 4,
+        "y": 67
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Lighting Energy Today",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "kwh",
+          "color": {
+            "mode": "none"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "decimals": 2
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "textMode": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(hass_sensor_energy_kwh{entity=~\".*lights.*energy\"})",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 8,
+        "y": 67
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Light Brightness Levels",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisPlacement": "auto",
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "decimals": 1
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Terrace floor lights"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Terrace"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Master bathroom ceiling lights"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Master Bath"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Guest bathroom ceiling lights"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Guest Bath"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_light_brightness_percent",
+          "range": true,
+          "refId": "A",
+          "legendFormat": "{{friendly_name}}"
+        }
+      ],
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 70
+      }
+    },
+    {
+      "type": "row",
+      "title": "Status & Issues",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 74
+      }
+    },
+    {
+      "type": "table",
+      "title": "Unavailable Entities",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -655,26 +2329,18 @@
         },
         "overrides": []
       },
-      "gridPos": {
-        "x": 16,
-        "y": 4,
-        "w": 8,
-        "h": 8
-      },
-      "id": 12,
       "options": {
         "cellHeight": "sm",
         "footer": {
-          "countRows": false,
+          "countRows": true,
           "fields": "",
           "reducer": [
             "sum"
           ],
-          "show": false
+          "show": true
         },
         "showHeader": true
       },
-      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -690,7 +2356,6 @@
           "instant": true
         }
       ],
-      "title": "Unavailable Entities",
       "transformations": [
         {
           "id": "organize",
@@ -703,10 +2368,8 @@
               "job": true,
               "service_instance_id": true,
               "service_name": true,
-              "service_namespace": true,
-              "Value": false
+              "service_namespace": true
             },
-            "indexByName": {},
             "renameByName": {
               "Value": "Available",
               "domain": "Domain",
@@ -716,9 +2379,16 @@
           }
         }
       ],
-      "type": "table"
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 75
+      }
     },
     {
+      "type": "table",
+      "title": "Low Batteries",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -744,8 +2414,12 @@
                 "value": null
               },
               {
+                "color": "yellow",
+                "value": 30
+              },
+              {
                 "color": "red",
-                "value": 1
+                "value": 15
               }
             ]
           },
@@ -753,26 +2427,18 @@
         },
         "overrides": []
       },
-      "gridPos": {
-        "x": 0,
-        "y": 12,
-        "w": 8,
-        "h": 8
-      },
-      "id": 20,
       "options": {
         "cellHeight": "sm",
         "footer": {
-          "countRows": false,
+          "countRows": true,
           "fields": "",
           "reducer": [
             "sum"
           ],
-          "show": false
+          "show": true
         },
         "showHeader": true
       },
-      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -788,7 +2454,6 @@
           "instant": true
         }
       ],
-      "title": "Low Batteries",
       "transformations": [
         {
           "id": "organize",
@@ -803,9 +2468,8 @@
               "service_name": true,
               "service_namespace": true
             },
-            "indexByName": {},
             "renameByName": {
-              "Value": "Battery",
+              "Value": "Battery %",
               "domain": "Domain",
               "entity": "Entity",
               "friendly_name": "Name"
@@ -813,668 +2477,65 @@
           }
         }
       ],
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
       "gridPos": {
-        "x": 8,
-        "y": 12,
-        "w": 8,
-        "h": 8
-      },
-      "id": 21,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "pluginVersion": "12.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "bottomk(20, hass_sensor_battery_percent or hass_sensor_battery_level_percent or hass_sensor_battery_level)",
-          "legendFormat": "{{friendly_name}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Lowest Battery Levels",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "celsius"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "x": 16,
-        "y": 12,
-        "w": 8,
-        "h": 8
-      },
-      "id": 22,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "pluginVersion": "12.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "topk(20, hass_sensor_temperature_celsius or hass_climate_current_temperature_celsius)",
-          "legendFormat": "{{friendly_name}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Temperatures",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "x": 0,
-        "y": 20,
-        "w": 8,
-        "h": 8
-      },
-      "id": 30,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "pluginVersion": "12.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "topk(20, hass_sensor_humidity_percent or hass_humidifier_target_humidity_percent)",
-          "legendFormat": "{{friendly_name}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Humidity",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "watt"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "x": 8,
-        "y": 20,
-        "w": 8,
-        "h": 8
-      },
-      "id": 31,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "pluginVersion": "12.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "topk(10, hass_sensor_power_w)",
-          "legendFormat": "{{friendly_name}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Top Power Sensors",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "x": 16,
-        "y": 20,
-        "w": 8,
-        "h": 8
-      },
-      "id": 32,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "pluginVersion": "12.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "topk(20, hass_light_brightness_percent > 0)",
-          "legendFormat": "{{friendly_name}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Light Brightness",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "celsius"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "x": 0,
-        "y": 28,
+        "h": 8,
         "w": 12,
-        "h": 8
-      },
-      "id": 40,
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "pluginVersion": "12.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "hass_climate_current_temperature_celsius",
-          "legendFormat": "{{friendly_name}} current",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "hass_climate_target_temperature_celsius",
-          "legendFormat": "{{friendly_name}} target",
-          "range": true,
-          "refId": "B"
-        }
-      ],
-      "title": "Climate Current vs Target",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "ops"
-        },
-        "overrides": []
-      },
-      "gridPos": {
         "x": 12,
-        "y": 28,
-        "w": 12,
-        "h": 8
+        "y": 75
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Top State-Changing Entities",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
       },
-      "id": 41,
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": false,
+            "axisPlacement": "auto",
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "decimals": 2
+        },
+        "overrides": []
+      },
       "options": {
         "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "calcs": [
+            "lastNotNull"
+          ]
         },
         "tooltip": {
-          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
       },
-      "pluginVersion": "12.0.2",
       "targets": [
         {
           "datasource": {
@@ -1482,14 +2543,98 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "topk(20, sum by (domain, entity, friendly_name) (rate(hass_state_change_total[5m])))",
-          "legendFormat": "{{domain}} {{friendly_name}}",
+          "expr": "topk(10, sum by (domain, entity, friendly_name) (rate(hass_state_change_total[5m])))",
           "range": true,
-          "refId": "A"
+          "refId": "A",
+          "legendFormat": "{{domain}} {{friendly_name}}"
         }
       ],
-      "title": "State Change Rate",
-      "type": "timeseries"
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 83
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Lowest Battery Levels (Trend)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "showPoints": "never",
+            "spanNulls": false,
+            "axisPlacement": "auto",
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 30
+              },
+              {
+                "color": "red",
+                "value": 15
+              }
+            ]
+          },
+          "decimals": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "bottomk(10, hass_sensor_battery_percent or hass_sensor_battery_level_percent or hass_sensor_battery_level)",
+          "range": true,
+          "refId": "A",
+          "legendFormat": "{{friendly_name}}"
+        }
+      ],
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 83
+      }
     }
   ],
   "preload": false,
@@ -1508,7 +2653,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Home Assistant (Prometheus)",
+  "title": "Home Assistant",
   "uid": "pinheiro-home-assistant",
-  "version": 2
+  "version": 3
 }
