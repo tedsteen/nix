@@ -537,7 +537,7 @@
     {
       "type": "timeseries",
       "id": 8,
-      "title": "Redox (ORP) vs setpoint",
+      "title": "Redox & Hydrolysis production",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -631,6 +631,33 @@
                 }
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Hydrolysis production (g/h)"
+            },
+            "properties": [
+              {
+                "id": "custom.fillOpacity",
+                "value": 15
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "dark-blue"
+                }
+              },
+              {
+                "id": "displayName",
+                "value": "Production g/h"
+              }
+            ]
           }
         ]
       },
@@ -655,7 +682,7 @@
           "expr": "hass_sensor_voltage_mv{entity=\"sensor.neopool_redox_orp\"}",
           "range": true,
           "refId": "A",
-          "legendFormat": "Redox"
+          "legendFormat": "ORP (mV)"
         },
         {
           "datasource": {
@@ -667,6 +694,17 @@
           "range": true,
           "refId": "B",
           "legendFormat": "Setpoint"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "hass_sensor_unit_g_per_h{entity=\"sensor.neopool_hydrolysis_g_h\"}",
+          "range": true,
+          "refId": "D",
+          "legendFormat": "Hydrolysis production (g/h)"
         }
       ]
     },
