@@ -789,32 +789,30 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Setpoint g/h"
+              "options": "Output %"
             },
             "properties": [
               {
-                "id": "custom.lineStyle",
-                "value": {
-                  "fill": "dash",
-                  "dash": [
-                    8,
-                    8
-                  ]
-                }
+                "id": "custom.axisPlacement",
+                "value": "right"
               },
               {
-                "id": "custom.fillOpacity",
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "custom.axisSoftMin",
                 "value": 0
               },
               {
-                "id": "custom.lineWidth",
-                "value": 1
+                "id": "custom.axisSoftMax",
+                "value": 100
               },
               {
                 "id": "color",
                 "value": {
                   "mode": "fixed",
-                  "fixedColor": "orange"
+                  "fixedColor": "green"
                 }
               }
             ]
@@ -890,14 +888,14 @@
           },
           "custom": {
             "drawStyle": "line",
-            "lineInterpolation": "stepAfter",
+            "lineInterpolation": "stepBefore",
             "lineWidth": 2,
             "fillOpacity": 15,
             "showPoints": "never",
             "spanNulls": true,
             "axisPlacement": "auto",
             "thresholdsStyle": {
-              "mode": "off"
+              "mode": "area"
             }
           },
           "mappings": [
@@ -931,8 +929,16 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text",
+                "color": "blue",
                 "value": null
+              },
+              {
+                "color": "purple",
+                "value": 2
+              },
+              {
+                "color": "orange",
+                "value": 3
               }
             ]
           },
@@ -1068,7 +1074,7 @@
       "gridPos": {
         "h": 6,
         "w": 6,
-        "x": 12,
+        "x": 0,
         "y": 33
       },
       "fieldConfig": {
@@ -1145,7 +1151,7 @@
       "gridPos": {
         "h": 6,
         "w": 6,
-        "x": 18,
+        "x": 6,
         "y": 33
       },
       "fieldConfig": {
@@ -1695,7 +1701,39 @@
           },
           "decimals": 2
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Modbus error %"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "custom.axisSoftMin",
+                "value": 0
+              },
+              {
+                "id": "custom.axisSoftMax",
+                "value": 100
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "red"
+                }
+              }
+            ]
+          }
+        ]
       },
       "options": {
         "legend": {
