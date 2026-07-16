@@ -576,10 +576,10 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "hass_sensor_power_w{entity=\"sensor.solax_inverter_inverter_power\"}",
+          "expr": "hass_sensor_power_w{entity=\"sensor.solax_inverter_pv_power_total\"} - on() hass_sensor_power_w{entity=\"sensor.solax_inverter_grid_export\"}",
           "range": true,
           "refId": "E",
-          "legendFormat": "Inverter Output"
+          "legendFormat": "Self-consumption"
         }
       ],
       "gridPos": {
