@@ -537,7 +537,7 @@
     {
       "type": "timeseries",
       "id": 8,
-      "title": "Redox & Hydrolysis production",
+      "title": "Redox (ORP)",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -631,33 +631,6 @@
                 }
               }
             ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Hydrolysis production (g/h)"
-            },
-            "properties": [
-              {
-                "id": "custom.fillOpacity",
-                "value": 15
-              },
-              {
-                "id": "custom.axisPlacement",
-                "value": "right"
-              },
-              {
-                "id": "color",
-                "value": {
-                  "mode": "fixed",
-                  "fixedColor": "dark-blue"
-                }
-              },
-              {
-                "id": "displayName",
-                "value": "Production g/h"
-              }
-            ]
           }
         ]
       },
@@ -694,17 +667,6 @@
           "range": true,
           "refId": "B",
           "legendFormat": "Setpoint"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "editorMode": "code",
-          "expr": "hass_sensor_unit_g_per_h{entity=\"sensor.neopool_hydrolysis_g_h\"}",
-          "range": true,
-          "refId": "D",
-          "legendFormat": "Hydrolysis production (g/h)"
         }
       ]
     },
