@@ -118,6 +118,7 @@ in
     extraDashboardPaths = [
       ./docker/infra/grafana/dashboards/home-assistant-prometheus.json
       ./docker/infra/grafana/dashboards/pool-neopool.json
+      ./docker/infra/grafana/dashboards/solax-inverter.json
     ];
   };
 
