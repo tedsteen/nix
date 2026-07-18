@@ -34,7 +34,7 @@ services:
       - hass_config:/config
       - ./home-assistant/configuration.yaml:/config/configuration.yaml:ro
       - ./home-assistant/packages:/config/packages:ro
-      - ./home-assistant/custom_components:/config/custom_components:ro
+      - /etc/docker-stacks/ha-custom-components:/config/custom_components:ro
 
   nodered:
     build: nodered
