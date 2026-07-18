@@ -122,6 +122,35 @@ in
     ];
   };
 
+  # Backup: native app backups + restic to Google Drive via rclone
+
+  systemd.services.backup-pinheiro = {
+    description = "Nightly backup of all Docker services";
+    after = [ "docker.service" ];
+    wants = [ "docker.service" ];
+    wantedBy = [ "multi-user.target" ];
+    path = [ config.virtualisation.docker.package pkgs.bash pkgs.curl pkgs.sqlite pkgs.restic ];
+    script = ''
+      export RESTIC_PASSWORD_FILE=${config.sops.secrets.restic_password.path}
+      export B2_ACCOUNT_ID=$(cat ${config.sops.secrets.b2_key_id.path})
+      export B2_ACCOUNT_KEY=$(cat ${config.sops.secrets.b2_application_key.path})
+      export HA_TOKEN=${config.sops.secrets.home_assistant_token.path}
+      ${builtins.readFile ./scripts/backup.sh}
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+    };
+  };
+
+  systemd.timers.backup-pinheiro = {
+    description = "Run backup-pinheiro nightly at 02:30";
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "02:30";
+      Persistent = true;
+    };
+  };
+
   services.dockerStack = {
     stacks = {
       infra = {
@@ -195,6 +224,26 @@ in
         owner = "root";
         group = "root";
       };
+      restic_password = {
+        mode = "0400";
+        owner = "root";
+        group = "root";
+      };
+      home_assistant_token = {
+        mode = "0440";
+        owner = "ted";
+        group = "docker";
+      };
+      b2_key_id = {
+        mode = "0400";
+        owner = "root";
+        group = "root";
+      };
+      b2_application_key = {
+        mode = "0400";
+        owner = "root";
+        group = "root";
+      };
     };
   };
 
@@ -209,6 +258,8 @@ in
   };
 
   environment.systemPackages = [
+    pkgs.restic
+    pkgs.sqlite
     (pkgs.writeShellScriptBin "ntfy-alert" ''
       #!/bin/sh
       set -euo pipefail
