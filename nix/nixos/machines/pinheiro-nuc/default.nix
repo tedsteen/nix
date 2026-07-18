@@ -4,43 +4,34 @@ let
   upsMonitorPasswordFile = "${pkgs.writeText "upsmon-password" "pinheiro-upsmon\n"}";
 
   # ─── HACS components (fetched declaratively) ─────────────────────────
-  daikin_onecta = pkgs.fetchFromGitHub {
-    owner = "jwillemsen";
-    repo = "daikin_onecta";
-    rev = "v4.6.13";
-    hash = "sha256-8fQ3BevlZUlfMHhf9leZtIwCMegBbe4GeZEWfdsUQOo=";
-  };
+  hacs = import ./docker/automation/home-assistant/custom-components.nix { inherit pkgs; lib = pkgs.lib; };
 
-  ar_smart_ir = pkgs.fetchFromGitHub {
-    owner = "marsh4200";
-    repo = "ar_smart_ir";
-    rev = "v1.7.1";
-    hash = "sha256-4Nn+wtiIuetzQ4BoRltVbSElE0rTU9leqbSe4dBDHjU=";
+  haCustomComponents = hacs.buildComponents {
+    daikin_onecta = hacs.fetchGitHub {
+      owner = "jwillemsen";
+      repo = "daikin_onecta";
+      rev = "v4.6.13";
+      hash = "sha256-8fQ3BevlZUlfMHhf9leZtIwCMegBbe4GeZEWfdsUQOo=";
+    };
+    ar_smart_ir = hacs.fetchGitHub {
+      owner = "marsh4200";
+      repo = "ar_smart_ir";
+      rev = "v1.7.1";
+      hash = "sha256-4Nn+wtiIuetzQ4BoRltVbSElE0rTU9leqbSe4dBDHjU=";
+    };
+    solax_modbus = hacs.fetchGitHub {
+      owner = "wills106";
+      repo = "homsassistant-solax-modbus";
+      rev = "2026.07.1";
+      hash = "sha256-7/Wprn5PJhfnmSHenPFrQY3c1EBdmzqyH8ZclAmDwoI=";
+    };
+    sugar_valley_neopool = hacs.fetchGitHub {
+      owner = "alexdelprete";
+      repo = "ha-sugar-valley-neopool";
+      rev = "v1.1.3";
+      hash = "sha256-0ddDwqyELsMDSwym8Rn5ZvsgvDJAF0pyy6JftNPLUFA=";
+    };
   };
-
-  solax_modbus = pkgs.fetchFromGitHub {
-    owner = "wills106";
-    repo = "homsassistant-solax-modbus";
-    rev = "2026.07.1";
-    hash = "sha256-7/Wprn5PJhfnmSHenPFrQY3c1EBdmzqyH8ZclAmDwoI=";
-  };
-
-  sugar_valley_neopool = pkgs.fetchFromGitHub {
-    owner = "alexdelprete";
-    repo = "ha-sugar-valley-neopool";
-    rev = "v1.1.3";
-    hash = "sha256-0ddDwqyELsMDSwym8Rn5ZvsgvDJAF0pyy6JftNPLUFA=";
-  };
-
-  # Combine fetched HACS components into a single directory for bind-mounting.
-  # Uses cp -rL (follow symlinks) so Docker can resolve the real files inside the container.
-  haCustomComponents = pkgs.runCommand "ha-custom-components" { } ''
-    mkdir -p "$out"
-    cp -rL ${daikin_onecta}/custom_components/daikin_onecta   "$out/"
-    cp -rL ${ar_smart_ir}/custom_components/ar_smart_ir       "$out/"
-    cp -rL ${solax_modbus}/custom_components/solax_modbus     "$out/"
-    cp -rL ${sugar_valley_neopool}/custom_components/sugar_valley_neopool "$out/"
-  '';
 in
 {
   imports = [
