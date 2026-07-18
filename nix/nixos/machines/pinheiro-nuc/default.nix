@@ -128,8 +128,7 @@ in
     description = "Nightly backup of all Docker services";
     after = [ "docker.service" ];
     wants = [ "docker.service" ];
-    wantedBy = [ "multi-user.target" ];
-    path = [ config.virtualisation.docker.package pkgs.bash pkgs.curl pkgs.sqlite pkgs.restic ];
+    path = [ config.virtualisation.docker.package pkgs.bash pkgs.curl pkgs.sqlite pkgs.restic pkgs.gzip ];
     script = ''
       export RESTIC_PASSWORD_FILE=${config.sops.secrets.restic_password.path}
       export B2_ACCOUNT_ID=$(cat ${config.sops.secrets.b2_key_id.path})
