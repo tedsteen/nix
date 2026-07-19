@@ -31,6 +31,12 @@ let
       rev = "v1.1.3";
       hash = "sha256-0ddDwqyELsMDSwym8Rn5ZvsgvDJAF0pyy6JftNPLUFA=";
     };
+    ha_mcp_tools = hacs.fetchGitHub {
+      owner = "homeassistant-ai";
+      repo = "ha-mcp";
+      rev = "v7.13.0";
+      hash = "sha256-24lsXK9gn8vI4aLE2B3IOfAOAE2Cy7bJtBTVgOgCdIQ=";
+    };
   };
 in
 {
