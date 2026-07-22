@@ -34,8 +34,8 @@ let
     ha_mcp_tools = hacs.fetchGitHub {
       owner = "homeassistant-ai";
       repo = "ha-mcp";
-      rev = "v7.13.0";
-      hash = "sha256-24lsXK9gn8vI4aLE2B3IOfAOAE2Cy7bJtBTVgOgCdIQ=";
+      rev = "v7.14.1";
+      hash = "sha256-+C7gyTBL4nGJUytHChFJUPzOgbZKVXWo0X1jdj4L+2I=";
     };
   };
 in
