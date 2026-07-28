@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f5efe2" />
+    <meta name="description" content="Finn and Milo's family screen-time bank." />
+    <title>Screen Time Bank</title>
+    <link rel="stylesheet" href="/styles.css?v=9" />
+    <script type="module" src="/app.js?v=9"></script>
+  </head>
+  <body>
+    <main>
+      <section id="home-view">
+        <header>
+          <p class="eyebrow">The family time vault</p>
+          <h1>Screen Time Bank</h1>
+          <p>Choose a bank to see its transactions.</p>
+        </header>
+
+        <section class="balances" aria-label="Current balances">
+          <button class="balance-card finn" type="button" data-kid="Finn">
+            <span class="avatar" aria-hidden="true">F</span>
+            <span>
+              <span class="name">Finn’s balance</span>
+              <span class="balance" id="Finn-balance">—</span>
+            </span>
+            <span class="card-arrow" aria-hidden="true">→</span>
+          </button>
+          <button class="balance-card milo" type="button" data-kid="Milo">
+            <span class="avatar" aria-hidden="true">M</span>
+            <span>
+              <span class="name">Milo’s balance</span>
+              <span class="balance" id="Milo-balance">—</span>
+            </span>
+            <span class="card-arrow" aria-hidden="true">→</span>
+          </button>
+        </section>
+      </section>
+
+      <section id="detail-view" hidden>
+        <button class="back" type="button">← Both banks</button>
+
+        <div class="detail-heading">
+          <div>
+            <p class="eyebrow">Screen-time bank</p>
+            <h2><span id="detail-kid"></span>’s history</h2>
+            <p class="detail-balance">Available: <strong id="detail-balance"></strong></p>
+          </div>
+          <button class="submit add-entry" type="button">＋ Add entry</button>
+        </div>
+
+        <section class="panel history-panel">
+          <div id="detail-history" class="history"></div>
+          <nav class="pagination" aria-label="History pages">
+            <button id="previous-page" type="button">← Previous</button>
+            <span id="page-status"></span>
+            <button id="next-page" type="button">Next →</button>
+          </nav>
+        </section>
+      </section>
+    </main>
+
+    <dialog id="add-dialog">
+      <form id="transaction-form">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow">New transaction</p>
+            <h2>Add entry for <span id="add-kid"></span></h2>
+          </div>
+          <button class="close" type="button" aria-label="Close">×</button>
+        </div>
+
+        <div class="action-switch" aria-label="Transaction type">
+          <button type="button" class="active" data-action="add">＋ Add</button>
+          <button type="button" data-action="spend">− Use</button>
+        </div>
+
+        <div class="duration-picker">
+          <span class="duration-label">Time</span>
+          <div class="duration-wheel" data-duration-wheel role="spinbutton" aria-label="Time" aria-valuemin="0" aria-valuemax="1440" aria-valuenow="0" tabindex="0"></div>
+          <input name="duration" type="hidden" value="0" />
+        </div>
+
+        <label class="comment">What was it for?<input name="comment" maxlength="200" list="recent-comments" placeholder="Read a book, watched a movie…" autocomplete="off" required /></label>
+        <datalist id="recent-comments"></datalist>
+
+        <details class="date-details">
+          <summary>Change date and time</summary>
+          <label>Date and time<input name="createdAt" type="datetime-local" /></label>
+          <small>Leave blank to use the current time.</small>
+        </details>
+
+        <div class="form-footer">
+          <p class="message" id="message" role="status"></p>
+          <button class="submit" type="submit">Add to bank</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="edit-dialog">
+      <form id="edit-form">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow">Correct a transaction</p>
+            <h2>Edit entry</h2>
+          </div>
+          <button class="close" type="button" aria-label="Close">×</button>
+        </div>
+
+        <div class="action-switch edit-action" aria-label="Edited transaction type">
+          <button type="button" class="active" data-edit-action="add">＋ Add</button>
+          <button type="button" data-edit-action="spend">− Use</button>
+        </div>
+
+        <div class="duration-picker">
+          <span class="duration-label">Time</span>
+          <div class="duration-wheel" data-duration-wheel role="spinbutton" aria-label="Time" aria-valuemin="0" aria-valuemax="1440" aria-valuenow="0" tabindex="0"></div>
+          <input name="duration" type="hidden" value="0" />
+        </div>
+
+        <label class="comment">What was it for?<input name="comment" maxlength="200" required /></label>
+        <label>Date and time<input name="createdAt" type="datetime-local" required /></label>
+        <div class="form-footer">
+          <p class="message" id="edit-message" role="status"></p>
+          <button class="submit" type="submit">Save changes</button>
+        </div>
+      </form>
+    </dialog>
+  </body>
+</html>

@@ -1,4 +1,20 @@
 services:
+  screentime:
+    build: screentime
+    restart: unless-stopped
+    environment:
+      TZ: Europe/Lisbon
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.lab_screentime.rule=Host(`screentime.hal.pub`)'
+      - 'traefik.http.routers.lab_screentime.entrypoints=web_public_secure'
+      - 'traefik.http.services.lab_screentime.loadbalancer.server.port=3000'
+      - 'traefik.docker.network=infra_traefik'
+    networks:
+      - infra_traefik
+    volumes:
+      - screentime_data:/data
+
   moobeldaja-db:
     image: mariadb:11.8.8
     restart: unless-stopped
@@ -93,6 +109,7 @@ volumes:
   minecraft_data:
   moobeldaja_db:
   moobeldaja_wordpress:
+  screentime_data:
 
 secrets:
   moobeldaja_db_password:
