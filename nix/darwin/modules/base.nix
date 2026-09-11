@@ -163,7 +163,9 @@ in {
       onActivation = {
         autoUpdate = true;
         cleanup = "zap";
-        upgrade = true;
+        # TODO: set back to true once the ocenaudio cask downloads again
+        # https://github.com/Homebrew/homebrew-cask/issues/286615
+        upgrade = false;
       };
       global.autoUpdate = true;
 
