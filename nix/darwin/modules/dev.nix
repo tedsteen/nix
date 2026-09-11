@@ -33,6 +33,7 @@ in
     nodejs_24
     (corepack.override { nodejs = nodejs_24; })
     python3
+    cocoapods
     cc65
     zig
     go
