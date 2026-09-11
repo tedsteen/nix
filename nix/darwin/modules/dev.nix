@@ -9,6 +9,13 @@ let
       "thumbv7em-none-eabi"
     ];
   };
+  # DeepSeek Harness via npx. nixpkgs' node is rejected by the
+  # node-addon-require-builtin hack dsh uses to reach Node internals, so run
+  # the entrypoint with --expose-internals instead of the plain `dsh` bin.
+  deepseek-harness = pkgs.writeShellScriptBin "dsh" ''
+    exec ${pkgs.nodejs_24}/bin/npx --yes -p @deepseek-ai/dsh -- \
+      sh -c 'exec node --expose-internals "$(command -v dsh)" "$@"' dsh "$@"
+  '';
 in
 {
   nixpkgs.overlays = [
@@ -37,5 +44,7 @@ in
     cc65
     zig
     go
+
+    deepseek-harness
   ];
 }
