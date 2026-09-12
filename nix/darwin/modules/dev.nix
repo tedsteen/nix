@@ -39,6 +39,7 @@ in
 
     nodejs_24
     (corepack.override { nodejs = nodejs_24; })
+    watchman
     python3
     cocoapods
     cc65
