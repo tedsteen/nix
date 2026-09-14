@@ -16,7 +16,7 @@ services:
       - screentime_data:/data
 
   moobeldaja-db:
-    image: mariadb:11.8.8
+    image: mariadb:11.8.9
     restart: unless-stopped
     environment:
       MARIADB_DATABASE: wordpress
@@ -35,7 +35,7 @@ services:
       - moobeldaja_db:/var/lib/mysql
 
   moobeldaja:
-    image: wordpress:7.0.0-php8.3-apache
+    image: wordpress:7.0.4-php8.3-apache
     restart: unless-stopped
     depends_on:
       moobeldaja-db:

@@ -10,32 +10,32 @@ let
     daikin_onecta = hacs.fetchGitHub {
       owner = "jwillemsen";
       repo = "daikin_onecta";
-      rev = "v4.6.13";
-      hash = "sha256-8fQ3BevlZUlfMHhf9leZtIwCMegBbe4GeZEWfdsUQOo=";
+      rev = "v4.6.19";
+      hash = "sha256-8VEURHJk3A449Y0HeUF+1cSsXlfZJHFFK3cg2Ero/Ec=";
     };
     ar_smart_ir = hacs.fetchGitHub {
       owner = "marsh4200";
       repo = "ar_smart_ir";
-      rev = "v1.7.1";
-      hash = "sha256-4Nn+wtiIuetzQ4BoRltVbSElE0rTU9leqbSe4dBDHjU=";
+      rev = "v1.7.4";
+      hash = "sha256-hNWvwfwazPqsNFSDHkfMIhnriZwvK1qEiH2LxPlsbHY=";
     };
     solax_modbus = hacs.fetchGitHub {
       owner = "wills106";
       repo = "homsassistant-solax-modbus";
-      rev = "2026.07.1";
-      hash = "sha256-7/Wprn5PJhfnmSHenPFrQY3c1EBdmzqyH8ZclAmDwoI=";
+      rev = "2026.09.2";
+      hash = "sha256-WxSzlcnwQ32qN1azPKjcfDaPTP1Vpfmc8FbF9XEK9kk=";
     };
     sugar_valley_neopool = hacs.fetchGitHub {
       owner = "alexdelprete";
       repo = "ha-sugar-valley-neopool";
-      rev = "v1.1.3";
-      hash = "sha256-0ddDwqyELsMDSwym8Rn5ZvsgvDJAF0pyy6JftNPLUFA=";
+      rev = "v2.1.2";
+      hash = "sha256-sPfGNzCUbopTzcq6oAWli9tAkFHgjXuVyLuttR2fZnI=";
     };
     ha_mcp_tools = hacs.fetchGitHub {
       owner = "homeassistant-ai";
       repo = "ha-mcp";
-      rev = "v7.14.1";
-      hash = "sha256-+C7gyTBL4nGJUytHChFJUPzOgbZKVXWo0X1jdj4L+2I=";
+      rev = "v8.4.3";
+      hash = "sha256-VrgMLYi8ZBoAflEqM37pP0V8/ud0/OF3bK6OVPWSrbE=";
     };
   };
 in

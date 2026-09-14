@@ -30,7 +30,7 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/../../.." && pwd)"
 FLAKE="git+file:${REPO_ROOT}?dir=nix/nixos#${MACHINE_NAME}"
 
 echo "==> Applying flake ${FLAKE} to ${TARGET_HOST} (mode: switch)"
-nix run github:NixOS/nixpkgs/nixos-unstable#nixos-rebuild -- switch \
+nix run github:NixOS/nixpkgs/nixos-26.05#nixos-rebuild -- switch \
   --flake "${FLAKE}" \
   --target-host "${TARGET_HOST}" \
   --build-host "${TARGET_HOST}" \

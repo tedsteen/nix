@@ -13,7 +13,7 @@ let
   # node-addon-require-builtin hack dsh uses to reach Node internals, so run
   # the entrypoint with --expose-internals instead of the plain `dsh` bin.
   deepseek-harness = pkgs.writeShellScriptBin "dsh" ''
-    exec ${pkgs.nodejs_24}/bin/npx --yes -p @deepseek-ai/dsh -- \
+    exec ${pkgs.nodejs_26}/bin/npx --yes -p @deepseek-ai/dsh -- \
       sh -c 'exec node --expose-internals "$(command -v dsh)" "$@"' dsh "$@"
   '';
 in
@@ -37,8 +37,8 @@ in
     espup
     probe-rs-tools
 
-    nodejs_24
-    (corepack.override { nodejs-slim = nodejs-slim_24; })
+    nodejs_26
+    (corepack.override { nodejs-slim = nodejs-slim_26; })
     watchman
     python3
     cocoapods

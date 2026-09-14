@@ -1,4 +1,4 @@
-FROM linuxserver/transmission:4.1.1
+FROM linuxserver/transmission:4.1.3
 
 RUN apk add --no-cache wireguard-tools iproute2 iptables curl
 

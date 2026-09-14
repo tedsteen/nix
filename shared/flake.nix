@@ -182,6 +182,12 @@
               viAlias = true;
               vimAlias = true;
 
+              # Nixvim's flake pins its own Nixpkgs; because we make it follow
+              # ours (which on macOS is the -darwin channel), nixvim warns that
+              # its locked rev differs. Point it at the host Nixpkgs explicitly
+              # so a single instance is used and the warning is suppressed.
+              nixpkgs.source = pkgs.path;
+
               extraPackages = with pkgs; [
                 fd
                 ripgrep

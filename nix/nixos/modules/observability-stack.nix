@@ -2,7 +2,7 @@
 
 let
   cfg = config.services.observabilityStack;
-  lgtmImage = "grafana/otel-lgtm:0.28.0";
+  lgtmImage = "grafana/otel-lgtm:0.29.0";
   pinPrometheus = ''
     def pin($ds):
       walk(
