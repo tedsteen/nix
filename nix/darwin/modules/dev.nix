@@ -38,7 +38,7 @@ in
     probe-rs-tools
 
     nodejs_24
-    (corepack.override { nodejs = nodejs_24; })
+    (corepack.override { nodejs-slim = nodejs-slim_24; })
     watchman
     python3
     cocoapods

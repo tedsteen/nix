@@ -2,21 +2,19 @@
   description = "Userbase: reusable HM module for my minimal user configuration";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-25.11";
-    # The default system list (nix-systems/default). nixvim and its docs-search
-    # dependency (flake-utils) each declare their own `systems` input; pointing
-    # both at this one collapses what would otherwise be duplicate, identical
-    # `systems`/`systems_2` nodes in the lock file.
+    nixpkgs.url = "nixpkgs/nixos-26.05";
+    # The default system list (nix-systems/default). nixvim declares its own
+    # `systems` input; pointing it at this one collapses what would otherwise be
+    # a duplicate, identical `systems` node in the lock file.
     systems.url = "github:nix-systems/default";
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixvim = {
-      url = "github:nix-community/nixvim/nixos-25.11";
+      url = "github:nix-community/nixvim/nixos-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems";
-      inputs.nuschtosSearch.inputs.flake-utils.inputs.systems.follows = "systems";
     };
   };
 
@@ -165,17 +163,17 @@
               enable = true;
               
               enableDefaultConfig = false;
-              matchBlocks."*" = {
-                forwardAgent = false;
-                addKeysToAgent = "yes";
-                compression = false;
-                serverAliveInterval = 60;
-                serverAliveCountMax = 10;
-                hashKnownHosts = false;
-                userKnownHostsFile = "~/.ssh/known_hosts";
-                controlMaster = "no";
-                controlPath = "~/.ssh/master-%r@%n:%p";
-                controlPersist = "no";
+              settings."*" = {
+                ForwardAgent = false;
+                AddKeysToAgent = "yes";
+                Compression = false;
+                ServerAliveInterval = 60;
+                ServerAliveCountMax = 10;
+                HashKnownHosts = false;
+                UserKnownHostsFile = "~/.ssh/known_hosts";
+                ControlMaster = "no";
+                ControlPath = "~/.ssh/master-%r@%n:%p";
+                ControlPersist = "no";
               };
             };
 
