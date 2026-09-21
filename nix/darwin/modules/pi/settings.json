@@ -1,0 +1,7 @@
+{
+  "defaultProvider": "deepseek",
+  "defaultModel": "deepseek-flash",
+  "defaultThinkingLevel": "high",
+  "showCacheMissNotices": true,
+  "enableInstallTelemetry": false
+}
