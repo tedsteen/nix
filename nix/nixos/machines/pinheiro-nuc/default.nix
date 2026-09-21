@@ -329,6 +329,7 @@ in
   boot = {
     kernelModules = [ "zfs" ];
     supportedFilesystems = [ "zfs" ];
+    zfs.forceImportRoot = false;
   };
 
   networking.hostId = "1f666b7f";
