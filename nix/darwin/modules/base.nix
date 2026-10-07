@@ -59,6 +59,7 @@ in {
         dock.magnification = false;
         dock.expose-animation-duration = 0.01;
         dock.expose-group-apps = true;
+        dock.mru-spaces = false;
 
         NSGlobalDomain = {
           InitialKeyRepeat = 15;
